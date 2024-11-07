@@ -1,6 +1,7 @@
 package hr.foi.air.baufind.ui.components
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -31,13 +32,15 @@ fun PrimaryButton(
     textStyle: TextStyle = MaterialTheme.typography.labelLarge,
     padding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
     buttonWidth: Dp? = null,
-    buttonHeight: Dp? = null
+    buttonHeight: Dp? = null,
+    maxWidth: Boolean = false
 ) {
     Button(
         onClick = onClick,
         modifier = modifier
             .then(if (buttonWidth != null) Modifier.width(buttonWidth) else Modifier.wrapContentWidth())
-            .then(if (buttonHeight != null) Modifier.height(buttonHeight) else Modifier.height(48.dp)), // Ispravljeno
+            .then(if (maxWidth) Modifier.fillMaxWidth() else Modifier)
+            .then(if (buttonHeight != null) Modifier.height(buttonHeight) else Modifier.height(48.dp)),
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColor,
@@ -55,4 +58,5 @@ fun PrimaryButton(
         Text(text = text, style = textStyle)
     }
 }
+
 
