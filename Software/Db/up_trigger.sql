@@ -1,5 +1,3 @@
-BEGIN TRANSACTION;
-
 CREATE TRIGGER trg_JobHistory_InsertUpdate
 ON job
 AFTER INSERT, UPDATE
@@ -17,5 +15,3 @@ BEGIN
     INSERT INTO job_history (job_id, job_status_id, datetime)
     VALUES (@JobID, @JobStatusID, @CurrentDatetime);
 END;
-
-COMMIT;
