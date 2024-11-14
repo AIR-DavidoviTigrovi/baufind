@@ -1,5 +1,7 @@
 package hr.foi.air.baufind.ui.components
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,9 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.Dp
+import hr.foi.air.baufind.ui.theme.BaufindTheme
 
 @Composable
 fun PrimaryButton(
@@ -25,9 +29,8 @@ fun PrimaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    backgroundColor: Color = MaterialTheme.colorScheme.primary,
-    contentColor: Color = Color.White,
     icon: ImageVector? = null,
+    drawableId : Int? = null,
     iconDescription: String? = null,
     textStyle: TextStyle = MaterialTheme.typography.labelLarge,
     padding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
@@ -42,15 +45,18 @@ fun PrimaryButton(
             .then(if (maxWidth) Modifier.fillMaxWidth() else Modifier)
             .then(if (buttonHeight != null) Modifier.height(buttonHeight) else Modifier.height(48.dp)),
         enabled = enabled,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = backgroundColor,
-            contentColor = contentColor
-        ),
         contentPadding = padding
     ) {
         if (icon != null) {
             Icon(
                 imageVector = icon,
+                contentDescription = iconDescription,
+                modifier = Modifier.padding(end = 8.dp)
+            )
+        }
+        if(drawableId != null){
+            Image(
+                painter = painterResource(id = drawableId),
                 contentDescription = iconDescription,
                 modifier = Modifier.padding(end = 8.dp)
             )
