@@ -11,12 +11,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import hr.foi.air.baufind.R
 import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ui.components.PrimaryTextField
 
 @Composable
-fun RegistrationScreen() {
+fun RegistrationScreen(navController : NavController) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
@@ -55,12 +56,6 @@ fun RegistrationScreen() {
             addressError = "You must enter your address"
             valid = false
         }
-        /*
-        if (username postoji već u bazi)) {
-            passwordError = "Korisničko ime je zauzeto"
-            valid = false
-        }
-         */
         if (password.isBlank()) {
             passwordError = "You must insert your password"
             valid = false
@@ -76,7 +71,7 @@ fun RegistrationScreen() {
         modifier = Modifier
             .fillMaxSize()
             .padding(22.dp),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
         Text(
             text ="Baufind",
@@ -180,9 +175,7 @@ fun RegistrationScreen() {
             maxWidth = true,
             onClick = {
                 if (validateInputs()) {
-                    /*
-                    Kad je sve validirano, onda se more napraviti logika
-                     */
+                    navController.navigate("login")
                 }
             }
         )
@@ -194,6 +187,7 @@ fun RegistrationScreen() {
             maxWidth = true,
             onClick = {
                 if (validateInputs()) {
+                    navController.navigate("login")
                 }
             }
         )
