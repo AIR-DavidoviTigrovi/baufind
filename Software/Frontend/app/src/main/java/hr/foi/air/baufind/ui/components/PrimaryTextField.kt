@@ -35,8 +35,8 @@ fun PrimaryTextField(
         },
         colors = TextFieldDefaults.colors(
             unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-            focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer
-
+            focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            errorContainerColor = MaterialTheme.colorScheme.errorContainer
         ),
         modifier = modifier,
         keyboardOptions = keyboardOptions,
