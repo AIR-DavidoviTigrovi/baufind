@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun WorkerSearchScreen(navController: NavController){
     val viewModel: WorkerSearchViewModel = viewModel()
+
 }
 @Preview
 @Composable
