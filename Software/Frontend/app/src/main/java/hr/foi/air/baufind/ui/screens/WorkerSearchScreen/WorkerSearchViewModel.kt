@@ -15,5 +15,5 @@ class WorkerSearchViewModel : ViewModel() {
     val selectedItemL: MutableState<String> = mutableStateOf("")
     val selectedItemR: MutableState<String> = mutableStateOf("")
 
-    val workers: MutableLiveData<List<WorkerMock.Worker>> = MutableLiveData(WorkerMock.workers)
+    val workers: MutableState<List<WorkerMock.Worker>> = mutableStateOf(WorkerMock.workers)
 }

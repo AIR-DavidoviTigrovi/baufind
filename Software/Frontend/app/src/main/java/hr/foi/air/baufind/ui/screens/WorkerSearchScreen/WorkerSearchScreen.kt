@@ -6,14 +6,18 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import hr.foi.air.baufind.mock.WorkerSearchMock.WorkerMock
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,8 +30,7 @@ fun WorkerSearchScreen(navController: NavController) {
 
     val selectedItemL by viewModel.selectedItemL
     val selectedItemR by viewModel.selectedItemR
-
-
+    val workers by viewModel.workers
     val optionsR = listOf("Ocjena ASC", "Ocjena DESC", "Broj poslova ASC", "Broj poslova DESC")
     val optionsL = listOf("Zagrebačka", "Krapinsko-zagorska", "Sisacko-moslavačka", "Karlovačka", "Varaždinska",
          "Bjelovarsko-bilogorska", "Primorsko-goranska", "Ličko-senjska",
@@ -96,10 +99,21 @@ fun WorkerSearchScreen(navController: NavController) {
                 }
             }
         }
-        
+        LazyColumn() {
+            items(workers){
+                worker -> WorkerItem(worker)
+            }
+        }
     }
 }
-
+@Composable
+fun WorkerItem(worker: WorkerMock.Worker) {
+    // Example UI for displaying worker's name and position
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(text = "Name: ${worker.firstName}", fontWeight = FontWeight.Bold)
+        Text(text = "Position: ${worker.skills}")
+    }
+}
 @Preview(showBackground = true)
 @Composable
 fun WorkerSearchScreenPreview() {
