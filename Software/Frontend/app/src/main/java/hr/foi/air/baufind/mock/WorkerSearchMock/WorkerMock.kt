@@ -7,20 +7,19 @@ object WorkerMock {
         val firstName: String,      // Ime radnika
         val lastName: String,       // Prezime radnika
         val location: String,       // Lokacija radnika (grad, regija)
-        val experienceYears: Int,   // Broj godina radnog iskustva
-        val skills: List<String>,   // Lista vještina radnika (npr. Java, Python, Vođenje projekata)
-        val jobCategory: String,    // Kategorija posla (npr. IT, Marketing, Administracija)
+        val numOfJobs: Int,   // Broj poslova
+        val skills: List<String>,   // Lista vještina radnika (vodoinstaler, keramičar)
         val availability: String,   // Dostupnost (npr. puno radno vrijeme, honorarni rad)
-        val expectedSalary: Double, // Očekivana plata radnika
-        val resumeLink: String?,    // Link na životopis (ako postoji)
+        val expectedSalary: Double, // Očekivana plaća radnika
         val contactInfo: String?    // Kontakt podaci (ako postoji)
     )
 
 
     val workers = listOf(
-        Worker(1, "Ivan", "Horvat", "Zagreb", 3, listOf("Java", "Spring", "SQL"), "IT", "Full-time", 50000.0, "https://linktoresume.com/ivan", "ivan@email.com"),
-        Worker(2, "Ana", "Kovač", "Split", 5, listOf("Marketing", "SEO", "Content Creation"), "Marketing", "Freelance", 35000.0, null, "ana@email.com"),
-        Worker(3, "Marko", "Novak", "Osijek", 7, listOf("JavaScript", "Node.js", "React"), "IT", "Part-time", 45000.0, null, "marko@email.com"),
-        Worker(4, "Luka", "Ivić", "Zagreb", 2, listOf("Excel", "Data Analysis", "SQL"), "Administration", "Full-time", 40000.0, null, "luka@email.com")
+        Worker(1, "Ivan", "Horvat", "Zagreb", 5, listOf("Vodoinstaler", "Keramičar"), "Full-time", 40000.0, "ivan@email.com"),
+        Worker(2, "Ana", "Kovač", "Split", 3, listOf("Keramičar", "Električar"), "Part-time", 30000.0, "ana@email.com"),
+        Worker(3, "Marko", "Novak", "Osijek", 10, listOf("Vodoinstaler", "Keramičar", "Instalater"), "Freelance", 45000.0, null),
+        Worker(4, "Luka", "Ivić", "Zadar", 8, listOf("Keramičar", "Majstor"), "Full-time", 35000.0, "luka@email.com")
     )
+
 }
