@@ -1,4 +1,8 @@
-﻿using DataAccessLayer;
+﻿using BusinessLogicLayer.AppLogic.Users;
+using BusinessLogicLayer.Infrastructure;
+using DataAccessLayer;
+using DataAccessLayer.AppLogic;
+using DataAccessLayer.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,6 +21,14 @@ public static class ServiceCollectionExtensions
         services.Configure<DBOptions>(
             configuration.GetSection("Database")
         );
+
+        services.AddScoped<DB>(); // Zbog DI u repozitorije
+
+        // Repozitoriji
+        services.AddScoped<IUserRepository, UserRepository>();
+
+        // Servisi
+        services.AddScoped<IUserService, UserService>();
 
         return services;
     }
