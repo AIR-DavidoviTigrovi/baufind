@@ -45,12 +45,12 @@ public class UserRepository : IUserRepository
     public UserModel? GetUser(int id)
     {
         string query = "SELECT * FROM app_user WHERE id = @id;";
-        var parameters = new Dictionary<string, int>
+        var parameters = new Dictionary<string, object>
         {
             { "@id", id }
         };
 
-        using (var reader = _db.ExecuteReader(query))
+        using (var reader = _db.ExecuteReader(query, parameters))
         {
             UserModel? result = null;
             if (reader.Read())
@@ -60,6 +60,38 @@ public class UserRepository : IUserRepository
 
             return result;
         }
+    }
+
+    /// <summary>
+    /// Metoda za dodavanje novog korisnika u bazu
+    /// </summary>
+    /// <param name="user">korisnik koji se dodaje</param>
+    /// <returns>ID ako je uspješno dodan, u protivnom null</returns>
+    public int? AddUser(UserModel user)
+    {
+        // Druga linija queryja vraća ID zadnje umetnutog zapisa, tako da se isti dobije
+        string query = @"
+            INSERT INTO app_user (name, email, phone, password_hash, joined, address, profile_picture, deleted, google_id)
+            VALUES (@name, @email, @phone, @password_hash, @joined, @address, CONVERT(VARBINARY(MAX), @profile_picture), @deleted, @google_id);
+            SELECT CAST(SCOPE_IDENTITY() AS INT);
+        ";
+
+        var parameters = new Dictionary<string, object>
+        {
+            { "@name", user.Name },
+            { "@email", user.Email },
+            { "@phone", user.Phone },
+            { "@password_hash", user.PasswordHash },
+            { "@joined", user.Joined },
+            { "@address", user.Address },
+            { "@profile_picture", user.ProfilePicture ?? (object)DBNull.Value },
+            { "@deleted", user.Deleted },
+            { "@google_id", user.GoogleId ?? (object)DBNull.Value }
+        };
+
+        object? result = _db.ExecuteScalar(query, parameters);
+
+        return result != null ? (int)result : null;
     }
 
     private UserModel UserModelFromReader(SqlDataReader reader)
@@ -73,9 +105,9 @@ public class UserRepository : IUserRepository
             PasswordHash = (string)reader["password_hash"],
             Joined = (DateTime)reader["joined"],
             Address = (string)reader["address"],
-            ProfilePicture = (byte[]?)reader["profile_picture"],
+            ProfilePicture = reader["profile_picture"] == DBNull.Value ? null : (byte[])reader["profile_picture"],
             Deleted = (bool)reader["deleted"],
-            GoogleId = (string?)reader["google_id"]
+            GoogleId = reader["google_id"] == DBNull.Value ? null : (string)reader["google_id"]
         };
     }
 }

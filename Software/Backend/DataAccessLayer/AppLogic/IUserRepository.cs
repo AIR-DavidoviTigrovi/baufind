@@ -20,4 +20,11 @@ public interface IUserRepository
     /// <param name="id">ID korisnika</param>
     /// <returns>korisnika koji ima taj ID ili null</returns>
     public UserModel? GetUser(int id);
+
+    /// <summary>
+    /// Metoda za dodavanje novog korisnika u bazu
+    /// </summary>
+    /// <param name="user">korisnik koji se dodaje</param>
+    /// <returns>ID ako je uspješno dodan, u protivnom null</returns>
+    public int? AddUser(UserModel user);
 }

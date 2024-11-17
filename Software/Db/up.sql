@@ -5,7 +5,7 @@ CREATE TABLE app_user (
     name NVARCHAR(100) NOT NULL,
     email NVARCHAR(100) NOT NULL UNIQUE,
     phone NVARCHAR(100) NOT NULL,
-    password_hash VARCHAR(100) NOT NULL,
+    password_hash VARCHAR(MAX) NOT NULL,
     joined DATETIME NOT NULL,
     address NVARCHAR(MAX) NOT NULL,
     profile_picture VARBINARY(MAX),
