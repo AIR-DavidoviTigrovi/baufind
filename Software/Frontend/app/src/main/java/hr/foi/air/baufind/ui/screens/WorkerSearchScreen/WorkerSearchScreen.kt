@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -51,7 +52,7 @@ fun WorkerSearchScreen(navController: NavController) {
     )
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Worker Search Screen")
+        Text("Pronađite poziciju x")
 
 
         Row(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -59,7 +60,7 @@ fun WorkerSearchScreen(navController: NavController) {
             ExposedDropdownMenuBox(
                 expanded = isExpandedL,
                 onExpandedChange = { viewModel.isExpandedL.value = it },
-                modifier = Modifier.fillMaxWidth(0.3f)
+                modifier = Modifier.width(128.dp)
             ) {
                 TextField(
                     value = selectedItemL,
@@ -88,7 +89,7 @@ fun WorkerSearchScreen(navController: NavController) {
             ExposedDropdownMenuBox(
                 expanded = isExpandedR,
                 onExpandedChange = { viewModel.isExpandedR.value = it },
-                modifier = Modifier.fillMaxWidth(0.4f)
+                modifier = Modifier.width(128.dp)
             ) {
                 TextField(
                     value = selectedItemR,
