@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -54,7 +55,8 @@ fun WorkerSearchScreen(navController: NavController) {
                     onValueChange = {},
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpandedL) },
-                    modifier = Modifier.menuAnchor()
+                    modifier = Modifier.menuAnchor().fillMaxWidth(),
+                    label = { Text("Location", overflow = TextOverflow.Ellipsis, maxLines = 1) }
                 )
                 ExposedDropdownMenu(
                     expanded = isExpandedL,
@@ -81,7 +83,8 @@ fun WorkerSearchScreen(navController: NavController) {
                     onValueChange = {},
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpandedL) },
-                    modifier = Modifier.menuAnchor()
+                    modifier = Modifier.menuAnchor().fillMaxWidth(),
+                    label = { Text("Sort by", overflow = TextOverflow.Ellipsis, maxLines = 1) }
                 )
                 ExposedDropdownMenu(
                     expanded = isExpandedR,
@@ -109,10 +112,17 @@ fun WorkerSearchScreen(navController: NavController) {
 @Composable
 fun WorkerItem(worker: WorkerMock.Worker) {
     // Example UI for displaying worker's name and position
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(text = "Name: ${worker.firstName}", fontWeight = FontWeight.Bold)
-        Text(text = "Position: ${worker.skills}")
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(4.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = "Name: ${worker.firstName} ${worker.lastName}", fontWeight = FontWeight.Bold)
+            Text(text = "Position: ${worker.skills}")
+            Text(text = "Location: ${worker.location}")
+            Text(text = "Previous jobs: ${worker.numOfJobs}")
+        }
     }
+
 }
 @Preview(showBackground = true)
 @Composable
