@@ -1,5 +1,8 @@
 package hr.foi.air.baufind.ui.screens.WorkerSearchScreen
 
+import android.widget.Toast
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,13 +11,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -25,13 +32,16 @@ import hr.foi.air.baufind.mock.WorkerSearchMock.WorkerMock
 fun WorkerSearchScreen(navController: NavController) {
     val viewModel: WorkerSearchViewModel = viewModel()
 
-
+    //Logika za dropdown meni
+    /// Preporučeno je za manji broj opcija koristiti chip
     val isExpandedL by viewModel.isExpandedL
     val isExpandedR by viewModel.isExpandedR
-
+    val scrollState = rememberScrollState()
     val selectedItemL by viewModel.selectedItemL
     val selectedItemR by viewModel.selectedItemR
     val workers by viewModel.workers
+    val context = LocalContext.current
+    // Opcije za dropdown meni
     val optionsR = listOf("Ocjena ASC", "Ocjena DESC", "Broj poslova ASC", "Broj poslova DESC")
     val optionsL = listOf("Zagrebačka", "Krapinsko-zagorska", "Sisacko-moslavačka", "Karlovačka", "Varaždinska",
          "Bjelovarsko-bilogorska", "Primorsko-goranska", "Ličko-senjska",
@@ -43,8 +53,9 @@ fun WorkerSearchScreen(navController: NavController) {
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text("Worker Search Screen")
 
-        // Left Dropdown
+
         Row(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+            //Lijevi dropdown meni
             ExposedDropdownMenuBox(
                 expanded = isExpandedL,
                 onExpandedChange = { viewModel.isExpandedL.value = it },
@@ -73,6 +84,7 @@ fun WorkerSearchScreen(navController: NavController) {
                     }
                 }
             }
+            //Desni dropdown meni
             ExposedDropdownMenuBox(
                 expanded = isExpandedR,
                 onExpandedChange = { viewModel.isExpandedR.value = it },
@@ -102,25 +114,47 @@ fun WorkerSearchScreen(navController: NavController) {
                 }
             }
         }
-        LazyColumn() {
+        //Lista radnika i prikaz i callback za pritisak
+        LazyColumn(
+            modifier = Modifier.scrollable(state = scrollState, orientation = Orientation.Vertical),
+
+        ) {
             items(workers){
-                worker -> WorkerItem(worker)
+                worker -> WorkerItem(worker){
+                    //Funkcija se poziva na pritiskom na radnika,| treba je promijeniti u kasnijim fazama i prilikom promjene obrišite dio komentara nakon | znaka.
+                   Toast.makeText(context, "Clicked on ${worker.firstName} ${worker.lastName}", Toast.LENGTH_SHORT).show()
+               }
             }
         }
     }
 }
 @Composable
-fun WorkerItem(worker: WorkerMock.Worker) {
+fun WorkerItem(
+    worker: WorkerMock.Worker,
+    onItemClick: () -> Unit
+) {
     // Example UI for displaying worker's name and position
     Card(
-        modifier = Modifier.fillMaxWidth().padding(4.dp)
+        modifier = Modifier.fillMaxWidth().padding(4.dp),
+        onClick = onItemClick
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "Name: ${worker.firstName} ${worker.lastName}", fontWeight = FontWeight.Bold)
-            Text(text = "Position: ${worker.skills}")
-            Text(text = "Location: ${worker.location}")
-            Text(text = "Previous jobs: ${worker.numOfJobs}")
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ){
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(text = "Ime: ${worker.firstName} ${worker.lastName}", fontWeight = FontWeight.Bold)
+                Text(text = "Pozicija: ${worker.skills}")
+                Text(text = "Lokacija: ${worker.location}")
+                Text(text = "Broj poslova: ${worker.numOfJobs}")
+            }
+            Column(modifier = Modifier.padding(8.dp)
+                ) {
+                Text(text = "${worker.rating}", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+
+            }
         }
+
     }
 
 }
