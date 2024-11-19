@@ -3,7 +3,7 @@ package hr.foi.air.baufind.mock.WorkerSearchMock
 object WorkerMock {
 
     data class Worker(
-        val id: Int,                
+        val id: Int,
         val firstName: String,
         val lastName: String,
         val location: String,

@@ -27,6 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.mock.WorkerSearchMock.WorkerMock
+import hr.foi.air.baufind.ui.components.WorkerCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -121,7 +122,7 @@ fun WorkerSearchScreen(navController: NavController) {
 
         ) {
             items(workers){
-                worker -> WorkerItem(worker){
+                worker -> WorkerCard(worker){
                     //Funkcija se poziva na pritiskom na radnika,| treba je promijeniti u kasnijim fazama i prilikom promjene obrišite dio komentara nakon | znaka.
                    Toast.makeText(context, "Clicked on ${worker.firstName} ${worker.lastName}", Toast.LENGTH_SHORT).show()
                }
@@ -129,36 +130,7 @@ fun WorkerSearchScreen(navController: NavController) {
         }
     }
 }
-@Composable
-fun WorkerItem(
-    worker: WorkerMock.Worker,
-    onItemClick: () -> Unit
-) {
-    // Example UI for displaying worker's name and position
-    Card(
-        modifier = Modifier.fillMaxWidth().padding(4.dp),
-        onClick = onItemClick
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ){
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = "Ime: ${worker.firstName} ${worker.lastName}", fontWeight = FontWeight.Bold)
-                Text(text = "Pozicija: ${worker.skills}")
-                Text(text = "Lokacija: ${worker.location}")
-                Text(text = "Broj poslova: ${worker.numOfJobs}")
-            }
-            Column(modifier = Modifier.padding(8.dp)
-                ) {
-                Text(text = "${worker.rating}", fontWeight = FontWeight.Bold, fontSize = 24.sp)
 
-            }
-        }
-
-    }
-
-}
 @Preview(showBackground = true)
 @Composable
 fun WorkerSearchScreenPreview() {
