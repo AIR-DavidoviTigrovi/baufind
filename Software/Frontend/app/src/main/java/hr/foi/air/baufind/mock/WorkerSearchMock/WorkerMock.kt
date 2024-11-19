@@ -3,16 +3,16 @@ package hr.foi.air.baufind.mock.WorkerSearchMock
 object WorkerMock {
 
     data class Worker(
-        val id: Int,                // Jedinstveni identifikator radnika
-        val firstName: String,      // Ime radnika
-        val lastName: String,       // Prezime radnika
-        val location: String,       // Lokacija radnika (grad, regija)
-        val numOfJobs: Int,   // Broj poslova
-        val skills: List<String>,   // Lista vještina radnika (vodoinstaler, keramičar)
-        val availability: String,   // Dostupnost (npr. puno radno vrijeme, honorarni rad)
-        val expectedSalary: Double, // Očekivana plaća radnika
+        val id: Int,                
+        val firstName: String,
+        val lastName: String,
+        val location: String,
+        val numOfJobs: Int,
+        val skills: List<String>,
+        val availability: String,
+        val expectedSalary: Double,
         val contactInfo: String?,
-        val rating: Int// Kontakt podaci (ako postoji)
+        val rating: Int
     )
 
 
