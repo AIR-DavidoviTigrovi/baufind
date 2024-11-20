@@ -13,11 +13,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import hr.foi.air.baufind.R
+import hr.foi.air.baufind.model.RegistrationDao
+import hr.foi.air.baufind.service.RegistrationService.RegistrationService
 import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ui.components.PrimaryTextField
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegistrationScreen(navController : NavController) {
+    val coroutineScope = rememberCoroutineScope()
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
@@ -175,7 +179,20 @@ fun RegistrationScreen(navController : NavController) {
             maxWidth = true,
             onClick = {
                 if (validateInputs()) {
-                    navController.navigate("login")
+                    val service = RegistrationService()
+                    coroutineScope.launch {
+                        service.addNewUserAsync(
+                            RegistrationDao(
+                                name = name,
+                                email = email,
+                                phone = phone,
+                                address = address,
+                                password = password,
+                                confirmPassword = confirmPassword
+                            )
+                        )
+
+                    }
                 }
             }
         )
@@ -187,7 +204,20 @@ fun RegistrationScreen(navController : NavController) {
             maxWidth = true,
             onClick = {
                 if (validateInputs()) {
-                    navController.navigate("login")
+                    val service = RegistrationService()
+                    coroutineScope.launch {
+                        service.addNewUserAsync(
+                            RegistrationDao(
+                                name = name,
+                                email = email,
+                                phone = phone,
+                                address = address,
+                                password = password,
+                                confirmPassword = confirmPassword
+                            )
+                        )
+
+                    }
                 }
             }
         )

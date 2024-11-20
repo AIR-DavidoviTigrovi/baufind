@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Baufind"
 include(":app")
- 
+include(":ws")
