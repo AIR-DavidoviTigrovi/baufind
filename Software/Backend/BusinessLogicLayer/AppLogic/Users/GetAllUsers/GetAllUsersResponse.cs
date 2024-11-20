@@ -1,9 +1,9 @@
-﻿namespace BusinessLogicLayer.AppLogic.Users;
+﻿namespace BusinessLogicLayer.AppLogic.Users.GetAllUsers;
 
 /// <summary>
 /// Ovo je odgovor koji se šalje preko API zahtjeva za dobivanje svih korisnika
 /// </summary>
-public class GetAllUsersResponse
+public record GetAllUsersResponse
 {
     public List<UserRecord> Users { get; set; } = new List<UserRecord>();
 

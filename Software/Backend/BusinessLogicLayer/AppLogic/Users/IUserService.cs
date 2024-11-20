@@ -1,4 +1,6 @@
-﻿using BusinessLogicLayer.AppLogic.Users.RegisterUser;
+﻿using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
+using BusinessLogicLayer.AppLogic.Users.GetUser;
+using BusinessLogicLayer.AppLogic.Users.RegisterUser;
 
 namespace BusinessLogicLayer.AppLogic.Users;
 
@@ -26,5 +28,5 @@ public interface IUserService
     /// </summary>
     /// <param name="command">podaci za registraciju</param>
     /// <returns>korisnik i poruka uspjeha ako je registracija uspješna, u protivnom poruka greške</returns>
-    public RegisterUserResponse RegisterUser(RegisterUserCommand command);
+    public RegisterUserResponse RegisterUser(RegisterUserRequest command);
 }

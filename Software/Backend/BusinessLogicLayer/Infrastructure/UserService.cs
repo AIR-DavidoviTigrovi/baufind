@@ -1,4 +1,6 @@
 ﻿using BusinessLogicLayer.AppLogic.Users;
+using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
+using BusinessLogicLayer.AppLogic.Users.GetUser;
 using BusinessLogicLayer.AppLogic.Users.RegisterUser;
 using DataAccessLayer.AppLogic;
 using DataAccessLayer.Models;
@@ -94,7 +96,7 @@ public class UserService : IUserService
     /// </summary>
     /// <param name="command">podaci za registraciju</param>
     /// <returns>korisnik i poruka uspjeha ako je registracija uspješna, u protivnom poruka greške</returns>
-    public RegisterUserResponse RegisterUser(RegisterUserCommand command)
+    public RegisterUserResponse RegisterUser(RegisterUserRequest command)
     {
         var errors = ValidateUserRegistration(command);
         if (errors.Any())
@@ -151,7 +153,7 @@ public class UserService : IUserService
     /// </summary>
     /// <param name="command">proslijeđena iz registracije</param>
     /// <returns>praznu listu, ili listu grešaka</returns>
-    private List<string> ValidateUserRegistration(RegisterUserCommand command)
+    private List<string> ValidateUserRegistration(RegisterUserRequest command)
     {
         List<string> errors = new List<string>();
         

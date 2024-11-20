@@ -1,4 +1,6 @@
 ﻿using BusinessLogicLayer.AppLogic.Users;
+using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
+using BusinessLogicLayer.AppLogic.Users.GetUser;
 using BusinessLogicLayer.AppLogic.Users.RegisterUser;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,7 +47,7 @@ public class UserController : ControllerBase
 
     // POST: /users/register
     [HttpPost("register")]
-    public ActionResult<RegisterUserResponse> RegisterUser(RegisterUserCommand command)
+    public ActionResult<RegisterUserResponse> RegisterUser(RegisterUserRequest command)
     {
         var newUser = _userService.RegisterUser(command);
 
