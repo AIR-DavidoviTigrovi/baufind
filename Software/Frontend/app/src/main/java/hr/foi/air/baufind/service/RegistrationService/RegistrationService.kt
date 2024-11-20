@@ -6,7 +6,7 @@ import hr.foi.air.baufind.ws.request.RegistrationBody
 
 class RegistrationService()
 {
-    suspend fun addNewUserAsync(registrationDao: RegistrationDao): String {
+    suspend fun addNewUserAsync(registrationDao: RegistrationDao): RegistrationResponse {
         val service = NetworkService.authService
 
         val registrationBody = RegistrationBody(
@@ -20,11 +20,24 @@ class RegistrationService()
 
         try {
             val response = service.registerUser(registrationBody)
-            if(response.user != null) return response.success
-            else return response.error
+            if(response.success != "") {
+                return RegistrationResponse(
+                    true,
+                    response.success
+                )
+            }
+            else {
+                return RegistrationResponse(
+                    false,
+                    response.error
+                )
+            }
         } catch (e: Exception) {
             e.printStackTrace()
-            return "Pogreska pri fetchanju"
+            return RegistrationResponse(
+                false,
+                "Pogreska pri fetchanju"
+            )
         }
     }
 }

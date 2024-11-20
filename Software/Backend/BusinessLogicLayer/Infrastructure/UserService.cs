@@ -130,17 +130,6 @@ public class UserService : IUserService
         return new RegisterUserResponse()
         {
             Success = $"Korisnik s e mail adresom {user!.Email} uspješno je registriran.",
-            User = new UserRecord()
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-                Phone = user.Phone,
-                Joined = user.Joined,
-                Address = user.Address,
-                ProfilePicture = user.ProfilePicture,
-                Deleted = user.Deleted
-            }
         };
     }
 
