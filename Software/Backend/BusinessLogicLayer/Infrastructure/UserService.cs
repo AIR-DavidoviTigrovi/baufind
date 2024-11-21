@@ -5,9 +5,9 @@ using BusinessLogicLayer.AppLogic.Users.Login;
 using BusinessLogicLayer.AppLogic.Users.RegisterUser;
 using DataAccessLayer.AppLogic;
 using DataAccessLayer.Models;
+using FluentValidation;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace BusinessLogicLayer.Infrastructure;
 
@@ -155,12 +155,13 @@ public class UserService : IUserService
     /// <returns>token ako je uspješno registriran, a ako ne, onda poruku greške</returns>
     public LoginResponse Login(LoginRequest request)
     {
-        var errors = ValidateLogin(request);
-        if (errors.Any())
+        var validator = new LoginValidator();
+        var result = validator.Validate(request);
+        if (!result.IsValid)
         {
             return new LoginResponse()
             {
-                Error = errors.First()
+                Error = string.Join(Environment.NewLine, result.Errors.Select(e => e.ErrorMessage))
             };
         }
 
@@ -189,38 +190,6 @@ public class UserService : IUserService
             JWT = "", // TODO: izračunaj JWT
             Success = $"Korisnik {user.Name} uspješno je prijavljen u sustav."
         };
-    }
-
-    // TODO: eventualno zamijeniti s FluentValidation ili nečim boljim
-    /// <summary>
-    /// Metoda koja validira podatke za prijavu
-    /// </summary>
-    /// <param name="request">proslijeđena iz prijave</param>
-    /// <returns>praznu listu, ili listu grešaka</returns>
-    private List<string> ValidateLogin(LoginRequest request)
-    {
-        List<string> errors = new List<string>();
-
-        if (string.IsNullOrWhiteSpace(request.Password))
-        {
-            errors.Add("Lozinka je obavezna");
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Email))
-        {
-            errors.Add("Email mora biti unesen");
-        }
-        else
-        {
-            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-            bool isValid = Regex.IsMatch(request.Email, pattern);
-            if (!isValid || request.Email.Length > 100)
-            {
-                errors.Add("Unesite validan email");
-            }
-        }
-
-        return errors;
     }
 
     private string ComputePasswordHash(string password)
