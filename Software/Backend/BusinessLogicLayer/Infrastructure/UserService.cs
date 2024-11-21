@@ -99,12 +99,13 @@ public class UserService : IUserService
     /// <returns>poruka uspjeha ako je registracija uspješna, u protivnom poruka greške</returns>
     public RegisterUserResponse RegisterUser(RegisterUserRequest request)
     {
-        var errors = ValidateUserRegistration(request);
-        if (errors.Any())
+        var validator = new RegisterUserValidator(_repository);
+        var result = validator.Validate(request);
+        if (!result.IsValid)
         {
             return new RegisterUserResponse()
             {
-                Error = errors.First()
+                Error = string.Join(Environment.NewLine, result.Errors.Select(e => e.ErrorMessage))
             };
         }
 
@@ -188,76 +189,6 @@ public class UserService : IUserService
             JWT = "", // TODO: izračunaj JWT
             Success = $"Korisnik {user.Name} uspješno je prijavljen u sustav."
         };
-    }
-
-    // TODO: eventualno zamijeniti s FluentValidation ili nečim boljim
-    /// <summary>
-    /// Metoda koja validira poslane korisničke podatke
-    /// Ove validacije bi trebale sve proći, jer na frontendu trebaju postojati iste, no ako se slučajno zaobiđu, ovdje također moraju biti
-    /// </summary>
-    /// <param name="request">proslijeđena iz registracije</param>
-    /// <returns>praznu listu, ili listu grešaka</returns>
-    private List<string> ValidateUserRegistration(RegisterUserRequest request)
-    {
-        List<string> errors = new List<string>();
-        
-        if (request.Password != request.RepeatPassword)
-        {
-            errors.Add("Lozinke se ne podudaraju");
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Password))
-        {
-            errors.Add("Lozinka je obavezna");
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Name))
-        {
-            errors.Add("Ime je obavezno");
-        } else if (request.Name.Length > 100)
-        {
-            errors.Add("Korisničko ime ne smije prelaziti 100 znakova");
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Address))
-        {
-            errors.Add("Adresa je obavezna");
-        } else if (request.Address.Length > 100)
-        {
-            errors.Add("Adresa ne smije prelaziti 100 znakova");
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Phone))
-        {
-            errors.Add("Broj telefona je obavezan");
-        }
-        else if (request.Phone.Length > 100)
-        {
-            errors.Add("Broj telefona ne smije prelaziti 100 znakova");
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Email))
-        {
-            errors.Add("Email mora biti unesen");
-        } else
-        {
-            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-            bool isValid = Regex.IsMatch(request.Email, pattern);
-            if (!isValid || request.Email.Length > 100)
-            {
-                errors.Add("Unesite validan email");
-            } else
-            {
-                var users = _repository.GetUsers();
-                var usersWithEmail = users.Where(x => x.Email == request.Email).ToList();
-                if (usersWithEmail.Any())
-                {
-                    errors.Add("Email adresa već postoji");
-                }
-            }
-        }
-
-        return errors;
     }
 
     // TODO: eventualno zamijeniti s FluentValidation ili nečim boljim
