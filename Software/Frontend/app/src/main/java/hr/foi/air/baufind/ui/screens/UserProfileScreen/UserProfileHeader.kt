@@ -22,11 +22,11 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun UserProfileHeader(name: String, phone:String, address:String, email: String, profilePicture: ByteArray?){
-    Row (
+    Column (
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        horizontalAlignment = Alignment.CenterHorizontally
     ){
         Box(
             modifier = Modifier
@@ -36,7 +36,7 @@ fun UserProfileHeader(name: String, phone:String, address:String, email: String,
         ){
 
         }
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(22.dp))
         Column {
             Text(text = name, style = TextStyle(fontSize = 20.sp))
             Text(text = phone, style = TextStyle(fontSize = 14.sp, color = Color.Gray))
