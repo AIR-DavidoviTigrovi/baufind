@@ -3,7 +3,7 @@
 /// <summary>
 /// Ovi podaci se šalju kod registracije novog korisnika
 /// </summary>
-public class RegisterUserCommand
+public record RegisterUserRequest
 {
     public string Name { get; set; }
     public string Email { get; set; }
