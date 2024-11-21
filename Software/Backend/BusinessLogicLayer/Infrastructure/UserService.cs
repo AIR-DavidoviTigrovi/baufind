@@ -1,10 +1,13 @@
 ﻿using BusinessLogicLayer.AppLogic.Users;
+using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
+using BusinessLogicLayer.AppLogic.Users.GetUser;
+using BusinessLogicLayer.AppLogic.Users.Login;
 using BusinessLogicLayer.AppLogic.Users.RegisterUser;
 using DataAccessLayer.AppLogic;
 using DataAccessLayer.Models;
+using FluentValidation;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace BusinessLogicLayer.Infrastructure;
 
@@ -92,27 +95,28 @@ public class UserService : IUserService
     /// <summary>
     /// Metoda za registriranje novog korisnika
     /// </summary>
-    /// <param name="command">podaci za registraciju</param>
-    /// <returns>korisnik i poruka uspjeha ako je registracija uspješna, u protivnom poruka greške</returns>
-    public RegisterUserResponse RegisterUser(RegisterUserCommand command)
+    /// <param name="request">podaci za registraciju</param>
+    /// <returns>poruka uspjeha ako je registracija uspješna, u protivnom poruka greške</returns>
+    public RegisterUserResponse RegisterUser(RegisterUserRequest request)
     {
-        var errors = ValidateUserRegistration(command);
-        if (errors.Any())
+        var validator = new RegisterUserValidator(_repository);
+        var result = validator.Validate(request);
+        if (!result.IsValid)
         {
             return new RegisterUserResponse()
             {
-                Error = errors.First()
+                Error = string.Join(Environment.NewLine, result.Errors.Select(e => e.ErrorMessage))
             };
         }
 
         UserModel newUser = new UserModel()
         {
-            Name = command.Name,
-            Email = command.Email,
-            Phone = command.Phone,
-            PasswordHash = ComputePasswordHash(command.Password),
+            Name = request.Name,
+            Email = request.Email,
+            Phone = request.Phone,
+            PasswordHash = ComputePasswordHash(request.Password),
             Joined = DateTime.Now,
-            Address = command.Address,
+            Address = request.Address,
             Deleted = false
         };
 
@@ -133,74 +137,48 @@ public class UserService : IUserService
         };
     }
 
-    // TODO: eventualno zamijeniti s FluentValidation ili nečim boljim
     /// <summary>
-    /// Metoda koja validira poslane korisničke podatke
-    /// Ove validacije bi trebale sve proći, jer na frontendu trebaju postojati iste, no ako se slučajno zaobiđu, ovdje također moraju biti
+    /// Metoda za prijavu postojećeg korisnika
     /// </summary>
-    /// <param name="command">proslijeđena iz registracije</param>
-    /// <returns>praznu listu, ili listu grešaka</returns>
-    private List<string> ValidateUserRegistration(RegisterUserCommand command)
+    /// <param name="request">podaci za prijavu</param>
+    /// <returns>token ako je uspješno registriran, a ako ne, onda poruku greške</returns>
+    public LoginResponse Login(LoginRequest request)
     {
-        List<string> errors = new List<string>();
-        
-        if (command.Password != command.RepeatPassword)
+        var validator = new LoginValidator();
+        var result = validator.Validate(request);
+        if (!result.IsValid)
         {
-            errors.Add("Lozinke se ne podudaraju");
-        }
-
-        if (string.IsNullOrWhiteSpace(command.Password))
-        {
-            errors.Add("Lozinka je obavezna");
-        }
-
-        if (string.IsNullOrWhiteSpace(command.Name))
-        {
-            errors.Add("Ime je obavezno");
-        } else if (command.Name.Length > 100)
-        {
-            errors.Add("Korisničko ime ne smije prelaziti 100 znakova");
-        }
-
-        if (string.IsNullOrWhiteSpace(command.Address))
-        {
-            errors.Add("Adresa je obavezna");
-        } else if (command.Address.Length > 100)
-        {
-            errors.Add("Adresa ne smije prelaziti 100 znakova");
-        }
-
-        if (string.IsNullOrWhiteSpace(command.Phone))
-        {
-            errors.Add("Broj telefona je obavezan");
-        }
-        else if (command.Phone.Length > 100)
-        {
-            errors.Add("Broj telefona ne smije prelaziti 100 znakova");
-        }
-
-        if (string.IsNullOrWhiteSpace(command.Email))
-        {
-            errors.Add("Email mora biti unesen");
-        } else
-        {
-            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-            bool isValid = Regex.IsMatch(command.Email, pattern);
-            if (!isValid || command.Email.Length > 100)
+            return new LoginResponse()
             {
-                errors.Add("Unesite validan email");
-            } else
-            {
-                var users = _repository.GetUsers();
-                var usersWithEmail = users.Where(x => x.Email == command.Email).ToList();
-                if (usersWithEmail.Any())
-                {
-                    errors.Add("Email adresa već postoji");
-                }
-            }
+                Error = string.Join(Environment.NewLine, result.Errors.Select(e => e.ErrorMessage))
+            };
         }
 
-        return errors;
+        var users = _repository.GetUsers();
+        var user = users.Where(x => x.Email == request.Email).FirstOrDefault();
+
+        if (user == null)
+        {
+            return new LoginResponse()
+            {
+                Error = "Korisnik s tom e-mail adresom ne postoji!"
+            };
+        }
+
+        var hashedPassword = ComputePasswordHash(request.Password);
+        if (user.PasswordHash != hashedPassword)
+        {
+            return new LoginResponse()
+            {
+                Error = "Neispravna lozinka."
+            };
+        }
+
+        return new LoginResponse()
+        {
+            JWT = "", // TODO: izračunaj JWT
+            Success = $"Korisnik {user.Name} uspješno je prijavljen u sustav."
+        };
     }
 
     private string ComputePasswordHash(string password)
