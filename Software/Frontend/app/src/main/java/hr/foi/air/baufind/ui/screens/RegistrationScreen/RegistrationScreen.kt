@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.KeyboardType
@@ -36,7 +37,7 @@ fun RegistrationScreen(navController : NavController) {
     var addressError by remember { mutableStateOf("") }
     var passwordError by remember { mutableStateOf("") }
     var confirmPasswordError by remember { mutableStateOf("") }
-    val snackbarHostState = remember { SnackbarHostState() }
+    var registrationError by remember { mutableStateOf("") }
     fun validateInputs(): Boolean {
         var valid = true
         emailError = ""
@@ -175,7 +176,13 @@ fun RegistrationScreen(navController : NavController) {
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-
+        Text(
+            text =registrationError,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+                .then(Modifier.padding(bottom = 16.dp)),
+            fontSize = 16.sp,
+            color = Color.Red
+        )
         PrimaryButton(
             text = "Register",
             maxWidth = true,
@@ -194,15 +201,11 @@ fun RegistrationScreen(navController : NavController) {
                             )
                         )
                         if (response.added) navController.navigate("login")
-                        else snackbarHostState.showSnackbar("response.message")
-
-
+                        else registrationError = "Cannot register with those data"
                     }
                 }
             }
         )
-        Spacer(modifier = Modifier.height(24.dp))
-        SnackbarHost(hostState = snackbarHostState)
     }
 }
 
