@@ -1,11 +1,13 @@
 // ui/screens/RegistrationScreen.kt
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -13,11 +15,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import hr.foi.air.baufind.R
+import hr.foi.air.baufind.model.RegistrationDao
+import hr.foi.air.baufind.service.RegistrationService.RegistrationService
 import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ui.components.PrimaryTextField
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegistrationScreen(navController : NavController) {
+    val coroutineScope = rememberCoroutineScope()
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
@@ -30,7 +36,7 @@ fun RegistrationScreen(navController : NavController) {
     var addressError by remember { mutableStateOf("") }
     var passwordError by remember { mutableStateOf("") }
     var confirmPasswordError by remember { mutableStateOf("") }
-
+    val snackbarHostState = remember { SnackbarHostState() }
     fun validateInputs(): Boolean {
         var valid = true
         emailError = ""
@@ -175,22 +181,28 @@ fun RegistrationScreen(navController : NavController) {
             maxWidth = true,
             onClick = {
                 if (validateInputs()) {
-                    navController.navigate("login")
+                    val service = RegistrationService()
+                    coroutineScope.launch {
+                        val response = service.addNewUserAsync(
+                            RegistrationDao(
+                                name = name,
+                                email = email,
+                                phone = phone,
+                                address = address,
+                                password = password,
+                                confirmPassword = confirmPassword
+                            )
+                        )
+                        if (response.added) navController.navigate("login")
+                        else snackbarHostState.showSnackbar("response.message")
+
+
+                    }
                 }
             }
         )
         Spacer(modifier = Modifier.height(24.dp))
-
-        PrimaryButton(
-            drawableId = R.drawable.google_icon,
-            text = "Register with google",
-            maxWidth = true,
-            onClick = {
-                if (validateInputs()) {
-                    navController.navigate("login")
-                }
-            }
-        )
+        SnackbarHost(hostState = snackbarHostState)
     }
 }
 

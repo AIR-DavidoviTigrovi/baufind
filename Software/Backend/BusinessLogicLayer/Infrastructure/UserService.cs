@@ -133,7 +133,7 @@ public class UserService : IUserService
 
         return new RegisterUserResponse()
         {
-            Success = $"Korisnik s e mail adresom {user!.Email} uspješno je registriran."
+            Success = $"Korisnik s e mail adresom {user!.Email} uspješno je registriran.",
         };
     }
 
