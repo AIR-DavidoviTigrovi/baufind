@@ -1,6 +1,5 @@
 package hr.foi.air.baufind.service.RegistrationService
 
-import hr.foi.air.baufind.model.RegistrationDao
 import hr.foi.air.baufind.ws.network.NetworkService
 import hr.foi.air.baufind.ws.request.RegistrationBody
 
