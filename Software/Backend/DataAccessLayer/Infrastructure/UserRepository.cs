@@ -93,6 +93,79 @@ public class UserRepository : IUserRepository
 
         return result != null ? (int)result : null;
     }
+    /// <summary>
+    /// Metoda za dohvat podataka potrebnih za prikaz profila korisnika
+    /// </summary>
+    /// <param name="id">Korisnik koji se traži</param>
+    /// <returns>Ako je uspješno vratiti će UserProfileModel, ako ne onda vraća null.</returns>
+    public UserProfileModel GetUserProfile(int id)
+    {
+        var userProfile = new UserProfileModel
+        {
+            Name = string.Empty, 
+            Email = string.Empty,
+            Phone = string.Empty,
+            Address = string.Empty
+        };
+        string userInfoQuery = @"
+            SELECT name, email, phone, address, joined, profile_picture
+            FROM app_User
+            WHERE id = @id;";
+        var idParameter = new Dictionary<string, object>
+        {
+            { "@id", id }
+        };
+
+        using (var reader = _db.ExecuteReader(userInfoQuery, idParameter))
+        {
+            if (reader.Read())
+            {
+                userProfile.Name = (string)reader["name"];
+                userProfile.Email = (string)reader["email"];
+                userProfile.Phone = (string)reader["phone"];
+                userProfile.Address = (string)reader["address"];
+                userProfile.Joined = (DateTime)reader["joined"];
+                userProfile.ProfilePicture = reader["profile_picture"] == DBNull.Value ? null : (byte[])reader["profile_picture"];
+            }
+        }
+
+        string skillsQuery = @"
+            SELECT s.id s.title
+            FROM user_skill us
+            JOIN skill s ON us.skill_id = s.id
+            WHERE us.user_id = @id;";
+        using (var reader = _db.ExecuteReader(skillsQuery, idParameter))
+        {
+            var skills = new List<SkillModel>();
+            while (reader.Read())
+            {
+                skills.Add(new SkillModel
+                {
+                    Id = (int)reader["id"],
+                    Title = (string)reader["title"],
+                });
+            }
+            userProfile.Skills = skills;
+        }
+
+        var workerRatingQuery = @"
+            SELECT AVG(wr.rating) as average_worker_rating
+            FROM working w
+            JOIN worker_review wr on w.id = wr.working_id
+            WHERE w.worker_id = @id
+            AND w.working_status = (SELECT id FROM working_status WHERE status = 'done');";
+        var workerRating = _db.ExecuteScalar(workerRatingQuery, idParameter);
+        userProfile.WorkerRating = workerRating == DBNull.Value ? 0.0 : Convert.ToDouble(workerRating);
+
+        var employerRatingQuery = @"
+            SELECT AVG(er.rating) as average_employer_rating
+            FROM employer_review er
+            WHERE er.reviewer_id = @id";
+        var employerRating = _db.ExecuteScalar(employerRatingQuery, idParameter);
+        userProfile.EmployerRating = employerRating == DBNull.Value ? 0.0 : Convert.ToDouble(employerRating);
+
+        return userProfile;
+    }
 
     private UserModel UserModelFromReader(SqlDataReader reader)
     {
