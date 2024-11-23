@@ -56,4 +56,15 @@ public class UserController : ControllerBase
 
         return newUser;
     }
+
+    // GET: /users/{id}/profile
+    [HttpGet("{id}/profile")]
+    public ActionResult<UserProfileResponse> GetUserProfile(int id)
+    {
+        var userProfileData = _userService.GetUserProfileData(id);
+        if (userProfileData.userProfileModel == null) { 
+            return NotFound(userProfileData);
+        }
+        return userProfileData;
+    }
 }

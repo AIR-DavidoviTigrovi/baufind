@@ -214,6 +214,27 @@ public class UserService : IUserService
         return errors;
     }
 
+    /// <summary>
+    /// Metoda za dohvat podataka povezane s profilom nekog korisnika
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Vraća podatke tj userProfileModel ili se vraća poruka greške</returns>
+    public UserProfileResponse GetUserProfileData(int id)
+    {
+        var userProfile = _repository.GetUserProfile(id);
+        if (userProfile == null)
+        {
+            return new UserProfileResponse()
+            {
+                Error = "Korisnik s tim ID ne postoji"
+            };
+        }
+        return new UserProfileResponse()
+        {
+            userProfileModel = userProfile
+        };
+    }
+
     private string ComputePasswordHash(string password)
     {
         byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
