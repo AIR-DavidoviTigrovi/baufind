@@ -34,6 +34,8 @@ fun userProfileScreen(name: String,phone: String, address:String, email: String,
             UserProfileHeader(name, phone, address, email, profilePicture)
             Spacer(modifier = Modifier.width(22.dp))
             UserSkillSection(skills)
+            Spacer(modifier = Modifier.width(22.dp))
+            UserProfileOptions(onLogout = {}, onEditProfile = {}, onDeleteAccount = {}, editSkills = {})
         }
     }
 }
