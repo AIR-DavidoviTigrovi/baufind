@@ -100,6 +100,7 @@ public class UserRepository : IUserRepository
     /// <returns>Ako je uspješno vratiti će UserProfileModel, ako ne onda vraća null.</returns>
     public UserProfileModel GetUserProfile(int id)
     {
+        // Sljedecih nekoliko linija koda vraća podatke potrebne za prikaz profila
         var userProfile = new UserProfileModel
         {
             Name = string.Empty, 
@@ -128,7 +129,7 @@ public class UserRepository : IUserRepository
                 userProfile.ProfilePicture = reader["profile_picture"] == DBNull.Value ? null : (byte[])reader["profile_picture"];
             }
         }
-
+        // Kod za skillsQuery vraća sve skillove povezane s traženim korisnikom.
         string skillsQuery = @"
             SELECT s.id, s.title
             FROM user_skill us
@@ -147,7 +148,7 @@ public class UserRepository : IUserRepository
             }
             userProfile.Skills = skills;
         }
-
+        // Dohvaca prosjecnu ocjenu recenzija gdje je bio radnik, ako ne postoji vraća 0.0
         var workerRatingQuery = @"
             SELECT AVG(wr.rating) as average_worker_rating
             FROM working w
@@ -157,6 +158,8 @@ public class UserRepository : IUserRepository
         var workerRating = _db.ExecuteScalar(workerRatingQuery, idParameter);
         userProfile.WorkerRating = workerRating == DBNull.Value ? 0.0 : Convert.ToDouble(workerRating);
 
+
+        // Dohvaca prosjecnu ocjenu recenzija gdje je bio šef, ako ne postoji vraća 0.0
         var employerRatingQuery = @"
             SELECT AVG(er.rating) as average_employer_rating
             FROM employer_review er
