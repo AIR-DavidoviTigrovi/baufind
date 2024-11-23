@@ -22,6 +22,13 @@ public interface IUserService
     public GetUserResponse GetOneUser(int id);
 
     /// <summary>
+    /// Metoda za dohvat podataka povezane s profilom nekog korisnika
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Vraća podatke tj userProfileModel ili se vraća poruka greške</returns>
+    public UserProfileResponse GetUserProfileData(int id);
+
+    /// <summary>
     /// Metoda za registriranje novog korisnika
     /// </summary>
     /// <param name="command">podaci za registraciju</param>
