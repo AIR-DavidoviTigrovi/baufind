@@ -130,7 +130,7 @@ public class UserRepository : IUserRepository
         }
 
         string skillsQuery = @"
-            SELECT s.id s.title
+            SELECT s.id, s.title
             FROM user_skill us
             JOIN skill s ON us.skill_id = s.id
             WHERE us.user_id = @id;";
@@ -153,7 +153,7 @@ public class UserRepository : IUserRepository
             FROM working w
             JOIN worker_review wr on w.id = wr.working_id
             WHERE w.worker_id = @id
-            AND w.working_status = (SELECT id FROM working_status WHERE status = 'done');";
+            AND w.working_status_id = (SELECT id FROM working_status WHERE status = 'done');";
         var workerRating = _db.ExecuteScalar(workerRatingQuery, idParameter);
         userProfile.WorkerRating = workerRating == DBNull.Value ? 0.0 : Convert.ToDouble(workerRating);
 
