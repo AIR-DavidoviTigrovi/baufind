@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import hr.foi.air.baufind.ui.components.Skill
@@ -29,7 +30,7 @@ fun UserSkillSection(skills : List<Skill>){
     {
         Text(
             text = "Skills",
-            style = TextStyle(fontSize = 18.sp),
+            style = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold),
             modifier = Modifier.padding(bottom = 8.dp)
         )
         FlowRow(

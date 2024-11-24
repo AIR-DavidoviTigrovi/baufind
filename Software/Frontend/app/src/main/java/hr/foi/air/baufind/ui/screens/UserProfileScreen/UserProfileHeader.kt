@@ -19,12 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun UserProfileHeader(name: String, phone:String, address:String, email: String,
-                      profilePicture: ByteArray?, onViewReviews: () -> Unit, averageRating: Double){
+fun UserProfileHeader(name: String, address:String, profilePicture: ByteArray?){
     Column (
         modifier = Modifier
             .fillMaxWidth()
@@ -33,51 +34,15 @@ fun UserProfileHeader(name: String, phone:String, address:String, email: String,
     ){
         Box(
             modifier = Modifier
-                .size(60.dp)
+                .size(128.dp)
                 .clip(CircleShape)
                 .background(Color.Gray)
         ){
-
         }
         Spacer(modifier = Modifier.height(16.dp))
-
-        Column {
-            Text(text = name, style = TextStyle(fontSize = 20.sp))
-            Text(text = phone, style = TextStyle(fontSize = 14.sp, color = Color.Gray))
-            Text(text = address, style = TextStyle(fontSize = 14.sp, color = Color.Gray))
-            Text(text = email, style = TextStyle(fontSize = 14.sp, color = Color.Gray))
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp)
-            .clip(CircleShape)
-            .background(Color.LightGray)
-            .padding(horizontal = 12.dp, vertical = 6.dp)
-            .clickable { onViewReviews() },
-            verticalAlignment = Alignment.CenterVertically
-            ) {
-            repeat(5){ index ->
-                val starColor = when {
-                    index < averageRating.toInt() -> Color.Yellow
-                    index < averageRating -> Color.Yellow.copy(alpha = 0.5f)
-                    else -> Color.Gray
-                }
-                    Box(
-                    modifier = Modifier
-                        .size(16.dp)
-                        .clip(CircleShape)
-                        .background(starColor)
-                        .padding(2.dp))
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Text(
-                text = "(${averageRating}) Reviews",
-                style = TextStyle(fontSize = 14.sp, color = Color.DarkGray)
-            )
+        Column(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+            Text(text = name, style = TextStyle(fontSize = 20.sp), textAlign = TextAlign.Center, fontWeight = Bold, fontSize = 22.sp, modifier = Modifier.fillMaxWidth())
+            Text(text = address, style = TextStyle(fontSize = 14.sp, color = Color.Gray), textAlign = TextAlign.Center, fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
         }
     }
-
 }
