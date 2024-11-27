@@ -17,12 +17,11 @@ public record UserProfileModel
     public required string Address { get; set; }
     public byte[]? ProfilePicture { get; set; }
     public DateTime Joined { get; set; }
-
     public List<SkillModel> Skills { get; set; } = new List<SkillModel>();
+
 
     public double WorkerRating { get; set; }
     public double EmployerRating { get; set; }
-
     public ReviewModel? Reviews { get; set; }
 }
 
