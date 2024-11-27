@@ -3,6 +3,7 @@ using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
 using BusinessLogicLayer.AppLogic.Users.GetUser;
 using BusinessLogicLayer.AppLogic.Users.Login;
 using BusinessLogicLayer.AppLogic.Users.RegisterUser;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -20,6 +21,7 @@ public class UserController : ControllerBase
 
     // GET: /users
     [HttpGet]
+    [Authorize]
     public ActionResult<GetAllUsersResponse> GetAll()
     {
         var users = _userService.GetAllUsers();
@@ -34,8 +36,19 @@ public class UserController : ControllerBase
 
     // GET: /users/{id}
     [HttpGet("{id}")]
+    [Authorize]
     public ActionResult<GetUserResponse> GetUser(int id)
     {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+
+        if (userIdFromJwt == null || userIdFromJwt != id)
+        {
+            return Unauthorized(new GetUserResponse()
+            {
+                Error = "Ne možete pristupiti tom resursu!"
+            });
+        } 
+
         var user = _userService.GetOneUser(id);
 
         if (user.User == null)
@@ -48,6 +61,7 @@ public class UserController : ControllerBase
 
     // POST: /users/register
     [HttpPost("register")]
+    [AllowAnonymous]
     public ActionResult<RegisterUserResponse> RegisterUser(RegisterUserRequest request)
     {
         var newUser = _userService.RegisterUser(request);
@@ -62,6 +76,7 @@ public class UserController : ControllerBase
 
     // POST: /users/login
     [HttpPost("login")]
+    [AllowAnonymous]
     public ActionResult<LoginResponse> Login(LoginRequest request)
     {
         var user = _userService.Login(request);

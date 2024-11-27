@@ -1,4 +1,5 @@
-﻿using BusinessLogicLayer.AppLogic.Users;
+﻿using BusinessLogicLayer.AppLogic;
+using BusinessLogicLayer.AppLogic.Users;
 using BusinessLogicLayer.Infrastructure;
 using DataAccessLayer;
 using DataAccessLayer.AppLogic;
@@ -21,6 +22,9 @@ public static class ServiceCollectionExtensions
         services.Configure<DBOptions>(
             configuration.GetSection("Database")
         );
+        services.Configure<JWTOptions>(
+            configuration.GetSection("JWTOptions")
+        );
 
         services.AddScoped<DB>(); // Zbog DI u repozitorije
 
@@ -28,6 +32,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserRepository, UserRepository>();
 
         // Servisi
+        services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IUserService, UserService>();
 
         return services;
