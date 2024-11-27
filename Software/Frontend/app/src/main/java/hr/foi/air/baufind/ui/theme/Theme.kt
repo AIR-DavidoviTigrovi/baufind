@@ -15,7 +15,8 @@ private val DarkColorScheme = darkColorScheme(
     onBackground = DarkTextPrimary,       // Main text on the background
     onSurface = DarkTextPrimary,          // Main text on surfaces
     secondary = DarkSecondary,            // Accent color
-    onSecondary = DarkOnSecondary,        // Text on secondary color
+    onSecondary = DarkOnSecondary,         // Text on secondary color
+    primaryContainer = DarkCardBackground,
 )
 
 // Light Theme Color Scheme
@@ -28,6 +29,7 @@ private val LightColorScheme = lightColorScheme(
     onSurface = LightTextPrimary,         // Main text on surfaces
     secondary = LightSecondary,           // Accent color
     onSecondary = LightOnSecondary,       // Text on secondary color
+    primaryContainer = LightCardBackground,
 )
 
 @Composable
