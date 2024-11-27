@@ -3,6 +3,7 @@ using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
 using BusinessLogicLayer.AppLogic.Users.GetUser;
 using BusinessLogicLayer.AppLogic.Users.Login;
 using BusinessLogicLayer.AppLogic.Users.RegisterUser;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -20,6 +21,7 @@ public class UserController : ControllerBase
 
     // GET: /users
     [HttpGet]
+    [Authorize]
     public ActionResult<GetAllUsersResponse> GetAll()
     {
         var users = _userService.GetAllUsers();
