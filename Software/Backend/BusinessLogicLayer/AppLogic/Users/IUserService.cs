@@ -1,4 +1,7 @@
-﻿using BusinessLogicLayer.AppLogic.Users.RegisterUser;
+﻿using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
+using BusinessLogicLayer.AppLogic.Users.GetUser;
+using BusinessLogicLayer.AppLogic.Users.Login;
+using BusinessLogicLayer.AppLogic.Users.RegisterUser;
 
 namespace BusinessLogicLayer.AppLogic.Users;
 
@@ -31,7 +34,14 @@ public interface IUserService
     /// <summary>
     /// Metoda za registriranje novog korisnika
     /// </summary>
-    /// <param name="command">podaci za registraciju</param>
-    /// <returns>korisnik i poruka uspjeha ako je registracija uspješna, u protivnom poruka greške</returns>
-    public RegisterUserResponse RegisterUser(RegisterUserCommand command);
+    /// <param name="request">podaci za registraciju</param>
+    /// <returns>poruka uspjeha ako je registracija uspješna, u protivnom poruka greške</returns>
+    public RegisterUserResponse RegisterUser(RegisterUserRequest request);
+
+    /// <summary>
+    /// Metoda za prijavu postojećeg korisnika
+    /// </summary>
+    /// <param name="request">podaci za prijavu</param>
+    /// <returns>token ako je uspješno registriran, a ako ne, onda poruku greške</returns>
+    public LoginResponse Login(LoginRequest request);
 }

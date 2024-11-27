@@ -17,6 +17,7 @@ private val DarkColorScheme = darkColorScheme(
     secondary = DarkSecondary,            // Accent color
     onSecondary = DarkOnSecondary,         // Text on secondary color
     primaryContainer = DarkCardBackground,
+
 )
 
 // Light Theme Color Scheme

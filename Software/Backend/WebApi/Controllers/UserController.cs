@@ -1,4 +1,7 @@
 ﻿using BusinessLogicLayer.AppLogic.Users;
+using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
+using BusinessLogicLayer.AppLogic.Users.GetUser;
+using BusinessLogicLayer.AppLogic.Users.Login;
 using BusinessLogicLayer.AppLogic.Users.RegisterUser;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,9 +48,9 @@ public class UserController : ControllerBase
 
     // POST: /users/register
     [HttpPost("register")]
-    public ActionResult<RegisterUserResponse> RegisterUser(RegisterUserCommand command)
+    public ActionResult<RegisterUserResponse> RegisterUser(RegisterUserRequest request)
     {
-        var newUser = _userService.RegisterUser(command);
+        var newUser = _userService.RegisterUser(request);
 
         if (newUser == null || !string.IsNullOrEmpty(newUser.Error))
         {
@@ -56,6 +59,7 @@ public class UserController : ControllerBase
 
         return newUser;
     }
+
 
     // GET: /users/{id}/profile
     [HttpGet("{id}/profile")]
@@ -66,5 +70,18 @@ public class UserController : ControllerBase
             return NotFound(userProfileData);
         }
         return userProfileData;
+    }
+    // POST: /users/login
+    [HttpPost("login")]
+    public ActionResult<LoginResponse> Login(LoginRequest request)
+    {
+        var user = _userService.Login(request);
+
+        if (!string.IsNullOrEmpty(user.Error))
+        {
+            return BadRequest(user);
+        }
+
+        return user;
     }
 }
