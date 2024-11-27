@@ -6,6 +6,6 @@
 public record LoginResponse
 {
     public string? Success { get; set; } = string.Empty;
-    public string? JWT { get; set; } = null; // TODO: implementirati JWT
+    public string? JWT { get; set; } = null;
     public string? Error { get; set; } = string.Empty;
 }
