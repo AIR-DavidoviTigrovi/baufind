@@ -148,24 +148,42 @@ public class UserRepository : IUserRepository
             }
             userProfile.Skills = skills;
         }
-        // Dohvaca prosjecnu ocjenu recenzija gdje je bio radnik, ako ne postoji vraća 0.0
-        var workerRatingQuery = @"
-            SELECT AVG(wr.rating) as average_worker_rating
-            FROM working w
-            JOIN worker_review wr on w.id = wr.working_id
-            WHERE w.worker_id = @id
-            AND w.working_status_id = (SELECT id FROM working_status WHERE status = 'done');";
-        var workerRating = _db.ExecuteScalar(workerRatingQuery, idParameter);
-        userProfile.WorkerRating = workerRating == DBNull.Value ? 0.0 : Convert.ToDouble(workerRating);
 
+        //reviews
+        string reviewsQuery = @"
+        SELECT rating, COUNT(*) as count
+        FROM worker_review wr
+        JOIN working w ON w.id = wr.working_id
+        WHERE w.worker_id = @id
+        AND w.working_status_id = (SELECT id FROM working_status WHERE status = 'done')
+        GROUP BY rating;";
+        using (var reader = _db.ExecuteReader(reviewsQuery, idParameter))
+        {
+            var totalReviews = 0;
+            var totalRating = 0.0;
+            var ratings = new int[5]; 
 
-        // Dohvaca prosjecnu ocjenu recenzija gdje je bio šef, ako ne postoji vraća 0.0
-        var employerRatingQuery = @"
-            SELECT AVG(er.rating) as average_employer_rating
-            FROM employer_review er
-            WHERE er.reviewer_id = @id";
-        var employerRating = _db.ExecuteScalar(employerRatingQuery, idParameter);
-        userProfile.EmployerRating = employerRating == DBNull.Value ? 0.0 : Convert.ToDouble(employerRating);
+            while (reader.Read())
+            {
+                int rating = (int)reader["rating"];
+                int count = (int)reader["count"];
+
+                totalReviews += count;
+                totalRating += rating * count;
+
+                if (rating >= 1 && rating <= 5)
+                {
+                    ratings[5 - rating] = count; 
+                }
+            }
+
+            userProfile.Reviews = new ReviewModel
+            {
+                AverageRating = totalReviews > 0 ? totalRating / totalReviews : 0.0,
+                TotalReviews = totalReviews,
+                Ratings = ratings.ToList()
+            };
+        }
 
         return userProfile;
     }

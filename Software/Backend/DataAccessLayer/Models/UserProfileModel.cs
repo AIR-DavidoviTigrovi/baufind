@@ -23,4 +23,12 @@ public record UserProfileModel
     public double WorkerRating { get; set; }
     public double EmployerRating { get; set; }
 
+    public ReviewModel? Reviews { get; set; }
+}
+
+public class ReviewModel
+{
+    public double AverageRating { get; set; }
+    public int TotalReviews { get; set; }
+    public List<int> Ratings { get; set; } = new List<int>(); 
 }
