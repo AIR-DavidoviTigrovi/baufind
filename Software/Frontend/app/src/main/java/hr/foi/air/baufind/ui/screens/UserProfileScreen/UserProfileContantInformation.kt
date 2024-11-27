@@ -14,6 +14,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,9 +36,9 @@ fun UserProfileContactInformation(address : String, phone: String, email: String
         Text(text = "Contact information",
             style = MaterialTheme.typography.titleMedium.copy(
                 fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.ExtraBold
         ),
-        color = Color.Black)
+        color = MaterialTheme.colorScheme.primary)
         Spacer(modifier = Modifier.height(16.dp))
 
         // Address Information Row
@@ -47,13 +50,13 @@ fun UserProfileContactInformation(address : String, phone: String, email: String
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFE0E7FF)), //promijeni da koristi definirane palete boja
+                    .background(MaterialTheme.colorScheme.primaryContainer),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Filled.LocationOn,
+                    imageVector = Icons.Outlined.LocationOn,
                     contentDescription = "Location Icon",
-                    tint = Color.Black,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
             }
@@ -63,11 +66,10 @@ fun UserProfileContactInformation(address : String, phone: String, email: String
             Text(
                 text = address,
                 style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp),
-                color = Color.Black
+                color = MaterialTheme.colorScheme.primary
             )
         }
 
-        //Ovo je za kreiranje broja
         Row (
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(vertical = 8.dp)
@@ -75,13 +77,13 @@ fun UserProfileContactInformation(address : String, phone: String, email: String
             Box(modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(Color(0xFFE0E7FF)), //dodaj boju
+                .background(MaterialTheme.colorScheme.primaryContainer),
                 contentAlignment = Alignment.Center
             ){
                 Icon(
-                    imageVector = Icons.Filled.Phone,
+                    imageVector =Icons.Outlined.Phone,
                     contentDescription = "Phone Icon",
-                    tint = Color.Black,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
             }
@@ -89,7 +91,7 @@ fun UserProfileContactInformation(address : String, phone: String, email: String
             Text(
                 text = phone,
                 style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp),
-                color = Color.Black
+                color = MaterialTheme.colorScheme.primary
             )
         }
 
@@ -102,13 +104,13 @@ fun UserProfileContactInformation(address : String, phone: String, email: String
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFE0E7FF)),
+                    .background(MaterialTheme.colorScheme.primaryContainer),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Email,
+                    imageVector = Icons.Outlined.Email,
                     contentDescription = "Email Icon",
-                    tint = Color.Black,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
             }
@@ -118,7 +120,7 @@ fun UserProfileContactInformation(address : String, phone: String, email: String
             Text(
                 text = email,
                 style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp),
-                color = Color.Black
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }

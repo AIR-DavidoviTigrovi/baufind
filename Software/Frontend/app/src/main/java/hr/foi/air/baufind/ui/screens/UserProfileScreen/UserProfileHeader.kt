@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -41,8 +42,8 @@ fun UserProfileHeader(name: String, address:String, profilePicture: ByteArray?){
         }
         Spacer(modifier = Modifier.height(16.dp))
         Column(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-            Text(text = name, style = TextStyle(fontSize = 20.sp), textAlign = TextAlign.Center, fontWeight = Bold, fontSize = 22.sp, modifier = Modifier.fillMaxWidth())
-            Text(text = address, style = TextStyle(fontSize = 14.sp, color = Color.Gray), textAlign = TextAlign.Center, fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
+            Text(text = name, color = MaterialTheme.colorScheme.primary ,style = TextStyle(fontSize = 20.sp), textAlign = TextAlign.Center, fontWeight = Bold, fontSize = 22.sp, modifier = Modifier.fillMaxWidth())
+            Text(text = address, color = MaterialTheme.colorScheme.onSurface ,style = TextStyle(fontSize = 14.sp, color = Color.Gray), textAlign = TextAlign.Center, fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
         }
     }
 }

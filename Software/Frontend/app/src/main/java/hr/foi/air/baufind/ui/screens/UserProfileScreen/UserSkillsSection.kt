@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -30,8 +31,9 @@ fun UserSkillSection(skills : List<Skill>){
     {
         Text(
             text = "Skills",
-            style = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold),
-            modifier = Modifier.padding(bottom = 8.dp)
+            style = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.ExtraBold),
+            modifier = Modifier.padding(bottom = 8.dp),
+            color = MaterialTheme.colorScheme.primary
         )
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
@@ -42,10 +44,10 @@ fun UserSkillSection(skills : List<Skill>){
           skills.forEach{ skill ->
               Box(modifier = Modifier
                   .clip(CircleShape)
-                  .background(Color.LightGray)
+                  .background(MaterialTheme.colorScheme.primaryContainer)
                   .padding(horizontal = 12.dp, vertical = 6.dp)
               ){
-                  Text(text = skill.name, style = TextStyle(fontSize = 14.sp))
+                  Text(text = skill.name, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium), color = MaterialTheme.colorScheme.primary)
               }
 
           }
