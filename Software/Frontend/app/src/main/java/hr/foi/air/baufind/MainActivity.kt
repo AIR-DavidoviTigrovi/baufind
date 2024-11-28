@@ -21,8 +21,6 @@ import hr.foi.air.baufind.ui.screens.LoginScreen.LoginScreen
 import hr.foi.air.baufind.ui.screens.WorkerSearchScreen.WorkerSearchScreen
 import hr.foi.air.baufind.ui.theme.BaufindTheme
 import hr.foi.air.baufind.ws.network.AppTokenProvider
-import hr.foi.air.baufind.ws.network.RetrofitClient
-import hr.foi.air.baufind.ws.network.TokenProvider
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +28,6 @@ class MainActivity : ComponentActivity() {
         val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val tokenProvider = AppTokenProvider(sharedPreferences)
         val jwtToken = sharedPreferences.getString("jwt_token", null)
-        val retrofitClient = RetrofitClient(tokenProvider)
 
         setContent {
             val navController = rememberNavController()
