@@ -1,6 +1,7 @@
 package hr.foi.air.baufind.ui.screens.JobCreateScreen
 
 import android.widget.Toast
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -30,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.R
+import hr.foi.air.baufind.ui.components.PictureItem
 import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ui.components.PrimaryTextField
 
@@ -42,6 +46,14 @@ fun JobDetailsScreen(navController: NavController){
     var jobDescriptionError by remember { mutableStateOf("") }
     var allowInvitations by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    val mockPictures = listOf(
+        R.drawable.image_icon,
+        R.drawable.image_icon,
+        R.drawable.image_icon,
+        R.drawable.image_icon,
+        R.drawable.image_icon
+    )
 
     fun validateInputs(): Boolean {
         var valid = true
@@ -99,8 +111,11 @@ fun JobDetailsScreen(navController: NavController){
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(24.dp))
-        Row {
-            //tu ce ic slike
+        //uzima mock listu slika i prikazuje
+        LazyRow {
+            itemsIndexed(mockPictures) { index, drawableId ->
+                PictureItem(drawableId = drawableId)
+            }
         }
         Spacer(modifier = Modifier.height(24.dp))
         Text(
