@@ -1,4 +1,5 @@
-﻿using BusinessLogicLayer.AppLogic.Users;
+﻿using BusinessLogicLayer.AppLogic;
+using BusinessLogicLayer.AppLogic.Users;
 using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
 using BusinessLogicLayer.AppLogic.Users.GetUser;
 using BusinessLogicLayer.AppLogic.Users.Login;
@@ -18,10 +19,12 @@ namespace BusinessLogicLayer.Infrastructure;
 public class UserService : IUserService
 {
     private readonly IUserRepository _repository;
+    private readonly IJwtService _jwtService;
 
-    public UserService(IUserRepository repository)
+    public UserService(IUserRepository repository, IJwtService jwtService)
     {
         _repository = repository;
+        _jwtService = jwtService;
     }
 
     /// <summary>
@@ -174,9 +177,15 @@ public class UserService : IUserService
             };
         }
 
+        var newUser = new UserRecord()
+        {
+            Id = user.Id,
+            Email = user.Email
+        };
+
         return new LoginResponse()
         {
-            JWT = "", // TODO: izračunaj JWT
+            JWT = _jwtService.GenerateToken(newUser),
             Success = $"Korisnik {user.Name} uspješno je prijavljen u sustav."
         };
     }
