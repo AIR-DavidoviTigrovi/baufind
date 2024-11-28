@@ -40,7 +40,9 @@ android {
 }
 
 dependencies {
-    implementation("com.google.accompanist:accompanist-flowlayout:0.30.1")
+    implementation(libs.retrofit.v290)
+    implementation(libs.converter.gson.v290)
+    implementation(libs.accompanist.flowlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

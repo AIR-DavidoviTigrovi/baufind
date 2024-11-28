@@ -76,7 +76,7 @@ public class UserController : ControllerBase
 
 
     // GET: /users/profile
-    [HttpGet("/profile")]
+    [HttpGet("profile")]
     [Authorize]
 
     public ActionResult<UserProfileResponse> GetUserProfile()
