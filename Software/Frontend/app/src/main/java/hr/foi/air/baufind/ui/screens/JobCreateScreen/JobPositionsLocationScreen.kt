@@ -1,6 +1,7 @@
 package hr.foi.air.baufind.ui.screens.JobCreateScreen
 
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -80,15 +81,19 @@ fun JobPositionsLocationScreen(navController: NavController, jobViewModel: JobVi
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(24.dp))
-        LazyColumn {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             items(jobViewModel.jobPositions) { position ->
                 PositionAndNumber(
                     text = position.name,
                     count = position.count.value,
-                    onCountChange = { newCount -> position.count.value = newCount }
+                    onCountChange = { newCount -> position.count.value = newCount },
+                    onDelete = { jobViewModel.jobPositions.remove(position) }
                 )
             }
         }
+        Spacer(modifier = Modifier.height(24.dp))
         PrimaryButton(
             drawableId = R.drawable.add_person_icon,
             text = "Dodaj poziciju",

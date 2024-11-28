@@ -1,5 +1,6 @@
 package hr.foi.air.baufind.ui.screens.JobCreateScreen
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -29,6 +31,7 @@ import kotlin.text.contains
 fun JobAddSkillsScreen(navController: NavController, jobViewModel: JobViewModel){
     var searchText by remember { mutableStateOf("") }
     val myStrings = listOf("Pozicija 1", "Pozicija 2", "Pozicija 3")
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -55,8 +58,11 @@ fun JobAddSkillsScreen(navController: NavController, jobViewModel: JobViewModel)
                 SkillListConfirm(
                     text = text,
                     onConfirmClick = {
-                        jobViewModel.jobPositions.add(JobPosition(text, mutableIntStateOf(1)))
-                        navController.popBackStack()
+                        if (!jobViewModel.jobPositions.any { it.name == text }){
+                            jobViewModel.jobPositions.add(JobPosition(text, mutableIntStateOf(1)))
+                            navController.popBackStack()
+                        }
+                        Toast.makeText(context, "Pozicija već postoji", Toast.LENGTH_SHORT).show()
                     }
                 )
             }
