@@ -1,12 +1,13 @@
 package hr.foi.air.baufind.service.RegistrationService
 
 import hr.foi.air.baufind.ws.network.NetworkService
+import hr.foi.air.baufind.ws.network.TokenProvider
 import hr.foi.air.baufind.ws.request.RegistrationBody
 
 class RegistrationService()
 {
-    suspend fun addNewUserAsync(registrationDao: RegistrationDao): RegistrationResponse {
-        val service = NetworkService.authService
+    suspend fun addNewUserAsync(registrationDao: RegistrationDao, tokenProvider: TokenProvider): RegistrationResponse {
+        val service = NetworkService.createAuthService(tokenProvider)
 
         val registrationBody = RegistrationBody(
             name = registrationDao.name,
