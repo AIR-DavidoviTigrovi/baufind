@@ -41,16 +41,11 @@ fun WorkerSearchScreen(navController: NavController) {
     val scrollState = rememberScrollState()
     val selectedItemL by viewModel.selectedItemL
     val selectedItemR by viewModel.selectedItemR
-    val workers by viewModel.workers
+    val workers by viewModel.filteredWorkers
     val context = LocalContext.current
     // Opcije za dropdown meni
-    val optionsR = listOf("Ocjena ASC", "Ocjena DESC", "Broj poslova ASC", "Broj poslova DESC")
-    val optionsL = listOf("Zagrebačka", "Krapinsko-zagorska", "Sisacko-moslavačka", "Karlovačka", "Varaždinska",
-         "Bjelovarsko-bilogorska", "Primorsko-goranska", "Ličko-senjska",
-        "Virovitičko-podravska", "Osječko-baranjska", "Šibensko-kninska", "Vukovarsko-srijemska",
-        "Zadarska", "Međimurska", "Dubrovničko-neretvanska", "Istarska", "Požeško-slavonska",
-        "Splitsko-dalmatinska", "Zagrebački grad"
-    )
+    val optionsR = viewModel.optionsR
+    val optionsL = viewModel.optionsL
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text("Pronađite poziciju x")
@@ -80,6 +75,12 @@ fun WorkerSearchScreen(navController: NavController) {
                             text = { Text(option) },
                             onClick = {
                                 viewModel.selectedItemL.value = option
+                                viewModel.filteredWorkers.value = emptyList()
+                                viewModel.workers.value.forEach {
+                                    if (it.location == option){
+                                        viewModel.filteredWorkers.value += it
+                                    }
+                                }
                                 viewModel.isExpandedL.value = false
                             }
                         )
@@ -109,6 +110,22 @@ fun WorkerSearchScreen(navController: NavController) {
                             text = { Text(option) },
                             onClick = {
                                 viewModel.selectedItemR.value = option
+                                viewModel.workers.value.forEach {
+                                    if(option == "Ocjena ASC"){
+                                        viewModel.filteredWorkers.value = viewModel.filteredWorkers.value.sortedBy { it.rating }
+
+                                    }
+                                    if(option == "Ocjena DESC") {
+                                        viewModel.filteredWorkers.value =
+                                            viewModel.filteredWorkers.value.sortedByDescending { it.rating }
+                                    }
+                                    if(option == "Broj poslova ASC"){
+                                        viewModel.filteredWorkers.value = viewModel.filteredWorkers.value.sortedBy { it.numOfJobs }
+                                    }
+                                    if(option == "Broj poslova DESC"){
+                                        viewModel.filteredWorkers.value = viewModel.filteredWorkers.value.sortedByDescending { it.numOfJobs }
+                                    }
+                                }
                                 viewModel.isExpandedR.value = false
                             }
                         )
