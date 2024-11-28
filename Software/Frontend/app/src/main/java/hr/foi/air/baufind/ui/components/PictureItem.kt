@@ -14,6 +14,6 @@ fun PictureItem(imageUri: Uri) {
     AsyncImage(
         model = imageUri,
         contentDescription = null,
-        modifier = Modifier.size(100.dp)
+        modifier = Modifier.size(200.dp)
     )
 }

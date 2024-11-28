@@ -52,7 +52,6 @@ fun JobDetailsScreen(navController: NavController){
     var jobDescription by remember { mutableStateOf("") }
     var jobDescriptionError by remember { mutableStateOf("") }
     var allowInvitations by remember { mutableStateOf(false) }
-    val context = LocalContext.current
     var selectedImageUris by remember { mutableStateOf<List<Uri>>(emptyList())}
 
     val launcher = rememberLauncherForActivityResult(
@@ -66,14 +65,6 @@ fun JobDetailsScreen(navController: NavController){
             }
         }
     }
-
-    val mockPictures = listOf(
-        R.drawable.image_icon,
-        R.drawable.image_icon,
-        R.drawable.image_icon,
-        R.drawable.image_icon,
-        R.drawable.image_icon
-    )
 
     fun validateInputs(): Boolean {
         var valid = true
@@ -138,7 +129,6 @@ fun JobDetailsScreen(navController: NavController){
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(24.dp))
-        //uzima mock listu slika i prikazuje
         LazyRow {
             items(selectedImageUris){ imageUri ->
                 PictureItem(imageUri = imageUri)
