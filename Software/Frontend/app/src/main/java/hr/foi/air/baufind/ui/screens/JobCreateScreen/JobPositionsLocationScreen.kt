@@ -36,8 +36,8 @@ fun JobPositionsLocationScreen(navController: NavController, jobViewModel: JobVi
     var longError by remember { mutableStateOf("") }
     var context = LocalContext.current
 
-    var latText by remember { mutableStateOf(jobViewModel.lat.doubleValue.toString()) }
-    var longText by remember { mutableStateOf(jobViewModel.long.doubleValue.toString()) }
+    var latText by remember { mutableStateOf("") }
+    var longText by remember { mutableStateOf("") }
 
     fun validateInputs(): Boolean {
         var valid = true
