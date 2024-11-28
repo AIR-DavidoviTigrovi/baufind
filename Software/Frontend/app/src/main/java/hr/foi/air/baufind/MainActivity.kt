@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         NavHost(
                             navController = navController,
-                            startDestination = "jobDetailsScreen"
+                            startDestination = "login"
                         ) {
                             composable("login") { LoginScreen(navController) }
                             composable("registration") { RegistrationScreen(navController) }
