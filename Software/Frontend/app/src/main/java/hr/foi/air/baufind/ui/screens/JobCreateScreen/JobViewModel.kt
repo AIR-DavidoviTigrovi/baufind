@@ -2,6 +2,7 @@ package hr.foi.air.baufind.ui.screens.JobCreateScreen
 
 import android.net.Uri
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -18,4 +19,6 @@ class JobViewModel : ViewModel(){
     val allowInvitations = mutableStateOf(false)
     val selectedImages = mutableStateListOf<Uri>()
     val jobPositions = mutableStateListOf<JobPosition>()
+    val lat = mutableDoubleStateOf(0.0)
+    val long = mutableDoubleStateOf(0.0)
 }
