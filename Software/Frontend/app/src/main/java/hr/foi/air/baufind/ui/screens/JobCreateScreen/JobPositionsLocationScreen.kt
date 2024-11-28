@@ -54,7 +54,7 @@ fun JobPositionsLocationScreen(navController: NavController){
             drawableId = R.drawable.add_person_icon,
             text = "Dodaj poziciju",
             onClick = {
-                //navController.navigate("jobAddSkillsScreen")
+                navController.navigate("jobAddSkillsScreen")
             }
         )
         Text(
@@ -67,7 +67,7 @@ fun JobPositionsLocationScreen(navController: NavController){
             text = "Postavi oglas",
             onClick = {
                 if (validateInputs()) {
-                    //navController.navigate("jobPositionsLocationScreen")
+                    //posta se posao i vraca ga negdje
                 }
             }
         )

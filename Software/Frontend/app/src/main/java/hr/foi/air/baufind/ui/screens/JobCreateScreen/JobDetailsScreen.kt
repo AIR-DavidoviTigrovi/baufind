@@ -73,11 +73,11 @@ fun JobDetailsScreen(navController: NavController){
         jobDescriptionError=""
 
         if (jobName.isBlank()) {
-            jobNameError = "You must enter your email"
+            jobNameError = "Morate unijeti ime posla"
             valid = false
         }
         if (jobDescription.isBlank()) {
-            jobDescriptionError = "You must enter your password"
+            jobDescriptionError = "Morate unijeti opis posla"
             valid = false
         }
         return valid
@@ -152,6 +152,7 @@ fun JobDetailsScreen(navController: NavController){
             text = "Nastavi",
             onClick = {
                 if (validateInputs()) {
+                    //moram prenijet unesene podatke
                     navController.navigate("jobPositionsLocationScreen")
                 }
             }
