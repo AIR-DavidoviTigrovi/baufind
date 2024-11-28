@@ -2,6 +2,7 @@
 
 package hr.foi.air.baufind.ui.screens.UserProfileScreen
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -77,10 +78,11 @@ fun decodeBase64ToByteArray(base64: String?): ByteArray? {
 
 
 @Composable
-fun userProfileScreen(navController: NavController, userProfileService: UserProfileService, tokenProvider: TokenProvider) {
+fun userProfileScreen(navController: NavController, context: Context, tokenProvider: TokenProvider) {
     var userProfile by remember { mutableStateOf<UserProfileResponse?>(null) }
     val coroutineScope = rememberCoroutineScope()
     val jwt = tokenProvider.getToken()
+    val userProfileService = UserProfileService(tokenProvider)
 
 
 
@@ -88,7 +90,7 @@ fun userProfileScreen(navController: NavController, userProfileService: UserProf
         coroutineScope.launch {
             try {
                 //znaci da ce jwt biti argument
-                userProfile = jwt?.let { userProfileService.fetchUserProfile(it) }
+                userProfile = jwt?.let { userProfileService.fetchUserProfile() }
             } catch (e: Exception) {
                 e.printStackTrace()
                 userProfile = null
@@ -97,6 +99,7 @@ fun userProfileScreen(navController: NavController, userProfileService: UserProf
     }
 
     if (userProfile != null) {
+
         Scaffold(
             topBar = {
                 CenterAlignedTopAppBar(

@@ -1,9 +1,4 @@
-package hr.foi.air.baufind.ws.response
-
-data class UserProfileWrapper(
-    val userProfileModel: UserProfileResponse?,
-    val error: String?
-)
+package hr.foi.air.baufind.service.UserProfileService
 
 data class UserProfileResponse(
     val name: String,

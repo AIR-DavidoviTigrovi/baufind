@@ -32,8 +32,8 @@ class MainActivity : ComponentActivity() {
         val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val tokenProvider = AppTokenProvider(sharedPreferences)
         val jwtToken = sharedPreferences.getString("jwt_token", null)
-        val userProfileNetworkService = createUserProfileService(tokenProvider)
-        val userProfileService = UserProfileService(userProfileNetworkService)
+        //val userProfileNetworkService = createUserProfileService(tokenProvider)
+        //val userProfileService = UserProfileService(userProfileNetworkService)
 
         setContent {
             val navController = rememberNavController()
@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
                             composable("login") { LoginScreen(navController, this@MainActivity, tokenProvider) }
                             composable("registration") { RegistrationScreen(navController, tokenProvider) }
                             composable("workersSearchScreen") { WorkerSearchScreen(navController) }
-                            composable("myUserProfileScreen") { userProfileScreen(navController,userProfileService, tokenProvider) }
+                            composable("myUserProfileScreen") { userProfileScreen(navController,this@MainActivity, tokenProvider) }
                         }
                     }
                 }
