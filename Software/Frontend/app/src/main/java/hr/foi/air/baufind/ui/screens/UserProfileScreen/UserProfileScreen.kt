@@ -33,7 +33,7 @@ import hr.foi.air.baufind.ui.theme.BaufindTheme
 
 
 @Composable
-fun userProfileScreen(name: String,phone: String, address:String, email: String, profilePicture: ByteArray?){
+fun userProfileScreen(){
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(modifier = Modifier.fillMaxWidth(),
@@ -108,17 +108,3 @@ fun EditProfileButton(onClick: () -> Unit) {
     }
 }
 
-
-@Preview(showBackground = true, apiLevel = 34)
-@Composable
-fun userProfileScreenPreview(){
-    BaufindTheme(darkTheme = false) {
-        userProfileScreen(
-            name = "Lily",
-            phone = "123-456-7890",
-            address = "San Francisco, CA",
-            email = "lily@example.com",
-            profilePicture = null
-        )
-    }
-}
