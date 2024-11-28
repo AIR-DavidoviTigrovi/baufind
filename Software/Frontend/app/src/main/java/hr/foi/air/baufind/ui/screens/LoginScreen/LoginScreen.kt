@@ -1,5 +1,6 @@
 package hr.foi.air.baufind.ui.screens.LoginScreen
 
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,12 +29,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import hr.foi.air.baufind.service.LoginService.LoginDao
 import hr.foi.air.baufind.service.LoginService.LoginService
+import hr.foi.air.baufind.service.jwtService.JwtService
 import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ui.components.PrimaryTextField
+import hr.foi.air.baufind.ws.network.TokenProvider
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(navController: NavController){
+fun LoginScreen(navController: NavController, context : Context, tokenProvider: TokenProvider){
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var emailError by remember { mutableStateOf("") }
@@ -116,7 +119,7 @@ fun LoginScreen(navController: NavController){
             maxWidth = true,
             onClick = {
                 if (validateInputs()) {
-                    val service = LoginService()
+                    val service = LoginService(tokenProvider)
                     coroutineScope.launch {
                         val response = service.loginAsync(
                             LoginDao(
@@ -124,7 +127,10 @@ fun LoginScreen(navController: NavController){
                                 password = password
                             )
                         )
-                        if (response.successfulLogin) navController.navigate("workersSearchScreen")
+                        if (response.successfulLogin){
+                            JwtService.saveJwt(context, response.jwt)
+                            navController.navigate("workersSearchScreen")
+                        }
                         else {
                             email = ""
                             password =""
@@ -144,3 +150,5 @@ fun LoginScreen(navController: NavController){
         )
     }
 }
+
+

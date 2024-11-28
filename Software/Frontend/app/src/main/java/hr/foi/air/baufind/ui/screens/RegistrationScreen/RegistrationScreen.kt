@@ -17,10 +17,11 @@ import hr.foi.air.baufind.service.RegistrationService.RegistrationDao
 import hr.foi.air.baufind.service.RegistrationService.RegistrationService
 import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ui.components.PrimaryTextField
+import hr.foi.air.baufind.ws.network.TokenProvider
 import kotlinx.coroutines.launch
 
 @Composable
-fun RegistrationScreen(navController : NavController) {
+fun RegistrationScreen(navController : NavController, tokenProvider: TokenProvider) {
     val coroutineScope = rememberCoroutineScope()
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -195,7 +196,8 @@ fun RegistrationScreen(navController : NavController) {
                                 address = address,
                                 password = password,
                                 confirmPassword = confirmPassword
-                            )
+                            ),
+                            tokenProvider
                         )
                         if (response.added) navController.navigate("login")
                         else registrationError = "Cannot register with those data"

@@ -1,6 +1,7 @@
 package hr.foi.air.baufind
 
 import RegistrationScreen
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,10 +20,17 @@ import hr.foi.air.baufind.navigation.BottomNavigationBar
 import hr.foi.air.baufind.ui.screens.LoginScreen.LoginScreen
 import hr.foi.air.baufind.ui.screens.WorkerSearchScreen.WorkerSearchScreen
 import hr.foi.air.baufind.ui.theme.BaufindTheme
+import hr.foi.air.baufind.ws.network.AppTokenProvider
+import hr.foi.air.baufind.ws.network.RetrofitClient
+import hr.foi.air.baufind.ws.network.TokenProvider
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val tokenProvider = AppTokenProvider(sharedPreferences)
+        val jwtToken = sharedPreferences.getString("jwt_token", null)
+        val retrofitClient = RetrofitClient(tokenProvider)
 
         setContent {
             val navController = rememberNavController()
@@ -43,12 +51,15 @@ class MainActivity : ComponentActivity() {
                             .background(MaterialTheme.colorScheme.background)
                             .padding(innerPadding)
                     ) {
+                        val startDestination : String
+                        if (jwtToken == null) startDestination ="login"
+                        else startDestination = "workersSearchScreen"
                         NavHost(
                             navController = navController,
-                            startDestination = "login"
+                            startDestination = startDestination
                         ) {
-                            composable("login") { LoginScreen(navController) }
-                            composable("registration") { RegistrationScreen(navController) }
+                            composable("login") { LoginScreen(navController, this@MainActivity, tokenProvider) }
+                            composable("registration") { RegistrationScreen(navController, tokenProvider) }
                             composable("workersSearchScreen") { WorkerSearchScreen(navController) }
                         }
                     }
