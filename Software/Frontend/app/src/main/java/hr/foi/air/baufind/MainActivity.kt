@@ -17,6 +17,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.navigation.BottomNavigationBar
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobDetailsScreen
+import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobPositionsLocationScreen
 import hr.foi.air.baufind.ui.screens.LoginScreen.LoginScreen
 import hr.foi.air.baufind.ui.screens.WorkerSearchScreen.WorkerSearchScreen
 import hr.foi.air.baufind.ui.theme.BaufindTheme
@@ -52,7 +53,7 @@ class MainActivity : ComponentActivity() {
                             composable("registration") { RegistrationScreen(navController) }
                             composable("workersSearchScreen") { WorkerSearchScreen(navController) }
                             composable("jobDetailsScreen") { JobDetailsScreen(navController) }
-                            //composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController) }
+                            composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController) }
                             //composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController) }
                         }
                     }

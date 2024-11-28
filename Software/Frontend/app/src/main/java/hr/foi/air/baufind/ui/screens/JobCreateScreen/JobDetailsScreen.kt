@@ -1,6 +1,12 @@
 package hr.foi.air.baufind.ui.screens.JobCreateScreen
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.provider.MediaStore
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -46,6 +53,19 @@ fun JobDetailsScreen(navController: NavController){
     var jobDescriptionError by remember { mutableStateOf("") }
     var allowInvitations by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    var selectedImageUris by remember { mutableStateOf<List<Uri>>(emptyList())}
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ){ result ->
+        if(result.resultCode == Activity.RESULT_OK){
+            val data: Intent? = result.data
+            val selectedUri = data?.data
+            if(selectedUri != null){
+                selectedImageUris = selectedImageUris + selectedUri
+            }
+        }
+    }
 
     val mockPictures = listOf(
         R.drawable.image_icon,
@@ -78,6 +98,13 @@ fun JobDetailsScreen(navController: NavController){
             .padding(22.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
+        Text(
+            text ="Novi posao",
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(24.dp))
         PrimaryTextField(
             value = jobName,
             onValueChange = { jobName = it },
@@ -99,8 +126,8 @@ fun JobDetailsScreen(navController: NavController){
             maxWidth = true,
             drawableId = R.drawable.upload_file_icon,
             onClick = {
-                //Ovdje ide logika za učitavanje fotografija
-                Toast.makeText(context, "Učitavanje fotografija", Toast.LENGTH_SHORT).show()
+                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                launcher.launch(intent)
             }
         )
         Spacer(modifier = Modifier.height(24.dp))
@@ -113,8 +140,8 @@ fun JobDetailsScreen(navController: NavController){
         Spacer(modifier = Modifier.height(24.dp))
         //uzima mock listu slika i prikazuje
         LazyRow {
-            itemsIndexed(mockPictures) { index, drawableId ->
-                PictureItem(drawableId = drawableId)
+            items(selectedImageUris){ imageUri ->
+                PictureItem(imageUri = imageUri)
             }
         }
         Spacer(modifier = Modifier.height(24.dp))
@@ -135,7 +162,7 @@ fun JobDetailsScreen(navController: NavController){
             text = "Nastavi",
             onClick = {
                 if (validateInputs()) {
-                    navController.navigate("workerSearch")
+                    navController.navigate("jobPositionsLocationScreen")
                 }
             }
         )
