@@ -46,8 +46,8 @@ fun JobPositionsLocationScreen(navController: NavController, jobViewModel: JobVi
             items(jobViewModel.jobPositions) { position ->
                 PositionAndNumber(
                     text = position.name,
-                    initialCount = position.count,
-                    onCountChange = { newCount -> position.count = newCount }
+                    count = position.count.value,
+                    onCountChange = { newCount -> position.count.value = newCount }
                 )
             }
         }

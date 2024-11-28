@@ -20,10 +20,9 @@ import androidx.compose.ui.Modifier
 @Composable
 fun PositionAndNumber(
     text: String,
-    initialCount: Int = 0,
+    count: Int,
     onCountChange: (Int) -> Unit
 ) {
-    var count by remember { mutableStateOf(initialCount) }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
