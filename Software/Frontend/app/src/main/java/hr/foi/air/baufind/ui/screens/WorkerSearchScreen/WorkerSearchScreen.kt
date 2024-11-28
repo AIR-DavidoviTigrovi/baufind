@@ -74,14 +74,7 @@ fun WorkerSearchScreen(navController: NavController) {
                         DropdownMenuItem(
                             text = { Text(option) },
                             onClick = {
-                                viewModel.selectedItemL.value = option
-                                viewModel.filteredWorkers.value = emptyList()
-                                viewModel.workers.value.forEach {
-                                    if (it.location == option){
-                                        viewModel.filteredWorkers.value += it
-                                    }
-                                }
-                                viewModel.isExpandedL.value = false
+                                viewModel.updateFilteredWorkersL(option)
                             }
                         )
                     }
@@ -109,24 +102,7 @@ fun WorkerSearchScreen(navController: NavController) {
                         DropdownMenuItem(
                             text = { Text(option) },
                             onClick = {
-                                viewModel.selectedItemR.value = option
-                                viewModel.workers.value.forEach {
-                                    if(option == "Ocjena ASC"){
-                                        viewModel.filteredWorkers.value = viewModel.filteredWorkers.value.sortedBy { it.rating }
-
-                                    }
-                                    if(option == "Ocjena DESC") {
-                                        viewModel.filteredWorkers.value =
-                                            viewModel.filteredWorkers.value.sortedByDescending { it.rating }
-                                    }
-                                    if(option == "Broj poslova ASC"){
-                                        viewModel.filteredWorkers.value = viewModel.filteredWorkers.value.sortedBy { it.numOfJobs }
-                                    }
-                                    if(option == "Broj poslova DESC"){
-                                        viewModel.filteredWorkers.value = viewModel.filteredWorkers.value.sortedByDescending { it.numOfJobs }
-                                    }
-                                }
-                                viewModel.isExpandedR.value = false
+                               viewModel.updateFilteredWorkersR(option)
                             }
                         )
                     }

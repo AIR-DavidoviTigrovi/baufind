@@ -22,4 +22,34 @@ class WorkerSearchViewModel : ViewModel() {
 
     val workers: MutableState<List<WorkerMock.Worker>> = mutableStateOf(WorkerMock.workers)
     val filteredWorkers: MutableState<List<WorkerMock.Worker>> = mutableStateOf(workers.value)
+    fun updateFilteredWorkersL(option: String) {
+        selectedItemL.value = option
+        filteredWorkers.value = emptyList()
+        workers.value.forEach {
+            if (it.location == option){
+                filteredWorkers.value += it
+            }
+        }
+        isExpandedL.value = false
+    }
+    fun updateFilteredWorkersR(option: String) {
+        selectedItemR.value = option
+        workers.value.forEach {
+            if(option == "Ocjena ASC"){
+                filteredWorkers.value = filteredWorkers.value.sortedBy { it.rating }
+
+            }
+            if(option == "Ocjena DESC") {
+                filteredWorkers.value =
+                   filteredWorkers.value.sortedByDescending { it.rating }
+            }
+            if(option == "Broj poslova ASC"){
+                filteredWorkers.value = filteredWorkers.value.sortedBy { it.numOfJobs }
+            }
+            if(option == "Broj poslova DESC"){
+                filteredWorkers.value = filteredWorkers.value.sortedByDescending { it.numOfJobs }
+            }
+        }
+        isExpandedR.value = false
+    }
 }
