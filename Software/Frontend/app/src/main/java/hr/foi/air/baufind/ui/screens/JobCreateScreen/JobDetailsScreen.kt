@@ -44,15 +44,10 @@ import hr.foi.air.baufind.ui.components.PictureItem
 import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ui.components.PrimaryTextField
 
-//ekran za dodavanje naslova, opisa, fotografija i toggle za dopuštanje pozivanja od strane radnika
 @Composable
-fun JobDetailsScreen(navController: NavController){
-    var jobName by remember { mutableStateOf("") }
+fun JobDetailsScreen(navController: NavController, jobViewModel: JobViewModel){
     var jobNameError by remember { mutableStateOf("") }
-    var jobDescription by remember { mutableStateOf("") }
     var jobDescriptionError by remember { mutableStateOf("") }
-    var allowInvitations by remember { mutableStateOf(false) }
-    var selectedImageUris by remember { mutableStateOf<List<Uri>>(emptyList())}
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -61,7 +56,7 @@ fun JobDetailsScreen(navController: NavController){
             val data: Intent? = result.data
             val selectedUri = data?.data
             if(selectedUri != null){
-                selectedImageUris = selectedImageUris + selectedUri
+                jobViewModel.selectedImages.add(selectedUri)
             }
         }
     }
@@ -72,11 +67,11 @@ fun JobDetailsScreen(navController: NavController){
         jobNameError =""
         jobDescriptionError=""
 
-        if (jobName.isBlank()) {
+        if (jobViewModel.jobName.value.isBlank()) {
             jobNameError = "Morate unijeti ime posla"
             valid = false
         }
-        if (jobDescription.isBlank()) {
+        if (jobViewModel.jobDescription.value.isBlank()) {
             jobDescriptionError = "Morate unijeti opis posla"
             valid = false
         }
@@ -97,16 +92,16 @@ fun JobDetailsScreen(navController: NavController){
         )
         Spacer(modifier = Modifier.height(24.dp))
         PrimaryTextField(
-            value = jobName,
-            onValueChange = { jobName = it },
+            value = jobViewModel.jobName.value,
+            onValueChange = { jobViewModel.jobName.value = it },
             label = "Naslov posla",
             modifier = Modifier.fillMaxWidth(),
             isError = jobNameError.isNotEmpty(),
             errorMessage = jobNameError
         )
         PrimaryTextField(
-            value = jobDescription,
-            onValueChange = { jobDescription = it },
+            value = jobViewModel.jobDescription.value,
+            onValueChange = { jobViewModel.jobDescription.value = it },
             label = "Opis posla",
             modifier = Modifier.fillMaxWidth(),
             isError = jobDescriptionError.isNotEmpty(),
@@ -130,7 +125,7 @@ fun JobDetailsScreen(navController: NavController){
         )
         Spacer(modifier = Modifier.height(24.dp))
         LazyRow {
-            items(selectedImageUris){ imageUri ->
+            items(jobViewModel.selectedImages){ imageUri ->
                 PictureItem(imageUri = imageUri)
             }
         }
@@ -143,8 +138,8 @@ fun JobDetailsScreen(navController: NavController){
         )
         Spacer(modifier = Modifier.height(24.dp))
         Switch(
-            checked = allowInvitations,
-            onCheckedChange = { allowInvitations = it },
+            checked = jobViewModel.allowInvitations.value,
+            onCheckedChange = { jobViewModel.allowInvitations.value = it },
             modifier = Modifier.align(Alignment.Start)
         )
         Spacer(modifier = Modifier.height(24.dp))
@@ -152,7 +147,6 @@ fun JobDetailsScreen(navController: NavController){
             text = "Nastavi",
             onClick = {
                 if (validateInputs()) {
-                    //moram prenijet unesene podatke
                     navController.navigate("jobPositionsLocationScreen")
                 }
             }
@@ -164,5 +158,5 @@ fun JobDetailsScreen(navController: NavController){
 @Composable
 fun JobDetailsScreenPreview() {
     val navController = rememberNavController()
-    JobDetailsScreen(navController)
+    JobDetailsScreen(navController, JobViewModel())
 }

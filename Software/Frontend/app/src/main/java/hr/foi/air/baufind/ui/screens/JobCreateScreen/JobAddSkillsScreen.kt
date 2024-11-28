@@ -24,22 +24,10 @@ import hr.foi.air.baufind.ui.components.PrimaryTextField
 import hr.foi.air.baufind.ui.components.SkillListConfirm
 import kotlin.text.contains
 
-//ekran za dodavanje uloga koje su potrebne za posao
 @Composable
-fun JobAddSkillsScreen(navController: NavController){
+fun JobAddSkillsScreen(navController: NavController, jobViewModel: JobViewModel){
     var searchText by remember { mutableStateOf("") }
-    val myStrings = listOf("Pozicija 1", "Pozicija 2", "Pozicija 3", "Pozicija 4", "Pozicija 5",
-        "Pozicija 1", "Pozicija 2", "Pozicija 3", "Pozicija 4", "Pozicija 5",
-        "Pozicija 1", "Pozicija 2", "Pozicija 3", "Pozicija 4", "Pozicija 5",
-        "Pozicija 1", "Pozicija 2", "Pozicija 3", "Pozicija 4", "Pozicija 5",
-        "Pozicija 1", "Pozicija 2", "Pozicija 3", "Pozicija 4", "Pozicija 5",
-        "Pozicija 1", "Pozicija 2", "Pozicija 3", "Pozicija 4", "Pozicija 5",
-        "Pozicija 1", "Pozicija 2", "Pozicija 3", "Pozicija 4", "Pozicija 5",
-        "Pozicija 1", "Pozicija 2", "Pozicija 3", "Pozicija 4", "Pozicija 5",
-        "Pozicija 1", "Pozicija 2", "Pozicija 3", "Pozicija 4", "Pozicija 5",
-        "Pozicija 1", "Pozicija 2", "Pozicija 3", "Pozicija 4", "Pozicija 5",
-        "Pozicija 1", "Pozicija 2", "Pozicija 3", "Pozicija 4", "Pozicija 5",
-        "Pozicija 1", "Pozicija 2", "Pozicija 3", "Pozicija 4", "Pozicija 5")
+    val myStrings = listOf("Pozicija 1", "Pozicija 2", "Pozicija 3")
 
     Column(
         modifier = Modifier
@@ -66,7 +54,8 @@ fun JobAddSkillsScreen(navController: NavController){
                 SkillListConfirm(
                     text = text,
                     onConfirmClick = {
-                        //prenosi na prošli ekran
+                        jobViewModel.jobPositions.add(JobPosition(text, 1))
+                        navController.popBackStack()
                     }
                 )
             }
@@ -78,5 +67,5 @@ fun JobAddSkillsScreen(navController: NavController){
 @Composable
 fun JobAddSkillsScreenPreview() {
     val navController = rememberNavController()
-    JobAddSkillsScreen(navController)
+    JobAddSkillsScreen(navController, JobViewModel())
 }

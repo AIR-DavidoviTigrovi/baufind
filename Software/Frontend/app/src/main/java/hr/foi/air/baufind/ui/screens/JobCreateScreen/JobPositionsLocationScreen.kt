@@ -4,6 +4,8 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,10 +21,8 @@ import hr.foi.air.baufind.R
 import hr.foi.air.baufind.ui.components.PositionAndNumber
 import hr.foi.air.baufind.ui.components.PrimaryButton
 
-//ekran sa pozicijama koje su potrebne za posao i lokacijom posla
 @Composable
-fun JobPositionsLocationScreen(navController: NavController){
-    val context = LocalContext.current
+fun JobPositionsLocationScreen(navController: NavController, jobViewModel: JobViewModel){
 
     fun validateInputs(): Boolean {
         var valid = true
@@ -42,14 +42,15 @@ fun JobPositionsLocationScreen(navController: NavController){
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
-        /*
-        PositionAndNumber(
-            text = "Zidar",
-            onCountChange = { count ->
-                Toast.makeText(context, "Count changed to $count", Toast.LENGTH_SHORT).show()
+        LazyColumn {
+            items(jobViewModel.jobPositions) { position ->
+                PositionAndNumber(
+                    text = position.name,
+                    initialCount = position.count,
+                    onCountChange = { newCount -> position.count = newCount }
+                )
             }
-        )
-         */
+        }
         PrimaryButton(
             drawableId = R.drawable.add_person_icon,
             text = "Dodaj poziciju",
@@ -67,7 +68,14 @@ fun JobPositionsLocationScreen(navController: NavController){
             text = "Postavi oglas",
             onClick = {
                 if (validateInputs()) {
-                    //posta se posao i vraca ga negdje
+                    val jobDetails = mapOf(
+                        "name" to jobViewModel.jobName.value,
+                        "description" to jobViewModel.jobDescription.value,
+                        "allowInvitations" to jobViewModel.allowInvitations.value,
+                        "positions" to jobViewModel.jobPositions.map { "${it.name}: ${it.count}" },
+                        "images" to jobViewModel.selectedImages
+                    )
+                    println(jobDetails)
                 }
             }
         )
@@ -78,5 +86,5 @@ fun JobPositionsLocationScreen(navController: NavController){
 @Composable
 fun JobPositionsLocationScreenPreview() {
     val navController = rememberNavController()
-    JobPositionsLocationScreen(navController)
+    JobPositionsLocationScreen(navController, JobViewModel())
 }
