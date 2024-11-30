@@ -17,7 +17,7 @@ import hr.foi.air.baufind.ws.model.Worker
 
 @Composable
 fun WorkerCard(
-    worker: Worker,
+    worker: Worker?,
     onItemClick: () -> Unit
 ) {
     // Example UI for displaying worker's name and position
@@ -30,14 +30,14 @@ fun WorkerCard(
             modifier = Modifier.fillMaxWidth()
         ){
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = "Ime: ${worker.name}", fontWeight = FontWeight.Bold)
-                Text(text = "Pozicija: ${worker.skills}")
-                Text(text = "Lokacija: ${worker.address}")
-                Text(text = "Broj poslova: ${worker.numOfJobs}")
+                Text(text = "Ime: ${worker?.name}", fontWeight = FontWeight.Bold)
+                Text(text = "Pozicija: ${worker?.skills}")
+                Text(text = "Lokacija: ${worker?.address}")
+                Text(text = "Broj poslova: ${worker?.numOfJobs}")
             }
             Column(modifier = Modifier.padding(8.dp)
             ) {
-                Text(text = "${worker.avgRating}", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+                Text(text = "${worker?.avgRating}", fontWeight = FontWeight.Bold, fontSize = 24.sp)
 
             }
         }

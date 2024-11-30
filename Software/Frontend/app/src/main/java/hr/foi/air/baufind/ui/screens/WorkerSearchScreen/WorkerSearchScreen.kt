@@ -138,7 +138,7 @@ fun WorkerSearchScreen(navController: NavController) {
             modifier = Modifier.scrollable(state = scrollState, orientation = Orientation.Vertical),
 
         ) {
-            items(workers){
+            items(workers!!){
                 worker -> WorkerCard(worker){
                     //Funkcija se poziva na pritiskom na radnika,| treba je promijeniti u kasnijim fazama i prilikom promjene obrišite dio komentara nakon | znaka.
                    Toast.makeText(context, "Clicked on ${worker.name}", Toast.LENGTH_SHORT).show()
