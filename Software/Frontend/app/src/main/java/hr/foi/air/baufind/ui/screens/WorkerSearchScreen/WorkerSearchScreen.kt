@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import hr.foi.air.baufind.mock.WorkerSearchMock.WorkerMock
 import hr.foi.air.baufind.ui.components.WorkerCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -117,7 +116,7 @@ fun WorkerSearchScreen(navController: NavController) {
             items(workers){
                 worker -> WorkerCard(worker){
                     //Funkcija se poziva na pritiskom na radnika,| treba je promijeniti u kasnijim fazama i prilikom promjene obrišite dio komentara nakon | znaka.
-                   Toast.makeText(context, "Clicked on ${worker.firstName} ${worker.lastName}", Toast.LENGTH_SHORT).show()
+                   Toast.makeText(context, "Clicked on ${worker.name}", Toast.LENGTH_SHORT).show()
                }
             }
         }

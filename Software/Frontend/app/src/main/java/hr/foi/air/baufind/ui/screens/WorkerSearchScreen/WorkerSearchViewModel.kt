@@ -4,7 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import hr.foi.air.baufind.mock.WorkerSearchMock.WorkerMock
+import hr.foi.air.baufind.ws.model.Worker
 
 class WorkerSearchViewModel : ViewModel() {
 
@@ -20,13 +20,13 @@ class WorkerSearchViewModel : ViewModel() {
         "Splitsko-dalmatinska", "Grad Zagreb", "Splitsko-dalmatinska",
     )
 
-    val workers: MutableState<List<WorkerMock.Worker>> = mutableStateOf(WorkerMock.workers)
-    val filteredWorkers: MutableState<List<WorkerMock.Worker>> = mutableStateOf(workers.value)
+    val workers: MutableState<List<Worker>> = mutableStateOf(WorkerMock.workers)
+    val filteredWorkers: MutableState<List<Worker>> = mutableStateOf(workers.value)
     fun updateFilteredWorkersL(option: String) {
         selectedItemL.value = option
         filteredWorkers.value = emptyList()
         workers.value.forEach {
-            if (it.location == option){
+            if (it.address == option){
                 filteredWorkers.value += it
             }
         }
@@ -36,12 +36,12 @@ class WorkerSearchViewModel : ViewModel() {
         selectedItemR.value = option
         workers.value.forEach {
             if(option == "Ocjena ASC"){
-                filteredWorkers.value = filteredWorkers.value.sortedBy { it.rating }
+                filteredWorkers.value = filteredWorkers.value.sortedBy { it.avgRating }
 
             }
             if(option == "Ocjena DESC") {
                 filteredWorkers.value =
-                   filteredWorkers.value.sortedByDescending { it.rating }
+                   filteredWorkers.value.sortedByDescending { it.avgRating }
             }
             if(option == "Broj poslova ASC"){
                 filteredWorkers.value = filteredWorkers.value.sortedBy { it.numOfJobs }
