@@ -3,7 +3,9 @@ package hr.foi.air.baufind.ui.screens.WorkerSearchScreen
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import hr.foi.air.baufind.ws.model.Worker
+import kotlinx.coroutines.launch
 
 class WorkerSearchViewModel : ViewModel() {
 
@@ -19,34 +21,39 @@ class WorkerSearchViewModel : ViewModel() {
         "Splitsko-dalmatinska", "Grad Zagreb", "Splitsko-dalmatinska",
     )
 
-    val workers: MutableState<List<Worker>> = mutableStateOf(WorkerMock.workers)
-    val filteredWorkers: MutableState<List<Worker>> = mutableStateOf(workers.value)
+    val workers: MutableState<List<Worker>?> = mutableStateOf(null)
+    val filteredWorkers: MutableState<List<Worker>?> = mutableStateOf(workers.value)
     fun updateFilteredWorkersL(option: String) {
         selectedItemL.value = option
         filteredWorkers.value = emptyList()
-        workers.value.forEach {
+        workers.value!!.forEach {
             if (it.address == option){
-                filteredWorkers.value += it
+                filteredWorkers.value = filteredWorkers.value!! + it
             }
         }
         isExpandedL.value = false
     }
+    fun fetchWorkers() {
+        viewModelScope.launch {
+
+        }
+    }
     fun updateFilteredWorkersR(option: String) {
         selectedItemR.value = option
-        workers.value.forEach {
+        workers.value?.forEach {
             if(option == "Ocjena ASC"){
-                filteredWorkers.value = filteredWorkers.value.sortedBy { it.avgRating }
+                filteredWorkers.value = filteredWorkers.value!!.sortedBy { it.avgRating }
 
             }
             if(option == "Ocjena DESC") {
                 filteredWorkers.value =
-                   filteredWorkers.value.sortedByDescending { it.avgRating }
+                   filteredWorkers.value!!.sortedByDescending { it.avgRating }
             }
             if(option == "Broj poslova ASC"){
-                filteredWorkers.value = filteredWorkers.value.sortedBy { it.numOfJobs }
+                filteredWorkers.value = filteredWorkers.value!!.sortedBy { it.numOfJobs }
             }
             if(option == "Broj poslova DESC"){
-                filteredWorkers.value = filteredWorkers.value.sortedByDescending { it.numOfJobs }
+                filteredWorkers.value = filteredWorkers.value!!.sortedByDescending { it.numOfJobs }
             }
         }
         isExpandedR.value = false
