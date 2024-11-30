@@ -6,17 +6,23 @@ import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,6 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.ui.components.WorkerCard
+import hr.foi.air.baufind.ws.model.Worker
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -106,6 +113,25 @@ fun WorkerSearchScreen(navController: NavController) {
                         )
                     }
                 }
+            }
+        }
+        if (viewModel.workers.value == emptyList<Worker>() || viewModel.filteredWorkers.value == emptyList<Worker>()){
+            Column(
+                modifier = Modifier.padding(16.dp).fillMaxWidth().fillMaxHeight()
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Close,
+                    contentDescription = "No Workers",
+                    tint = Color.Gray,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.size(8.dp))
+                Text(
+                    text = "Nema radnika koje pretražujete",
+                    color = Color.Gray,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
         //Lista radnika i prikaz i callback za pritisak
