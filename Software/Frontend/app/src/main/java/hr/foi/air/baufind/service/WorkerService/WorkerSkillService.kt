@@ -13,10 +13,10 @@ class WorkerSkillService : IWorkerSkillService {
         try {
             val response = service.getWorkersBySkill(workersSkillBody)
             return response.data
-        }catch (err: Exception) {
+        }catch (err: Exception){
             err.printStackTrace()
             return emptyList()
-        }
+            }
     }
 
     override suspend fun getWorkerAccount(worker: Worker,tokenProvider: TokenProvider): User {

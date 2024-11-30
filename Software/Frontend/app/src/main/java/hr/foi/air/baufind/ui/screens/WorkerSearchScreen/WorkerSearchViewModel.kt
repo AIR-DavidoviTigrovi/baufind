@@ -1,14 +1,22 @@
 package hr.foi.air.baufind.ui.screens.WorkerSearchScreen
 
+import WorkerMock
+import android.content.SharedPreferences
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import hr.foi.air.baufind.mock.WorkerSearchMock.WorkerTitleMock
+import hr.foi.air.baufind.service.WorkerService.WorkerSkillService
 import hr.foi.air.baufind.ws.model.Worker
+import hr.foi.air.baufind.ws.network.AppTokenProvider
+import hr.foi.air.baufind.ws.network.TokenProvider
+import hr.foi.air.baufind.ws.request.WorkersSkillBody
 import kotlinx.coroutines.launch
 
-class WorkerSearchViewModel : ViewModel() {
-
+class WorkerSearchViewModel() : ViewModel() {
+    val tokenProvider: MutableState<TokenProvider?> = mutableStateOf(null)
     val isExpandedL: MutableState<Boolean> = mutableStateOf(false)
     val isExpandedR: MutableState<Boolean> = mutableStateOf(false)
     val selectedItemL: MutableState<String> = mutableStateOf("")
@@ -20,40 +28,45 @@ class WorkerSearchViewModel : ViewModel() {
         "Zadarska", "Međimurska", "Dubrovničko-neretvanska", "Istarska", "Požeško-slavonska",
         "Splitsko-dalmatinska", "Grad Zagreb", "Splitsko-dalmatinska",
     )
-
-    val workers: MutableState<List<Worker>?> = mutableStateOf(null)
-    val filteredWorkers: MutableState<List<Worker>?> = mutableStateOf(workers.value)
+    val service = WorkerSkillService()
+    val workers: MutableState<List<Worker>> = mutableStateOf(emptyList())
+    val filteredWorkers: MutableState<List<Worker>> = mutableStateOf(emptyList())
     fun updateFilteredWorkersL(option: String) {
         selectedItemL.value = option
         filteredWorkers.value = emptyList()
-        workers.value!!.forEach {
+        Log.e("AAA", workers.value.toString())
+        Log.e("filteredWorkers", filteredWorkers.value.toString())
+        workers.value.forEach {
             if (it.address == option){
-                filteredWorkers.value = filteredWorkers.value!! + it
+                filteredWorkers.value += it
+                Log.e("filteredWorkers", filteredWorkers.value.toString())
             }
         }
         isExpandedL.value = false
     }
-    fun fetchWorkers() {
-        viewModelScope.launch {
+     fun loadWorkers() {
+         Log.e("loadWorkers", workers.value.toString())
+         workers.value = WorkerMock.workers
+         filteredWorkers.value = workers.value
 
-        }
     }
     fun updateFilteredWorkersR(option: String) {
         selectedItemR.value = option
-        workers.value?.forEach {
+        Log.e("AAAAAAAAAAA", workers.value.toString())
+        workers.value.forEach {
             if(option == "Ocjena ASC"){
-                filteredWorkers.value = filteredWorkers.value!!.sortedBy { it.avgRating }
+                filteredWorkers.value = filteredWorkers.value.sortedBy { it.avgRating }
 
             }
             if(option == "Ocjena DESC") {
                 filteredWorkers.value =
-                   filteredWorkers.value!!.sortedByDescending { it.avgRating }
+                   filteredWorkers.value.sortedByDescending { it.avgRating }
             }
             if(option == "Broj poslova ASC"){
-                filteredWorkers.value = filteredWorkers.value!!.sortedBy { it.numOfJobs }
+                filteredWorkers.value = filteredWorkers.value.sortedBy { it.numOfJobs }
             }
             if(option == "Broj poslova DESC"){
-                filteredWorkers.value = filteredWorkers.value!!.sortedByDescending { it.numOfJobs }
+                filteredWorkers.value = filteredWorkers.value.sortedByDescending { it.numOfJobs }
             }
         }
         isExpandedR.value = false

@@ -1,5 +1,6 @@
 package hr.foi.air.baufind.ui.screens.WorkerSearchScreen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -33,12 +34,13 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.ui.components.WorkerCard
 import hr.foi.air.baufind.ws.model.Worker
+import hr.foi.air.baufind.ws.network.TokenProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WorkerSearchScreen(navController: NavController) {
+fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider) {
     val viewModel: WorkerSearchViewModel = viewModel()
-
+    viewModel.tokenProvider.value = tokenProvider
     //Logika za dropdown meni
     /// Preporučeno je za manji broj opcija koristiti chip
     val isExpandedL by viewModel.isExpandedL
@@ -46,11 +48,15 @@ fun WorkerSearchScreen(navController: NavController) {
     val scrollState = rememberScrollState()
     val selectedItemL by viewModel.selectedItemL
     val selectedItemR by viewModel.selectedItemR
-    val workers by viewModel.filteredWorkers
     val context = LocalContext.current
     // Opcije za dropdown meni
     val optionsR = viewModel.optionsR
     val optionsL = viewModel.optionsL
+    val workers by viewModel.filteredWorkers
+
+    LaunchedEffect(Unit) {
+        viewModel.loadWorkers()
+    }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text("Pronađite poziciju x")
@@ -138,7 +144,9 @@ fun WorkerSearchScreen(navController: NavController) {
             modifier = Modifier.scrollable(state = scrollState, orientation = Orientation.Vertical),
 
         ) {
-            items(workers!!){
+
+            items(workers ?: emptyList()){
+
                 worker -> WorkerCard(worker){
                     //Funkcija se poziva na pritiskom na radnika,| treba je promijeniti u kasnijim fazama i prilikom promjene obrišite dio komentara nakon | znaka.
                    Toast.makeText(context, "Clicked on ${worker.name}", Toast.LENGTH_SHORT).show()
@@ -146,11 +154,12 @@ fun WorkerSearchScreen(navController: NavController) {
             }
         }
     }
+
 }
 
 @Preview(showBackground = true)
 @Composable
 fun WorkerSearchScreenPreview() {
     val navController = rememberNavController()
-    WorkerSearchScreen(navController)
+    WorkerSearchScreen(navController,tokenProvider = object : TokenProvider { override fun getToken(): String? { return null }})
 }

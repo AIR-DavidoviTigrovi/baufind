@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             composable("login") { LoginScreen(navController, this@MainActivity, tokenProvider) }
                             composable("registration") { RegistrationScreen(navController, tokenProvider) }
-                            composable("workersSearchScreen") { WorkerSearchScreen(navController) }
+                            composable("workersSearchScreen") { WorkerSearchScreen(navController,tokenProvider) }
                         }
                     }
                 }
