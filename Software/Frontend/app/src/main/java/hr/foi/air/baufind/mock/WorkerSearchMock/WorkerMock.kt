@@ -1,5 +1,4 @@
 import hr.foi.air.baufind.ws.model.Worker
-import java.time.format.DateTimeFormatter
 
 object WorkerMock {
 

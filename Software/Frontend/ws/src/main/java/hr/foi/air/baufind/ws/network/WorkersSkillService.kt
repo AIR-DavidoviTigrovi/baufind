@@ -4,7 +4,6 @@ import hr.foi.air.baufind.ws.model.Worker
 import hr.foi.air.baufind.ws.request.WorkersSkillBody
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Query
 
 interface WorkersSkillService {
 
