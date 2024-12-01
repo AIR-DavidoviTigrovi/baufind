@@ -1,5 +1,6 @@
 ﻿using BusinessLogicLayer.AppLogic;
 using BusinessLogicLayer.AppLogic.Users;
+using BusinessLogicLayer.AppLogic.Workers;
 using BusinessLogicLayer.Infrastructure;
 using DataAccessLayer;
 using DataAccessLayer.AppLogic;
@@ -30,10 +31,11 @@ public static class ServiceCollectionExtensions
 
         // Repozitoriji
         services.AddScoped<IUserRepository, UserRepository>();
-
+        services.AddScoped<IWorkerRepository,WorkerRepository>();
         // Servisi
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IWorkersService,WorkersService>();   
 
         return services;
     }
