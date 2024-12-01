@@ -3,6 +3,10 @@ package hr.foi.air.baufind.ui.screens.WorkerSearchScreen
 import android.text.style.ClickableSpan
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -24,6 +28,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -39,6 +44,7 @@ import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.ui.components.WorkerCard
 import hr.foi.air.baufind.ws.model.Worker
 import hr.foi.air.baufind.ws.network.TokenProvider
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,6 +55,7 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
     //Logika za dropdown meni
     /// Preporučeno je za manji broj opcija koristiti chip
     viewModel.skill.value = skill
+    var isLoading by remember { mutableStateOf(true) }
     val isExpandedL by viewModel.isExpandedL
     val isExpandedR by viewModel.isExpandedR
     val scrollState = rememberScrollState()
@@ -61,7 +68,10 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
     val workers by viewModel.filteredWorkers
     val coroutine = rememberCoroutineScope()
     LaunchedEffect(Unit) {
+        isLoading = true
         viewModel.loadWorkers()
+        delay(2000)
+        isLoading = false
     }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
@@ -106,7 +116,10 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
                         viewModel.updateFilteredWorkersR("")
                         viewModel.updateFilteredWorkersL("")
                         coroutine.launch {
+                            isLoading = true
                             viewModel.loadWorkers()
+                            isLoading = false
+
                         }
                     }
 
@@ -141,7 +154,16 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
                 }
             }
         }
-        if (viewModel.workers.value == emptyList<Worker>() || viewModel.filteredWorkers.value == emptyList<Worker>()){
+        if(isLoading){
+        Column(
+            modifier = Modifier.padding(16.dp).fillMaxWidth().fillMaxHeight(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CircularProgressIndicator()
+        }
+    }
+        if (!isLoading && viewModel.workers.value == emptyList<Worker>() || viewModel.filteredWorkers.value == emptyList<Worker>()){
             Column(
                 modifier = Modifier.padding(16.dp).fillMaxWidth().fillMaxHeight()
             ) {
@@ -160,6 +182,7 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
                 )
             }
         }
+
         //Lista radnika i prikaz i callback za pritisak
         LazyColumn(
             modifier = Modifier.scrollable(state = scrollState, orientation = Orientation.Vertical),
@@ -168,10 +191,18 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
 
             items(workers){
 
-                worker -> WorkerCard(worker){
-                    //Funkcija se poziva na pritiskom na radnika,| treba je promijeniti u kasnijim fazama i prilikom promjene obrišite dio komentara nakon | znaka.
-                   Toast.makeText(context, "Clicked on ${worker.name}", Toast.LENGTH_SHORT).show()
-               }
+                worker ->
+                AnimatedVisibility(
+                    visible = true,
+                    enter = fadeIn(animationSpec = tween(300)) + slideInVertically(
+                        initialOffsetY = { it }
+                    ),
+                ) {
+                    WorkerCard(worker){
+                        //Funkcija se poziva na pritiskom na radnika,| treba je promijeniti u kasnijim fazama i prilikom promjene obrišite dio komentara nakon | znaka.
+                        Toast.makeText(context, "Clicked on ${worker.name}", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
