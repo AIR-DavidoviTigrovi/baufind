@@ -1,12 +1,13 @@
 package hr.foi.air.baufind.ws.network
 
-import hr.foi.air.baufind.ws.request.WorkersSkillBody
+
 import hr.foi.air.baufind.ws.response.WorkersSkillResponse
-import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Path
+
 
 interface WorkersSkillService {
 
-    @GET("workers/skills")
-    suspend fun getWorkersBySkill(@Body workersSkillBody: WorkersSkillBody): WorkersSkillResponse
+    @GET("/workers/{skill}")
+    suspend fun getWorkersBySkill(@Path("skill") skill: String): WorkersSkillResponse
 }

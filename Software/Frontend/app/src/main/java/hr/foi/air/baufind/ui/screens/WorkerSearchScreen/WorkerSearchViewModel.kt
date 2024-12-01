@@ -8,9 +8,11 @@ import androidx.lifecycle.ViewModel
 import hr.foi.air.baufind.service.WorkerService.WorkerSkillService
 import hr.foi.air.baufind.ws.model.Worker
 import hr.foi.air.baufind.ws.network.TokenProvider
+import hr.foi.air.baufind.ws.request.WorkersSkillBody
 
 
 class WorkerSearchViewModel() : ViewModel() {
+    val skill : MutableState<String> = mutableStateOf("")
     val tokenProvider: MutableState<TokenProvider?> = mutableStateOf(null)
     val isExpandedL: MutableState<Boolean> = mutableStateOf(false)
     val isExpandedR: MutableState<Boolean> = mutableStateOf(false)
@@ -40,11 +42,18 @@ class WorkerSearchViewModel() : ViewModel() {
         isExpandedL.value = false
     }
     //Funkcija za učitavanje radnika
-     fun loadWorkers() {
+     fun loadWorkersMock() {
          Log.e("loadWorkers", workers.value.toString())
          workers.value = WorkerMock.workers
          filteredWorkers.value = workers.value
 
+    }
+    suspend fun loadWorkers() {
+        Log.e("tokenss", tokenProvider.value.toString())
+        workers.value =  service.getWorkersBySkill(workersSkillBody = WorkersSkillBody(skill.value),
+            tokenProvider = tokenProvider.value!!)
+        Log.e("getWorkersBySkill", workers.value.toString())
+        filteredWorkers.value = workers.value
     }
     //Funkcija za filtriranje radnika
     fun updateFilteredWorkersR(option: String) {

@@ -39,14 +39,16 @@ import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.ui.components.WorkerCard
 import hr.foi.air.baufind.ws.model.Worker
 import hr.foi.air.baufind.ws.network.TokenProvider
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider,position: String) {
+fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider,skill: String) {
     val viewModel: WorkerSearchViewModel = viewModel()
     viewModel.tokenProvider.value = tokenProvider
     //Logika za dropdown meni
     /// Preporučeno je za manji broj opcija koristiti chip
+    viewModel.skill.value = skill
     val isExpandedL by viewModel.isExpandedL
     val isExpandedR by viewModel.isExpandedR
     val scrollState = rememberScrollState()
@@ -57,13 +59,13 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
     val optionsR = viewModel.optionsR
     val optionsL = viewModel.optionsL
     val workers by viewModel.filteredWorkers
-    
+    val coroutine = rememberCoroutineScope()
     LaunchedEffect(Unit) {
         viewModel.loadWorkers()
     }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Pronađite poziciju ${position}")
+        Text("Pronađite poziciju ${skill}")
 
 
         Row(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -103,7 +105,9 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
                     modifier = Modifier.padding(12.dp, 0.dp).clickable {
                         viewModel.updateFilteredWorkersR("")
                         viewModel.updateFilteredWorkersL("")
-                        viewModel.loadWorkers()
+                        coroutine.launch {
+                            viewModel.loadWorkers()
+                        }
                     }
 
                 )
