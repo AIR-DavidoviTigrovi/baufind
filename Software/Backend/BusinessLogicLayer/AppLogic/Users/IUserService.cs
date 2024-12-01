@@ -1,5 +1,6 @@
 ﻿using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
 using BusinessLogicLayer.AppLogic.Users.GetUser;
+using BusinessLogicLayer.AppLogic.Users.GetUserProfile;
 using BusinessLogicLayer.AppLogic.Users.Login;
 using BusinessLogicLayer.AppLogic.Users.RegisterUser;
 

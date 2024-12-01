@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogicLayer.AppLogic.Users
+namespace BusinessLogicLayer.AppLogic.Users.GetUserProfile
 {
     public class UserProfileResponse
     {
