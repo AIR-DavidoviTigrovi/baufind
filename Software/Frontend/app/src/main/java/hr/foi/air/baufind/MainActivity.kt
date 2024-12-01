@@ -17,14 +17,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.navigation.BottomNavigationBar
-import hr.foi.air.baufind.service.UserProfileService.UserProfileService
 import hr.foi.air.baufind.ui.screens.LoginScreen.LoginScreen
+import hr.foi.air.baufind.ui.screens.UserProfileScreen.EditProfileScreen
+import hr.foi.air.baufind.ui.screens.UserProfileScreen.UserProfileViewModel
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.userProfileScreen
 import hr.foi.air.baufind.ui.screens.WorkerSearchScreen.WorkerSearchScreen
 import hr.foi.air.baufind.ui.theme.BaufindTheme
 import hr.foi.air.baufind.ws.network.AppTokenProvider
-import hr.foi.air.baufind.ws.network.NetworkService
-import hr.foi.air.baufind.ws.network.NetworkService.createUserProfileService
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +31,7 @@ class MainActivity : ComponentActivity() {
         val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val tokenProvider = AppTokenProvider(sharedPreferences)
         val jwtToken = sharedPreferences.getString("jwt_token", null)
+        val userProfileViewModel = UserProfileViewModel()
         //val userProfileNetworkService = createUserProfileService(tokenProvider)
         //val userProfileService = UserProfileService(userProfileNetworkService)
 
@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         val startDestination : String
                         if (jwtToken == null) startDestination ="login"
-                        else startDestination = "login"
+                        else startDestination = "login" // promijeniti kada se doda token refresh
                         NavHost(
                             navController = navController,
                             startDestination = startDestination
@@ -64,7 +64,8 @@ class MainActivity : ComponentActivity() {
                             composable("login") { LoginScreen(navController, this@MainActivity, tokenProvider) }
                             composable("registration") { RegistrationScreen(navController, tokenProvider) }
                             composable("workersSearchScreen") { WorkerSearchScreen(navController) }
-                            composable("myUserProfileScreen") { userProfileScreen(navController,this@MainActivity, tokenProvider) }
+                            composable("myUserProfileScreen") { userProfileScreen(navController,this@MainActivity, tokenProvider, userProfileViewModel) }
+                            composable("editUserProfileScreen") { EditProfileScreen(navController, this@MainActivity, tokenProvider, userProfileViewModel) }
                         }
                     }
                 }

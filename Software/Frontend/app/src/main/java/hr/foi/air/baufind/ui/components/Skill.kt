@@ -1,3 +1,3 @@
 package hr.foi.air.baufind.ui.components
 
-data class Skill(val name: String)
+data class Skill(val id: Int, val name: String)

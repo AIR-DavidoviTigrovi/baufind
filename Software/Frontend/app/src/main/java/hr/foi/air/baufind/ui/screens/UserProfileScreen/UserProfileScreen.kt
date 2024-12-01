@@ -28,11 +28,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -41,7 +39,6 @@ import androidx.navigation.NavController
 import hr.foi.air.baufind.service.UserProfileService.UserProfileService
 import hr.foi.air.baufind.ui.components.Skill
 import hr.foi.air.baufind.ws.network.TokenProvider
-import hr.foi.air.baufind.ws.response.UserProfileResponse
 import kotlinx.coroutines.launch
 
 @Composable
@@ -78,11 +75,16 @@ fun decodeBase64ToByteArray(base64: String?): ByteArray? {
 
 
 @Composable
-fun userProfileScreen(navController: NavController, context: Context, tokenProvider: TokenProvider) {
-    var userProfile by remember { mutableStateOf<UserProfileResponse?>(null) }
+fun userProfileScreen(
+    navController: NavController,
+    context: Context,
+    tokenProvider: TokenProvider,
+    userProfileViewModel: UserProfileViewModel
+) {
     val coroutineScope = rememberCoroutineScope()
     val jwt = tokenProvider.getToken()
     val userProfileService = UserProfileService(tokenProvider)
+    val userProfile by userProfileViewModel.userProfile.collectAsState()
 
 
 
@@ -90,10 +92,12 @@ fun userProfileScreen(navController: NavController, context: Context, tokenProvi
         coroutineScope.launch {
             try {
                 //znaci da ce jwt biti argument
-                userProfile = jwt?.let { userProfileService.fetchUserProfile() }
+                val fetchedProfile = jwt?.let { userProfileService.fetchUserProfile() }
+                if (fetchedProfile != null) {
+                    userProfileViewModel.setUserProfile(fetchedProfile)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
-                userProfile = null
             }
         }
     }
@@ -115,7 +119,7 @@ fun userProfileScreen(navController: NavController, context: Context, tokenProvi
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = { /* Navigate back */ }) {
+                        IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Back",
@@ -140,9 +144,9 @@ fun userProfileScreen(navController: NavController, context: Context, tokenProvi
                     .verticalScroll(rememberScrollState())
             ) {
                 UserProfileHeader(profile.name, profile.address ?: "N/A", decodeBase64ToByteArray(profile.profilePicture))
-                EditProfileButton(onClick = { /* Navigate to Edit Profile Screen */ })
+                EditProfileButton(onClick = {navController.navigate("editUserProfileScreen")})
                 UserProfileContactInformation(profile.address ?: "N/A", profile.phone ?: "N/A", profile.email)
-                UserSkillSection(profile.skills.orEmpty().map { skill -> Skill(skill.title) })
+                UserSkillSection(profile.skills.orEmpty().map { skill -> Skill(skill.id, skill.title) })
                 Spacer(modifier = Modifier.width(22.dp))
                 profile.reviews?.let {
                     UserProfileReview(
