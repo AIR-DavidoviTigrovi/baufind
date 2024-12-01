@@ -145,7 +145,7 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
 
         ) {
 
-            items(workers ?: emptyList()){
+            items(workers){
 
                 worker -> WorkerCard(worker){
                     //Funkcija se poziva na pritiskom na radnika,| treba je promijeniti u kasnijim fazama i prilikom promjene obrišite dio komentara nakon | znaka.
