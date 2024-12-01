@@ -12,11 +12,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.navigation.BottomNavigationBar
+import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobAddSkillsScreen
+import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobDetailsScreen
+import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobPositionsLocationScreen
+import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobViewModel
 import hr.foi.air.baufind.ui.screens.LoginScreen.LoginScreen
 import hr.foi.air.baufind.ui.screens.WorkerSearchScreen.WorkerSearchScreen
 import hr.foi.air.baufind.ui.theme.BaufindTheme
@@ -30,6 +35,7 @@ class MainActivity : ComponentActivity() {
         val jwtToken = sharedPreferences.getString("jwt_token", null)
 
         setContent {
+            val jobViewModel : JobViewModel = viewModel()
             val navController = rememberNavController()
             val currentRoute = navController
                 .currentBackStackEntryAsState().value?.destination?.route
@@ -58,6 +64,10 @@ class MainActivity : ComponentActivity() {
                             composable("login") { LoginScreen(navController, this@MainActivity, tokenProvider) }
                             composable("registration") { RegistrationScreen(navController, tokenProvider) }
                             composable("workersSearchScreen") { WorkerSearchScreen(navController,tokenProvider,"Vodoinstalater") }
+                            composable("jobDetailsScreen") { JobDetailsScreen(navController, jobViewModel) }
+                            composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController, jobViewModel) }
+                            composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController, jobViewModel) }
+
                         }
                     }
                 }
