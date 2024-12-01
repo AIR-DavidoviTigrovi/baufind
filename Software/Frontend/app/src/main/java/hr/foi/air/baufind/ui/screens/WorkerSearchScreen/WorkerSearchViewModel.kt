@@ -31,10 +31,10 @@ class WorkerSearchViewModel() : ViewModel() {
     val service = WorkerSkillService()
     val workers: MutableState<List<Worker>> = mutableStateOf(emptyList())
     val filteredWorkers: MutableState<List<Worker>> = mutableStateOf(emptyList())
+    //Funkcija za filtriranje radnika
     fun updateFilteredWorkersL(option: String) {
         selectedItemL.value = option
         filteredWorkers.value = emptyList()
-        Log.e("AAA", workers.value.toString())
         Log.e("filteredWorkers", filteredWorkers.value.toString())
         workers.value.forEach {
             if (it.address == option){
@@ -44,15 +44,16 @@ class WorkerSearchViewModel() : ViewModel() {
         }
         isExpandedL.value = false
     }
+    //Funkcija za učitavanje radnika
      fun loadWorkers() {
          Log.e("loadWorkers", workers.value.toString())
          workers.value = WorkerMock.workers
          filteredWorkers.value = workers.value
 
     }
+    //Funkcija za filtriranje radnika
     fun updateFilteredWorkersR(option: String) {
         selectedItemR.value = option
-        Log.e("AAAAAAAAAAA", workers.value.toString())
         workers.value.forEach {
             if(option == "Ocjena ASC"){
                 filteredWorkers.value = filteredWorkers.value.sortedBy { it.avgRating }

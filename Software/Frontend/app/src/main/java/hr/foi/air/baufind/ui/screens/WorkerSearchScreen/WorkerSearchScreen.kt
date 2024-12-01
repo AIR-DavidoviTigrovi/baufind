@@ -1,7 +1,9 @@
 package hr.foi.air.baufind.ui.screens.WorkerSearchScreen
 
+import android.text.style.ClickableSpan
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,12 +20,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,7 +57,7 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
     val optionsR = viewModel.optionsR
     val optionsL = viewModel.optionsL
     val workers by viewModel.filteredWorkers
-
+    
     LaunchedEffect(Unit) {
         viewModel.loadWorkers()
     }
@@ -75,7 +79,7 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpandedL) },
                     modifier = Modifier.menuAnchor().fillMaxWidth(),
-                    label = { Text("Location", overflow = TextOverflow.Ellipsis, maxLines = 1) }
+                    label = { Text("Lokacija", overflow = TextOverflow.Ellipsis, maxLines = 1) }
                 )
                 ExposedDropdownMenu(
                     expanded = isExpandedL,
@@ -91,6 +95,19 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
                     }
                 }
             }
+            if(selectedItemL != "" || selectedItemR != "") {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close icon",
+                    tint = Color.Black,
+                    modifier = Modifier.padding(12.dp, 0.dp).clickable {
+                        viewModel.updateFilteredWorkersR("")
+                        viewModel.updateFilteredWorkersL("")
+                        viewModel.loadWorkers()
+                    }
+
+                )
+            }
             //Desni dropdown meni
             ExposedDropdownMenuBox(
                 expanded = isExpandedR,
@@ -103,7 +120,7 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpandedL) },
                     modifier = Modifier.menuAnchor().fillMaxWidth(),
-                    label = { Text("Sort by", overflow = TextOverflow.Ellipsis, maxLines = 1) }
+                    label = { Text("Sortiraj", overflow = TextOverflow.Ellipsis, maxLines = 1) }
                 )
                 ExposedDropdownMenu(
                     expanded = isExpandedR,
