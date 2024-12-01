@@ -1,19 +1,14 @@
 package hr.foi.air.baufind.ui.screens.WorkerSearchScreen
 
 import WorkerMock
-import android.content.SharedPreferences
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import hr.foi.air.baufind.mock.WorkerSearchMock.WorkerTitleMock
 import hr.foi.air.baufind.service.WorkerService.WorkerSkillService
 import hr.foi.air.baufind.ws.model.Worker
-import hr.foi.air.baufind.ws.network.AppTokenProvider
 import hr.foi.air.baufind.ws.network.TokenProvider
-import hr.foi.air.baufind.ws.request.WorkersSkillBody
-import kotlinx.coroutines.launch
+
 
 class WorkerSearchViewModel() : ViewModel() {
     val tokenProvider: MutableState<TokenProvider?> = mutableStateOf(null)
