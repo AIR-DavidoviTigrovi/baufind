@@ -70,7 +70,6 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
     LaunchedEffect(Unit) {
         isLoading = true
         viewModel.loadWorkers()
-        delay(2000)
         isLoading = false
     }
 
