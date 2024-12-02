@@ -3,6 +3,7 @@ using BusinessLogicLayer.AppLogic.Users.GetUser;
 using BusinessLogicLayer.AppLogic.Users.GetUserProfile;
 using BusinessLogicLayer.AppLogic.Users.Login;
 using BusinessLogicLayer.AppLogic.Users.RegisterUser;
+using BusinessLogicLayer.AppLogic.Users.UpdateUserProfile;
 
 namespace BusinessLogicLayer.AppLogic.Users;
 
@@ -44,5 +45,7 @@ public interface IUserService
     /// </summary>
     /// <param name="request">podaci za prijavu</param>
     /// <returns>token ako je uspješno registriran, a ako ne, onda poruku greške</returns>
+    /// 
+    public UpdateUserResponse UpdateUser(UpdateUserRequest request);
     public LoginResponse Login(LoginRequest request);
 }

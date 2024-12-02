@@ -27,6 +27,8 @@ public interface IUserRepository
     /// <param name="user">korisnik koji se dodaje</param>
     /// <returns>ID ako je uspješno dodan, u protivnom null</returns>
     public int? AddUser(UserModel user);
-
     public UserProfileModel GetUserProfile(int id);
+    public string? UpdateUserProfile(UserProfileUpdateModel user);
+    void AddUserSkills(int userId, List<int> addSkills);
+    void RemoveUserSkills(int userId, List<int> removeSkills);
 }

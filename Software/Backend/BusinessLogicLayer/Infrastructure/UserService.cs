@@ -5,6 +5,7 @@ using BusinessLogicLayer.AppLogic.Users.GetUser;
 using BusinessLogicLayer.AppLogic.Users.GetUserProfile;
 using BusinessLogicLayer.AppLogic.Users.Login;
 using BusinessLogicLayer.AppLogic.Users.RegisterUser;
+using BusinessLogicLayer.AppLogic.Users.UpdateUserProfile;
 using DataAccessLayer.AppLogic;
 using DataAccessLayer.Models;
 using FluentValidation;
@@ -209,6 +210,48 @@ public class UserService : IUserService
         return new UserProfileResponse()
         {
             userProfileModel = userProfile
+        };
+    }
+
+    public UpdateUserResponse UpdateUser(UpdateUserRequest request) 
+    {
+        var validator = new UpdateUserValidator();
+        var validationResult = validator.Validate(request);
+
+        if (!validationResult.IsValid)
+        {
+            return new UpdateUserResponse
+            {
+                Success = false,
+                Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList()
+            };
+        }
+
+        var updateModel = new UserProfileUpdateModel
+        {
+            UserId = request.UserId,
+            Name = request.Name,
+            Address = request.Address,
+            Phone = request.Phone,
+            ProfilePicture = request.ProfilePicture
+        };
+
+        var result = _repository.UpdateUserProfile(updateModel);
+
+        if (request.AddSkills != null && request.AddSkills.Any())
+        {
+            _repository.AddUserSkills(request.UserId, request.AddSkills);
+        }
+
+        if (request.RemoveSkills != null && request.RemoveSkills.Any())
+        {
+            _repository.RemoveUserSkills(request.UserId, request.RemoveSkills);
+        }
+
+        return new UpdateUserResponse
+        {
+            Success = true,
+            Message = "Profile and skills updated successfully."
         };
     }
 

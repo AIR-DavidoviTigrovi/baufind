@@ -188,6 +188,65 @@ public class UserRepository : IUserRepository
         return userProfile;
     }
 
+    public string? UpdateUserProfile(UserProfileUpdateModel user)
+    {
+        var query = @"
+        UPDATE app_user
+        SET
+            name = COALESCE(@name, name),
+            address = COALESCE(@address, address),
+            phone = COALESCE(@phone, phone),
+            profile_picture = COALESCE(@profile_picture, profile_picture)
+        WHERE id = @userId;
+    ";
+
+        var parameters = new Dictionary<string, object>
+    {
+        { "@userId", user.UserId },
+        { "@name", user.Name ?? (object)DBNull.Value },
+        { "@address", user.Address ?? (object)DBNull.Value },
+        { "@phone", user.Phone ?? (object)DBNull.Value },
+        { "@profile_picture", user.ProfilePicture ?? (object)DBNull.Value }
+    };
+
+        var result = _db.ExecuteNonQuery(query, parameters);
+        return result > 0 ? "Success" : null;
+    }
+    public void AddUserSkills(int userId, List<int> skillIds)
+    {
+        string query = @"
+            INSERT INTO user_skill (user_id, skill_id)
+            VALUES (@user_id, @skill_id);";
+
+        foreach (var skillId in skillIds)
+        {
+            var parameters = new Dictionary<string, object>
+            {
+                { "@user_id", userId },
+                { "@skill_id", skillId }
+            };
+            _db.ExecuteNonQuery(query, parameters);
+        }
+    }
+
+    public void RemoveUserSkills(int userId, List<int> skillIds)
+    {
+        string query = @"
+            DELETE FROM user_skill
+            WHERE user_id = @user_id AND skill_id = @skill_id;";
+
+        foreach (var skillId in skillIds)
+        {
+            var parameters = new Dictionary<string, object>
+            {
+                { "@user_id", userId },
+                { "@skill_id", skillId }
+            };
+            _db.ExecuteNonQuery(query, parameters);
+        }
+    }
+
+
     private UserModel UserModelFromReader(SqlDataReader reader)
     {
         return new UserModel()
@@ -203,5 +262,5 @@ public class UserRepository : IUserRepository
             Deleted = (bool)reader["deleted"],
             GoogleId = reader["google_id"] == DBNull.Value ? null : (string)reader["google_id"]
         };
-    }
+    }    
 }

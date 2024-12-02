@@ -1,11 +1,14 @@
-﻿using BusinessLogicLayer.AppLogic.Users;
+﻿using Azure.Core;
+using BusinessLogicLayer.AppLogic.Users;
 using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
 using BusinessLogicLayer.AppLogic.Users.GetUser;
 using BusinessLogicLayer.AppLogic.Users.GetUserProfile;
 using BusinessLogicLayer.AppLogic.Users.Login;
 using BusinessLogicLayer.AppLogic.Users.RegisterUser;
+using BusinessLogicLayer.AppLogic.Users.UpdateUserProfile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebApi.Controllers;
 
@@ -27,7 +30,7 @@ public class UserController : ControllerBase
     {
         var users = _userService.GetAllUsers();
 
-        if (users.Users == null || !users.Users.Any())
+        if (users.Users == null || users.Users.Count == 0)
         {
             return NotFound(users);
         }
@@ -98,18 +101,40 @@ public class UserController : ControllerBase
         }
         return userProfileData;
     }
-
-  /*  // GET: /users/profile/{id}
-    [HttpGet("/profile/{id}")]
-    public ActionResult<UserProfileResponse> GetUserProfile(int id)
+    [HttpPut("updateProfile")]
+    public ActionResult<UpdateUserResponse> UpdateProfile([FromBody] UpdateUserRequest request)
     {
-        var userProfileData = _userService.GetUserProfileData(id);
-        if (userProfileData.userProfileModel == null)
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+        if (!userIdFromJwt.HasValue || userIdFromJwt.Value != request.UserId)
         {
-            return NotFound(userProfileData);
+            return Unauthorized(new UpdateUserResponse
+            {
+                Success = false,
+                Message = "You are not authorized to update this profile."
+            });
         }
-        return userProfileData;
-    }*/
+        var response = _userService.UpdateUser(request);
+
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
+
+        return Ok(response);
+
+    }
+
+    /*  // GET: /users/profile/{id}
+      [HttpGet("/profile/{id}")]
+      public ActionResult<UserProfileResponse> GetUserProfile(int id)
+      {
+          var userProfileData = _userService.GetUserProfileData(id);
+          if (userProfileData.userProfileModel == null)
+          {
+              return NotFound(userProfileData);
+          }
+          return userProfileData;
+      }*/
 
     // POST: /users/login
     [HttpPost("login")]
