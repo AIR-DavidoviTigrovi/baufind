@@ -20,6 +20,10 @@ object NetworkService {
             .build()
     }
 
+    fun createWorkersService(tokenProvider: TokenProvider): WorkersSkillService {
+        return createRetrofit(tokenProvider).create(WorkersSkillService::class.java)
+    }
+
     fun createAuthService(tokenProvider: TokenProvider): AuthenticationService {
         return createRetrofit(tokenProvider).create(AuthenticationService::class.java)
     }

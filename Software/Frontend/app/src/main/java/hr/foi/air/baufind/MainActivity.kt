@@ -63,10 +63,11 @@ class MainActivity : ComponentActivity() {
                         ) {
                             composable("login") { LoginScreen(navController, this@MainActivity, tokenProvider) }
                             composable("registration") { RegistrationScreen(navController, tokenProvider) }
-                            composable("workersSearchScreen") { WorkerSearchScreen(navController) }
+                            composable("workersSearchScreen") { WorkerSearchScreen(navController,tokenProvider,"Vodoinstalater") }
                             composable("jobDetailsScreen") { JobDetailsScreen(navController, jobViewModel) }
                             composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController, jobViewModel) }
                             composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController, jobViewModel) }
+
                         }
                     }
                 }
