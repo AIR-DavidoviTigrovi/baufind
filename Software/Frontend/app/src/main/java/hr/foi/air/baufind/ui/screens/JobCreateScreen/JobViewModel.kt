@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import hr.foi.air.baufind.ws.network.TokenProvider
 
 data class JobPosition(
     val name: String,
@@ -21,4 +22,5 @@ class JobViewModel : ViewModel(){
     val jobPositions = mutableStateListOf<JobPosition>()
     val lat = mutableDoubleStateOf(0.0)
     val long = mutableDoubleStateOf(0.0)
+    val tokenProvider: MutableState<TokenProvider?> = mutableStateOf(null)
 }

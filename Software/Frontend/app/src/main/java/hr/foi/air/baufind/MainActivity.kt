@@ -3,6 +3,7 @@ package hr.foi.air.baufind
 import RegistrationScreen
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -33,6 +34,7 @@ class MainActivity : ComponentActivity() {
         val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val tokenProvider = AppTokenProvider(sharedPreferences)
         val jwtToken = sharedPreferences.getString("jwt_token", null)
+        Log.d("JWT token je:", jwtToken.toString())
 
         setContent {
             val jobViewModel : JobViewModel = viewModel()
@@ -55,7 +57,7 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding)
                     ) {
                         val startDestination : String
-                        if (jwtToken == null) startDestination ="login"
+                        if (jwtToken != null) startDestination ="login"
                         else startDestination = "workersSearchScreen"
                         NavHost(
                             navController = navController,
@@ -65,8 +67,8 @@ class MainActivity : ComponentActivity() {
                             composable("registration") { RegistrationScreen(navController, tokenProvider) }
                             composable("workersSearchScreen") { WorkerSearchScreen(navController,tokenProvider,"Vodoinstalater") }
                             composable("jobDetailsScreen") { JobDetailsScreen(navController, jobViewModel) }
-                            composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController, jobViewModel) }
-                            composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController, jobViewModel) }
+                            composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController, jobViewModel, tokenProvider) }
+                            composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController, jobViewModel, tokenProvider) }
 
                         }
                     }

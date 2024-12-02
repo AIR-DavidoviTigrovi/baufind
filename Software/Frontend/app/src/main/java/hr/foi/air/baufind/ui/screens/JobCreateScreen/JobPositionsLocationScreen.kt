@@ -29,9 +29,11 @@ import hr.foi.air.baufind.R
 import hr.foi.air.baufind.ui.components.PositionAndNumber
 import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ui.components.PrimaryTextField
+import hr.foi.air.baufind.ws.network.TokenProvider
 
 @Composable
-fun JobPositionsLocationScreen(navController: NavController, jobViewModel: JobViewModel){
+fun JobPositionsLocationScreen(navController: NavController, jobViewModel: JobViewModel, tokenProvider: TokenProvider){
+    jobViewModel.tokenProvider.value = tokenProvider
 
     var latError by remember { mutableStateOf("") }
     var longError by remember { mutableStateOf("") }
@@ -151,5 +153,5 @@ fun JobPositionsLocationScreen(navController: NavController, jobViewModel: JobVi
 @Composable
 fun JobPositionsLocationScreenPreview() {
     val navController = rememberNavController()
-    JobPositionsLocationScreen(navController, JobViewModel())
+    JobPositionsLocationScreen(navController, JobViewModel(), object : TokenProvider { override fun getToken(): String? { return null } })
 }
