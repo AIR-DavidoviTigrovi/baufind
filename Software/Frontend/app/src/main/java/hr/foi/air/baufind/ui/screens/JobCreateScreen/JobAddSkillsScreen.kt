@@ -41,7 +41,7 @@ fun JobAddSkillsScreen(navController: NavController, jobViewModel: JobViewModel,
         skillViewModel.loadSkills()
     }
 
-    val skills = skillViewModel.skill.value.map { it.title }
+    val skills = skillViewModel.skill.value
 
     var searchText by remember { mutableStateOf("") }
     val context = LocalContext.current
@@ -69,12 +69,12 @@ fun JobAddSkillsScreen(navController: NavController, jobViewModel: JobViewModel,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(skills.filter { it.contains(searchText, ignoreCase = true) }) { text ->
+            items(skills.filter { it.title.contains(searchText, ignoreCase = true) }) { skill ->
                 SkillListConfirm(
-                    text = text,
+                    text = skill.title,
                     onConfirmClick = {
-                        if (!jobViewModel.jobPositions.any { it.name == text }){
-                            jobViewModel.jobPositions.add(JobPosition(text, mutableIntStateOf(1)))
+                        if (!jobViewModel.jobPositions.any { it.name == skill.title }){
+                            jobViewModel.jobPositions.add(JobPosition(skill.title, mutableIntStateOf(1), skill.id))
                             navController.popBackStack()
                         }
                         Toast.makeText(context, "Pozicija već postoji", Toast.LENGTH_SHORT).show()

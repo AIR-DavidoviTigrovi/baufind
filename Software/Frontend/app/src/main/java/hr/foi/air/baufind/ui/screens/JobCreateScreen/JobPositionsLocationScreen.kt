@@ -137,8 +137,8 @@ fun JobPositionsLocationScreen(navController: NavController, jobViewModel: JobVi
                         "name" to jobViewModel.jobName.value,
                         "description" to jobViewModel.jobDescription.value,
                         "allowInvitations" to jobViewModel.allowInvitations.value,
-                        "positions" to jobViewModel.jobPositions.map { "${it.name}: ${it.count}" },
-                        "images" to jobViewModel.selectedImages,
+                        "positions" to jobViewModel.getPositionsArray(),
+                        "images" to jobViewModel.getImagesAsByteArrayList(context),
                         "lat" to jobViewModel.lat.doubleValue,
                         "long" to jobViewModel.long.doubleValue
                     )
