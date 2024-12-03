@@ -14,8 +14,8 @@ namespace DataAccessLayer.AppLogic
         /// <summary>
         /// Metoda za upis u slabi entitet gdje se povezuje posao sa svim pozicijama koje se traže
         /// </summary>
-        /// <param name="skills"></param>
-        /// <param name="job_id"></param>
+        /// <param name="skills"> lista ID-ova</param>
+        /// <param name="job_id"> prenosi se od JWT-a </param>
         public void CreatePositionsForJob(List<int> skills, int job_id);
     }
 }

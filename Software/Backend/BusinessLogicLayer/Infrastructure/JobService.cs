@@ -14,12 +14,14 @@ namespace BusinessLogicLayer.Infrastructure
     public class JobService : IJobService
     {
         private readonly IJobRepository _jobRepository;
+        private readonly IPictureRepository _pictureRepository;
         private readonly IJwtService _jwtService;
 
-        public JobService(IJobRepository jobRepository, IJwtService jwtService)
+        public JobService(IJobRepository jobRepository, IJwtService jwtService, IPictureRepository pictureRepository)
         {
             _jobRepository = jobRepository;
             _jwtService = jwtService;
+            _pictureRepository = pictureRepository;
         }
 
         public AddJobResponse AddJob(AddJobRequest request, int user_id)
@@ -30,7 +32,7 @@ namespace BusinessLogicLayer.Infrastructure
             {
                 return new AddJobResponse()
                 {
-                    Error = result.Errors.First().ErrorMessage
+                    Error = string.Join(Environment.NewLine, result.Errors.Select(e => e.ErrorMessage))
                 };
             }
 
@@ -55,10 +57,7 @@ namespace BusinessLogicLayer.Infrastructure
                 };
             }
             _jobRepository.CreatePositionsForJob(request.Skills, job_id.Value);
-            //slike
-            /*
-             * 
-            */
+            _pictureRepository.AddJobPicture(job_id.Value, request.Pictures);
 
             return new AddJobResponse()
             {
