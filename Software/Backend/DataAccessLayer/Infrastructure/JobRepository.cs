@@ -40,5 +40,27 @@ namespace DataAccessLayer.Infrastructure
             object? result = _db.ExecuteScalar(query, parameters);
             return result != null ? (int)result : null;
         }
+
+        public void CreatePositionsForJob(List<int> skills, int job_id)
+        {
+            string query = @"
+                INSERT INTO working
+                (skill_id, job_id, working_status_id)
+                VALUES
+                (@skill_id, @job_id, @working_status_id);
+            ";
+
+            foreach (var skill_id in skills)
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    { "@skill_id", skill_id },
+                    { "@job_id", job_id },
+                    { "@working_status_id", 1 }
+                };
+
+                _db.ExecuteNonQuery(query, parameters);
+            }
+        }
     }
 }

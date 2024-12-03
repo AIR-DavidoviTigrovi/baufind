@@ -54,12 +54,7 @@ namespace BusinessLogicLayer.Infrastructure
                     Error = "Greška kod dodavanja posla"
                 };
             }
-            //sad sa job_id dalje radim sve
-            //skillovi
-            /*
-             * uzimam svaki ID_skill i jedan job_id i radim nove upise
-             * fiksni working_status npr 1
-             */
+            _jobRepository.CreatePositionsForJob(request.Skills, job_id.Value);
             //slike
             /*
              * 
