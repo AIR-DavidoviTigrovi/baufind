@@ -56,7 +56,14 @@ namespace BusinessLogicLayer.Infrastructure
             }
             //sad sa job_id dalje radim sve
             //skillovi
+            /*
+             * uzimam svaki ID_skill i jedan job_id i radim nove upise
+             * fiksni working_status npr 1
+             */
             //slike
+            /*
+             * 
+            */
 
             return new AddJobResponse()
             {
