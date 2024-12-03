@@ -103,13 +103,14 @@ public class UserRepository : IUserRepository
         // Sljedecih nekoliko linija koda vraća podatke potrebne za prikaz profila
         var userProfile = new UserProfileModel
         {
+            Id = 0,
             Name = string.Empty, 
             Email = string.Empty,
             Phone = string.Empty,
             Address = string.Empty
         };
         string userInfoQuery = @"
-            SELECT name, email, phone, address, joined, profile_picture
+            SELECT id, name, email, phone, address, joined, profile_picture
             FROM app_User
             WHERE id = @id;";
         var idParameter = new Dictionary<string, object>
@@ -121,6 +122,7 @@ public class UserRepository : IUserRepository
         {
             if (reader.Read())
             {
+                userProfile.Id = Convert.ToInt32(reader["ID"]);
                 userProfile.Name = (string)reader["name"];
                 userProfile.Email = (string)reader["email"];
                 userProfile.Phone = (string)reader["phone"];
@@ -196,7 +198,7 @@ public class UserRepository : IUserRepository
             name = COALESCE(@name, name),
             address = COALESCE(@address, address),
             phone = COALESCE(@phone, phone),
-            profile_picture = COALESCE(@profile_picture, profile_picture)
+            profile_picture = COALESCE(CONVERT(VARBINARY(MAX), @profile_picture), profile_picture)
         WHERE id = @userId;
     ";
 

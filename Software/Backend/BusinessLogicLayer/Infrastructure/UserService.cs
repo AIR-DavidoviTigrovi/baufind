@@ -227,13 +227,14 @@ public class UserService : IUserService
             };
         }
 
+
         var updateModel = new UserProfileUpdateModel
         {
             UserId = request.UserId,
             Name = request.Name,
             Address = request.Address,
             Phone = request.Phone,
-            ProfilePicture = request.ProfilePicture
+            ProfilePicture = Convert.FromBase64String(request.ProfilePicture)
         };
 
         var result = _repository.UpdateUserProfile(updateModel);

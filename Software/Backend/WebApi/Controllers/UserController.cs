@@ -101,7 +101,9 @@ public class UserController : ControllerBase
         }
         return userProfileData;
     }
+
     [HttpPut("updateProfile")]
+    [Authorize]
     public ActionResult<UpdateUserResponse> UpdateProfile([FromBody] UpdateUserRequest request)
     {
         var userIdFromJwt = HttpContext.Items["UserId"] as int?;
