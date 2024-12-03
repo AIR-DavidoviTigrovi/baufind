@@ -34,7 +34,6 @@ class MainActivity : ComponentActivity() {
         val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val tokenProvider = AppTokenProvider(sharedPreferences)
         val jwtToken = sharedPreferences.getString("jwt_token", null)
-        Log.d("JWT token je:", jwtToken.toString())
 
         setContent {
             val jobViewModel : JobViewModel = viewModel()
@@ -57,7 +56,7 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding)
                     ) {
                         val startDestination : String
-                        if (jwtToken != null) startDestination ="login"
+                        if (jwtToken == null) startDestination ="login"
                         else startDestination = "workersSearchScreen"
                         NavHost(
                             navController = navController,
