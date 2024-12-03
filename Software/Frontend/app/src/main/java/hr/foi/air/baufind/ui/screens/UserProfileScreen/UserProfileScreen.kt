@@ -3,6 +3,11 @@
 package hr.foi.air.baufind.ui.screens.UserProfileScreen
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -72,6 +77,36 @@ fun decodeBase64ToByteArray(base64: String?): ByteArray? {
         }
     }
 }
+fun convertUriToByteArray(context: Context, uri: Uri?): ByteArray? {
+    return uri?.let {
+        try {
+            context.contentResolver.openInputStream(it)?.use { inputStream ->
+                inputStream.readBytes()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+}
+fun uriToBitmap(context: Context, uri: Uri?): Bitmap? {
+    return uri?.let {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, it))
+            } else {
+                @Suppress("DEPRECATION")
+                context.contentResolver.openInputStream(it)?.use { inputStream ->
+                    BitmapFactory.decodeStream(inputStream)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+}
+
 
 
 @Composable

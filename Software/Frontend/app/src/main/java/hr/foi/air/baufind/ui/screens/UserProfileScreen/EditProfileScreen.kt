@@ -3,15 +3,23 @@
 package hr.foi.air.baufind.ui.screens.UserProfileScreen
 
 import android.content.Context
+import android.net.Uri
+import android.util.Base64
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -37,6 +45,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import hr.foi.air.baufind.ws.network.TokenProvider
@@ -57,9 +68,17 @@ fun EditProfileScreen(
         var address by remember { mutableStateOf(profile.address ?: "") }
         var phone by remember { mutableStateOf(profile.phone ?: "") }
         var email by remember { mutableStateOf(profile.email) }
-        var skills by remember { mutableStateOf(profile.skills.orEmpty().toMutableList()) }
-        var profilePicture by remember { mutableStateOf(profile.profilePicture) }
+        var profilePictureUri by remember { mutableStateOf<Uri?>(null) }
+        var selectedSkills by remember { mutableStateOf(profile.skills.orEmpty().toMutableList()) }
+        val initialSkills = profile.skills.orEmpty()
 
+        val imagePickerLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent()
+        ) { uri ->
+            if (uri != null) {
+                profilePictureUri = uri
+            }
+        }
         Scaffold(
             topBar = {
                 CenterAlignedTopAppBar(
@@ -86,36 +105,42 @@ fun EditProfileScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(16.dp)
             ) {
-                // Profile Picture Upload
-                Text(
-                    text = "Tap to Upload Profile Picture",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.secondary
-                )
-                Spacer(Modifier.height(8.dp))
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .height(150.dp)
+                        .padding(vertical = 16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    // Placeholder for Profile Picture
-                    // TODO: Replace with actual image picker
-                    Button(
-                        onClick = {
-                            // Add logic to open the gallery and select a picture
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary
-                        )
+                    Box(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .fillMaxWidth(0.5f)
+                            .aspectRatio(1f),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Text("Select Profile Picture")
+                        val bitmap = uriToBitmap(context, profilePictureUri)
+                        if (bitmap != null) {
+                            Image(
+                                bitmap = bitmap.asImageBitmap(),
+                                contentDescription = "Profile Picture",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        } else {
+                            Text(
+                                text = "Select Picture",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
                     }
                 }
-
-
-                Spacer(Modifier.height(16.dp))
+                Button(
+                    onClick = { imagePickerLauncher.launch("image/*") },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Upload Picture")
+                }
 
                 // Editable Text Fields
                 OutlinedTextField(
@@ -123,9 +148,6 @@ fun EditProfileScreen(
                     onValueChange = { name = it },
                     label = { Text("Name") },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary
-                    )
                 )
                 Spacer(Modifier.height(8.dp))
 
@@ -143,13 +165,13 @@ fun EditProfileScreen(
                     label = { Text("Phone") },
                     modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(16.dp))
 
-                // Skill Management
+                // Skills Management
                 Text("Skills", style = MaterialTheme.typography.bodyLarge)
                 Spacer(Modifier.height(8.dp))
                 Column {
-                    skills.forEachIndexed { index, skill ->
+                    selectedSkills.forEachIndexed { index, skill ->
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
@@ -160,7 +182,7 @@ fun EditProfileScreen(
                                 style = MaterialTheme.typography.bodyMedium
                             )
                             IconButton(onClick = {
-                                skills.removeAt(index)
+                                selectedSkills.remove(skill)
                             }) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
@@ -172,7 +194,7 @@ fun EditProfileScreen(
                         Spacer(Modifier.height(4.dp))
                     }
                     Button(
-                        onClick = { skills.add(SkillResponse(id = skills.size + 1, title = "New Skill")) },
+                        onClick = { selectedSkills.add(SkillResponse(id = selectedSkills.size + 1, title = "New Skill")) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary
                         )
@@ -186,15 +208,23 @@ fun EditProfileScreen(
                 // Save Button
                 Button(
                     onClick = {
-                        val updatedProfile = profile.copy(
+                        val addSkills = selectedSkills.filter { it !in initialSkills }.map { it.id }
+                        val removeSkills = initialSkills.filter { it !in selectedSkills }.map { it.id }
+                        val byteArray = convertUriToByteArray(context, profilePictureUri)
+                        Log.d("ProfilePicture", "Byte array size: ${byteArray?.size ?: 0}")
+
+                        userProfileViewModel.updateUserProfile(
+                            userId = profile.id,
                             name = name,
                             address = address,
                             phone = phone,
-                            email = email,
-                            profilePicture = profilePicture,
-                            skills = skills
+                            profilePicture = convertUriToByteArray(context, profilePictureUri)?.let {
+                                Base64.encodeToString(it, Base64.NO_WRAP)
+                            },
+                            addSkills = addSkills,
+                            removeSkills = removeSkills,
+                            tokenProvider = tokenProvider
                         )
-                        userProfileViewModel.setUserProfile(updatedProfile)
                         navController.popBackStack()
                     },
                     modifier = Modifier.fillMaxWidth(),

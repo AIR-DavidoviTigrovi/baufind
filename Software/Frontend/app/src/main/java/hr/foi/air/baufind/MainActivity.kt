@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
         val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val tokenProvider = AppTokenProvider(sharedPreferences)
         val jwtToken = sharedPreferences.getString("jwt_token", null)
-        val userProfileViewModel = UserProfileViewModel()
+        val userProfileViewModel = UserProfileViewModel(tokenProvider)
         //val userProfileNetworkService = createUserProfileService(tokenProvider)
         //val userProfileService = UserProfileService(userProfileNetworkService)
 

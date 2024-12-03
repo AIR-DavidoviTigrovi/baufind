@@ -6,6 +6,7 @@ data class UserProfileWrapper(
 )
 
 data class UserProfileResponse(
+    val id: Int,
     val name: String,
     val email: String,
     val phone: String?,
