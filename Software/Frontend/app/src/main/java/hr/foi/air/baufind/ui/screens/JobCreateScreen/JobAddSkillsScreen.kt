@@ -1,5 +1,6 @@
 package hr.foi.air.baufind.ui.screens.JobCreateScreen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -21,17 +23,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.ui.components.PrimaryTextField
 import hr.foi.air.baufind.ui.components.SkillListConfirm
+import hr.foi.air.baufind.ws.network.TokenProvider
 import kotlin.text.contains
 
+
 @Composable
-fun JobAddSkillsScreen(navController: NavController, jobViewModel: JobViewModel){
+fun JobAddSkillsScreen(navController: NavController, jobViewModel: JobViewModel, tokenProvider: TokenProvider){
+    val skillViewModel : SkillViewModel = viewModel()
+    skillViewModel.tokenProvider.value = tokenProvider
+
+    LaunchedEffect(key1 = Unit){
+        skillViewModel.loadSkills()
+    }
+
+    val skills = skillViewModel.skill.value
+
     var searchText by remember { mutableStateOf("") }
-    val myStrings = listOf("Pozicija 1", "Pozicija 2", "Pozicija 3")
     val context = LocalContext.current
+
+
 
     Column(
         modifier = Modifier
@@ -54,12 +69,12 @@ fun JobAddSkillsScreen(navController: NavController, jobViewModel: JobViewModel)
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(myStrings.filter { it.contains(searchText, ignoreCase = true) }) { text ->
+            items(skills.filter { it.title.contains(searchText, ignoreCase = true) }) { skill ->
                 SkillListConfirm(
-                    text = text,
+                    text = skill.title,
                     onConfirmClick = {
-                        if (!jobViewModel.jobPositions.any { it.name == text }){
-                            jobViewModel.jobPositions.add(JobPosition(text, mutableIntStateOf(1)))
+                        if (!jobViewModel.jobPositions.any { it.name == skill.title }){
+                            jobViewModel.jobPositions.add(JobPosition(skill.title, mutableIntStateOf(1), skill.id))
                             navController.popBackStack()
                         }
                         Toast.makeText(context, "Pozicija već postoji", Toast.LENGTH_SHORT).show()
@@ -74,5 +89,5 @@ fun JobAddSkillsScreen(navController: NavController, jobViewModel: JobViewModel)
 @Composable
 fun JobAddSkillsScreenPreview() {
     val navController = rememberNavController()
-    JobAddSkillsScreen(navController, JobViewModel())
+    JobAddSkillsScreen(navController, JobViewModel(), object : TokenProvider { override fun getToken(): String? { return null } })
 }

@@ -1,4 +1,6 @@
 ﻿using BusinessLogicLayer.AppLogic;
+using BusinessLogicLayer.AppLogic.Jobs;
+using BusinessLogicLayer.AppLogic.Skills;
 using BusinessLogicLayer.AppLogic.Users;
 using BusinessLogicLayer.AppLogic.Workers;
 using BusinessLogicLayer.Infrastructure;
@@ -32,10 +34,15 @@ public static class ServiceCollectionExtensions
         // Repozitoriji
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IWorkerRepository,WorkerRepository>();
+        services.AddScoped<ISkillRepository, SkillRepository>();
+        services.AddScoped<IJobRepository, JobRepository>();
+        services.AddScoped<IPictureRepository, PictureRepository>();
         // Servisi
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IWorkersService,WorkersService>();   
+        services.AddScoped<IWorkersService,WorkersService>();
+        services.AddScoped<ISkillService, SkillService>();
+        services.AddScoped<IJobService, JobService>();
 
         return services;
     }

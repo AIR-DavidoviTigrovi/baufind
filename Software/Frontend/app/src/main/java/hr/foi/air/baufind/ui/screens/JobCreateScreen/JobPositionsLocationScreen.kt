@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,12 +27,18 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.R
+import hr.foi.air.baufind.service.JobService.JobDao
+import hr.foi.air.baufind.service.JobService.JobService
 import hr.foi.air.baufind.ui.components.PositionAndNumber
 import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ui.components.PrimaryTextField
+import hr.foi.air.baufind.ws.network.TokenProvider
+import kotlinx.coroutines.launch
 
 @Composable
-fun JobPositionsLocationScreen(navController: NavController, jobViewModel: JobViewModel){
+fun JobPositionsLocationScreen(navController: NavController, jobViewModel: JobViewModel, tokenProvider: TokenProvider){
+    jobViewModel.tokenProvider.value = tokenProvider
+    val coroutineScope = rememberCoroutineScope()
 
     var latError by remember { mutableStateOf("") }
     var longError by remember { mutableStateOf("") }
@@ -131,16 +138,26 @@ fun JobPositionsLocationScreen(navController: NavController, jobViewModel: JobVi
             onClick = {
                 if (validateInputs()) {
                     updateCoordinates()
-                    val jobDetails = mapOf(
-                        "name" to jobViewModel.jobName.value,
-                        "description" to jobViewModel.jobDescription.value,
-                        "allowInvitations" to jobViewModel.allowInvitations.value,
-                        "positions" to jobViewModel.jobPositions.map { "${it.name}: ${it.count}" },
-                        "images" to jobViewModel.selectedImages,
-                        "lat" to jobViewModel.lat.doubleValue,
-                        "long" to jobViewModel.long.doubleValue
-                    )
-                    println(jobDetails)
+                    val service = JobService()
+                    coroutineScope.launch{
+                        val response = service.addJobAsync(
+                            JobDao(
+                                name = jobViewModel.jobName.value,
+                                description = jobViewModel.jobDescription.value,
+                                allowInvitations = jobViewModel.allowInvitations.value,
+                                positions = jobViewModel.getPositionsArray(),
+                                images = jobViewModel.getImagesAsByteArrayList(context),
+                                lat = jobViewModel.lat.doubleValue,
+                                long = jobViewModel.long.doubleValue
+                            ),
+                            tokenProvider
+                        )
+                        if (response.added) {
+                            navController.navigate("workersSearchScreen")
+                        } else {
+                            Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
+                        }
+                    }
                 }
             }
         )
@@ -151,5 +168,5 @@ fun JobPositionsLocationScreen(navController: NavController, jobViewModel: JobVi
 @Composable
 fun JobPositionsLocationScreenPreview() {
     val navController = rememberNavController()
-    JobPositionsLocationScreen(navController, JobViewModel())
+    JobPositionsLocationScreen(navController, JobViewModel(), object : TokenProvider { override fun getToken(): String? { return null } })
 }

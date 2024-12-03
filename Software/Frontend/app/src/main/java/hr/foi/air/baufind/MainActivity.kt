@@ -3,6 +3,7 @@ package hr.foi.air.baufind
 import RegistrationScreen
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -65,8 +66,8 @@ class MainActivity : ComponentActivity() {
                             composable("registration") { RegistrationScreen(navController, tokenProvider) }
                             composable("workersSearchScreen") { WorkerSearchScreen(navController,tokenProvider,"Vodoinstalater") }
                             composable("jobDetailsScreen") { JobDetailsScreen(navController, jobViewModel) }
-                            composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController, jobViewModel) }
-                            composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController, jobViewModel) }
+                            composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController, jobViewModel, tokenProvider) }
+                            composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController, jobViewModel, tokenProvider) }
 
                         }
                     }

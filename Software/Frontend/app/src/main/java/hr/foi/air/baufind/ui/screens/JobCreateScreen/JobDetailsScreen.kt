@@ -48,6 +48,7 @@ import hr.foi.air.baufind.ui.components.PrimaryTextField
 fun JobDetailsScreen(navController: NavController, jobViewModel: JobViewModel){
     var jobNameError by remember { mutableStateOf("") }
     var jobDescriptionError by remember { mutableStateOf("") }
+    var context = LocalContext.current
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -73,6 +74,10 @@ fun JobDetailsScreen(navController: NavController, jobViewModel: JobViewModel){
         }
         if (jobViewModel.jobDescription.value.isBlank()) {
             jobDescriptionError = "Morate unijeti opis posla"
+            valid = false
+        }
+        if (jobViewModel.selectedImages.isEmpty()) {
+            Toast.makeText(context, "Morate unijeti bar jednu fotografiju", Toast.LENGTH_SHORT).show()
             valid = false
         }
         return valid

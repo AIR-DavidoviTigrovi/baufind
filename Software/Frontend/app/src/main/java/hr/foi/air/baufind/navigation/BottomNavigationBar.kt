@@ -19,7 +19,8 @@ fun BottomNavigationBar(navController: NavController) {
         BottomNavItem(
             route = "workersSearchScreen",
             icon = IconType.Vector(imageVector = Icons.Default.Search),
-            label = "Search")
+            label = "Search"
+        )
     )
 
     NavigationBar {
