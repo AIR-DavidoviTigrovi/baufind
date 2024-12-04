@@ -213,6 +213,11 @@ public class UserService : IUserService
         };
     }
 
+    /// <summary>
+    /// Metoda koja se koristi za azuriranje korisnika.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns>Vraca updateuserResponse</returns>
     public UpdateUserResponse UpdateUser(UpdateUserRequest request) 
     {
         var validator = new UpdateUserValidator();
@@ -238,7 +243,7 @@ public class UserService : IUserService
                 return new UpdateUserResponse
                 {
                     Success = false,
-                    Errors = new List<string> { "Invalid Base64 string for profile picture." }
+                    Errors = ["Invalid Base64 string for profile picture."]
                 };
             }
         }
@@ -254,12 +259,12 @@ public class UserService : IUserService
 
         var result = _repository.UpdateUserProfile(updateModel);
 
-        if (request.AddSkills != null && request.AddSkills.Any())
+        if (request.AddSkills != null && request.AddSkills.Count != 0)
         {
             _repository.AddUserSkills(request.UserId, request.AddSkills);
         }
 
-        if (request.RemoveSkills != null && request.RemoveSkills.Any())
+        if (request.RemoveSkills != null && request.RemoveSkills.Count != 0)
         {
             _repository.RemoveUserSkills(request.UserId, request.RemoveSkills);
         }

@@ -17,6 +17,10 @@ public class SkillRepository : ISkillRepository
         _db = db;
     }
 
+    /// <summary>
+    /// Metoda za dohvat svih skillova
+    /// </summary>
+    /// <returns>Listu skillova</returns>
     public List<SkillModel> GetAllSkills()
     {
         string query = "SELECT * FROM skill;";

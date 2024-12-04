@@ -102,6 +102,7 @@ public class UserController : ControllerBase
         return userProfileData;
     }
 
+    // PUT: /users/updateProfile
     [HttpPut("updateProfile")]
     [Authorize]
     public ActionResult<UpdateUserResponse> UpdateProfile([FromBody] UpdateUserRequest request)

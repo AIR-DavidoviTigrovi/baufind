@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Models
 {
+    /// <summary>
+    /// Model koji predstavlja kako izgleda azuriranje korisnika(tj njegovog profila)
+    /// </summary>
     public record UserProfileUpdateModel
     {
         public int UserId { get; set; }

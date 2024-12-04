@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.AppLogic.Users.UpdateUserProfile
 {
+    /// <summary>
+    /// Response koji će se vratiti nakon ažuriranja korisničkog računa
+    /// </summary>
     public record UpdateUserResponse
     {
         public bool Success { get; set; }

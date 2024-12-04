@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.AppLogic.Users.UpdateUserProfile
 {
+    /// <summary>
+    /// Validacija koja se koristi prilikom ažuriranja profila
+    /// </summary>
     public class UpdateUserValidator : AbstractValidator<UpdateUserRequest>
     {
         public UpdateUserValidator()

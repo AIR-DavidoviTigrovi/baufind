@@ -189,7 +189,11 @@ public class UserRepository : IUserRepository
 
         return userProfile;
     }
-
+    /// <summary>
+    /// Konkretna metoda za ažuriranje korisnikog profila
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns></returns>
     public string? UpdateUserProfile(UserProfileUpdateModel user)
     {
         var query = @"
@@ -214,6 +218,12 @@ public class UserRepository : IUserRepository
         var result = _db.ExecuteNonQuery(query, parameters);
         return result > 0 ? "Success" : null;
     }
+
+    /// <summary>
+    /// Metoda za dodavanje skillova povezanih s korisnikom
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="skillIds"></param>
     public void AddUserSkills(int userId, List<int> skillIds)
     {
         string query = @"
@@ -231,6 +241,11 @@ public class UserRepository : IUserRepository
         }
     }
 
+    /// <summary>
+    /// Metoda za uklanjanje skillova povezanih s korisnikom
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="skillIds"></param>
     public void RemoveUserSkills(int userId, List<int> skillIds)
     {
         string query = @"

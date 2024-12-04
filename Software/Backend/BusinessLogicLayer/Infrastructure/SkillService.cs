@@ -20,6 +20,10 @@ namespace BusinessLogicLayer.Infrastructure
             _repository = repository;
             _jwtService = jwtService;
         }
+        /// <summary>
+        /// Metoda koja dohvaca sve skillove povezane s korisnikom
+        /// </summary>
+        /// <returns>GetAllSkillsResponse()</returns>
         public GetAllSkillsResponse GetAllSkills()
         {
             var query = _repository.GetAllSkills();

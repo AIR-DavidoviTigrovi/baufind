@@ -24,7 +24,7 @@ public class SkillController : ControllerBase
     public ActionResult<GetAllSkillsResponse> GetAllSkills()
     {
         var skills = _skillService.GetAllSkills();
-        if(skills.Skills == null || !skills.Skills.Any())
+        if(skills.Skills == null || skills.Skills.Count == 0)
         {
             return NotFound(skills);
         }

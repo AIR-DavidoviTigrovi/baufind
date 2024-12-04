@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.AppLogic.Users.UpdateUserProfile
 {
+    /// <summary>
+    /// Request forma za ažuriranje korisnkičkog profila
+    /// </summary>
     public record UpdateUserRequest
     {
         public int UserId { get; set; }
