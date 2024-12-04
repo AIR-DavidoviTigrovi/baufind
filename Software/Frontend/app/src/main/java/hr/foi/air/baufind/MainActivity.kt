@@ -32,8 +32,6 @@ class MainActivity : ComponentActivity() {
         val tokenProvider = AppTokenProvider(sharedPreferences)
         val jwtToken = sharedPreferences.getString("jwt_token", null)
         val userProfileViewModel = UserProfileViewModel(tokenProvider)
-        //val userProfileNetworkService = createUserProfileService(tokenProvider)
-        //val userProfileService = UserProfileService(userProfileNetworkService)
 
         setContent {
             val navController = rememberNavController()

@@ -10,7 +10,6 @@ import hr.foi.air.baufind.ws.response.UserProfileResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlin.io.encoding.Base64
 
 class UserProfileViewModel(tokenProvider: AppTokenProvider) : ViewModel() {
 
@@ -54,7 +53,8 @@ class UserProfileViewModel(tokenProvider: AppTokenProvider) : ViewModel() {
         phone: String,
         profilePicture: String?,
         addSkills: List<Int>,
-        removeSkills: List<Int>,tokenProvider: TokenProvider
+        removeSkills: List<Int>,
+        tokenProvider: TokenProvider
     ) {
         viewModelScope.launch {
             _loading.value = true

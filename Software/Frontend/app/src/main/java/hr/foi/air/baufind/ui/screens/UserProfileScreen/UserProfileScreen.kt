@@ -4,10 +4,8 @@ package hr.foi.air.baufind.ui.screens.UserProfileScreen
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -92,14 +90,7 @@ fun convertUriToByteArray(context: Context, uri: Uri?): ByteArray? {
 fun uriToBitmap(context: Context, uri: Uri?): Bitmap? {
     return uri?.let {
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, it))
-            } else {
-                @Suppress("DEPRECATION")
-                context.contentResolver.openInputStream(it)?.use { inputStream ->
-                    BitmapFactory.decodeStream(inputStream)
-                }
-            }
+            ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, it))
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -168,7 +159,8 @@ fun userProfileScreen(
                         navigationIconContentColor = MaterialTheme.colorScheme.primary
                     )
                 )
-            }
+            },
+
         ) { paddingValues ->
             val profile = userProfile!!
             Column(
