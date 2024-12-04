@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class UserProfileViewModel(tokenProvider: AppTokenProvider) : ViewModel() {
 
-    val userProfileService = UserProfileService(tokenProvider)
+    private val userProfileService = UserProfileService(tokenProvider)
     private val _userProfile = MutableStateFlow<UserProfileResponse?>(null)
     val userProfile: StateFlow<UserProfileResponse?> get() = _userProfile
 
@@ -27,7 +27,7 @@ class UserProfileViewModel(tokenProvider: AppTokenProvider) : ViewModel() {
         _userProfile.value = profile
     }
 
-    fun fetchUserProfile() {
+    private fun fetchUserProfile() {
         viewModelScope.launch {
             _loading.value = true
             try {

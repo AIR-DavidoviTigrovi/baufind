@@ -3,11 +3,10 @@ package hr.foi.air.baufind.service.SkillsService
 import android.util.Log
 import hr.foi.air.baufind.ws.network.NetworkService
 import hr.foi.air.baufind.ws.network.TokenProvider
-import hr.foi.air.baufind.ws.response.GetAllSkillsResponse
 import hr.foi.air.baufind.ws.response.SkillResponse
 
-class SkillsService (private val tokenProvider: TokenProvider){
-    val skillsNetworkService = NetworkService.createSkillsService(tokenProvider)
+class SkillsService (tokenProvider: TokenProvider){
+    private val skillsNetworkService = NetworkService.createSkillsService(tokenProvider)
     suspend fun fetchAllSkills(): List<SkillResponse>?{
         return try {
             val response = skillsNetworkService.getAllSkills()
