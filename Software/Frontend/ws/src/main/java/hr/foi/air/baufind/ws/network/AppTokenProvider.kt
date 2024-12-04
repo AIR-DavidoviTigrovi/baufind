@@ -7,5 +7,6 @@ class AppTokenProvider(private val sharedPreferences: SharedPreferences) : Token
     override fun getToken(): String? {
         return sharedPreferences.getString("jwt_token", null)
     }
+
 }
 
