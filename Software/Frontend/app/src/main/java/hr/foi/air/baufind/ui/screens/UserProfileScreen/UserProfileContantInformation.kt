@@ -37,7 +37,6 @@ fun UserProfileContactInformation(address : String, phone: String, email: String
         color = MaterialTheme.colorScheme.primary)
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Address Information Row
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(vertical = 8.dp)

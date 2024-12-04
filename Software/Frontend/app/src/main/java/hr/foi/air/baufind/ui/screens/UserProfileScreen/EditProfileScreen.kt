@@ -77,14 +77,12 @@ fun EditProfileScreen(
     val userProfile by userProfileViewModel.userProfile.collectAsState()
     val skillsService = SkillsService(tokenProvider)
 
-    // States
     val allSkills = remember { mutableStateOf<List<SkillResponse>>(emptyList()) }
     var searchQuery by remember { mutableStateOf("") }
     val selectedSkills = remember { mutableStateListOf<SkillResponse>() }
     val addSkills = remember { mutableStateListOf<SkillResponse>() }
     val removeSkills = remember { mutableStateListOf<SkillResponse>() }
 
-    // Load all skills and set initial selected skills
     LaunchedEffect(Unit) {
         allSkills.value = skillsService.fetchAllSkills().orEmpty()
         userProfile?.skills?.let { selectedSkills.addAll(it) }
