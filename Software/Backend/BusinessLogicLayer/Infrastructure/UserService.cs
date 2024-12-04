@@ -226,7 +226,22 @@ public class UserService : IUserService
                 Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList()
             };
         }
-
+        byte[]? profilePictureBytes = null;
+        if (!string.IsNullOrEmpty(request.ProfilePicture))
+        {
+            try
+            {
+                profilePictureBytes = Convert.FromBase64String(request.ProfilePicture);
+            }
+            catch (FormatException ex)
+            {
+                return new UpdateUserResponse
+                {
+                    Success = false,
+                    Errors = new List<string> { "Invalid Base64 string for profile picture." }
+                };
+            }
+        }
 
         var updateModel = new UserProfileUpdateModel
         {
@@ -234,7 +249,7 @@ public class UserService : IUserService
             Name = request.Name,
             Address = request.Address,
             Phone = request.Phone,
-            ProfilePicture = Convert.FromBase64String(request.ProfilePicture)
+            ProfilePicture = profilePictureBytes
         };
 
         var result = _repository.UpdateUserProfile(updateModel);
