@@ -55,6 +55,7 @@ import androidx.navigation.NavController
 import hr.foi.air.baufind.service.SkillsService.SkillsService
 import hr.foi.air.baufind.ws.network.TokenProvider
 import hr.foi.air.baufind.ws.response.SkillResponse
+import hr.foi.air.baufind.ws.response.SkillsWithIdResponse
 
 
 fun decodeBase64ToBitmap(base64: String): Bitmap? {
@@ -77,11 +78,11 @@ fun EditProfileScreen(
     val userProfile by userProfileViewModel.userProfile.collectAsState()
     val skillsService = SkillsService(tokenProvider)
 
-    val allSkills = remember { mutableStateOf<List<SkillResponse>>(emptyList()) }
+    val allSkills = remember { mutableStateOf<List<SkillsWithIdResponse>>(emptyList()) }
     var searchQuery by remember { mutableStateOf("") }
-    val selectedSkills = remember { mutableStateListOf<SkillResponse>() }
-    val addSkills = remember { mutableStateListOf<SkillResponse>() }
-    val removeSkills = remember { mutableStateListOf<SkillResponse>() }
+    val selectedSkills = remember { mutableStateListOf<SkillsWithIdResponse>() }
+    val addSkills = remember { mutableStateListOf<SkillsWithIdResponse>() }
+    val removeSkills = remember { mutableStateListOf<SkillsWithIdResponse>() }
 
     LaunchedEffect(Unit) {
         allSkills.value = skillsService.fetchAllSkills().orEmpty()

@@ -32,7 +32,7 @@ object NetworkService {
     }
     fun createSkillsService(tokenProvider: TokenProvider): SkillsService {
         return createRetrofit(tokenProvider).create(SkillsService::class.java)
-
+    }
     fun createSkillService(tokenProvider: TokenProvider): SkillService{
         return createRetrofit(tokenProvider).create(SkillService::class.java)
     }

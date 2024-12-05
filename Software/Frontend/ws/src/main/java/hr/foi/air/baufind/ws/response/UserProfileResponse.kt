@@ -13,11 +13,11 @@ data class UserProfileResponse(
     val address: String?,
     val profilePicture: String?,
     val joined: String,
-    val skills: List<SkillResponse>?,
+    val skills: List<SkillsWithIdResponse>?,
     val reviews: ReviewResponse?
 )
 
-data class SkillResponse(
+data class SkillsWithIdResponse(
     val id: Int,
     val title: String
 )
