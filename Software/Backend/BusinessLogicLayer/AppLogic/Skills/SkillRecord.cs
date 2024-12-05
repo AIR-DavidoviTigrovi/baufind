@@ -8,7 +8,6 @@ namespace BusinessLogicLayer.AppLogic.Skills
 {
     public record SkillRecord
     {
-
         public int Id { get; set; }
         public string Title { get; set; }
     }
