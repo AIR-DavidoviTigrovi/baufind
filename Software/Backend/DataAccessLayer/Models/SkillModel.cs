@@ -1,11 +1,11 @@
 ﻿namespace DataAccessLayer.Models
 {
     /// <summary>
-    /// Skill model koji odgovara tablici Skills u bazi podataka.
+    /// Model za tablicu "Skill"
     /// </summary>
-    public class SkillModel
+    public record SkillModel
     {
         public int Id { get; set; }
-        public string? Title { get; set; }
+        public string Title { get; set; }
     }
 }

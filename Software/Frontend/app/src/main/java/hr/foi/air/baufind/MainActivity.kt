@@ -3,6 +3,7 @@ package hr.foi.air.baufind
 import RegistrationScreen
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -12,11 +13,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.navigation.BottomNavigationBar
+import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobAddSkillsScreen
+import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobDetailsScreen
+import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobPositionsLocationScreen
+import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobViewModel
 import hr.foi.air.baufind.ui.screens.LoginScreen.LoginScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.EditProfileScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.UserProfileViewModel
@@ -34,6 +40,7 @@ class MainActivity : ComponentActivity() {
         val userProfileViewModel = UserProfileViewModel(tokenProvider)
 
         setContent {
+            val jobViewModel : JobViewModel = viewModel()
             val navController = rememberNavController()
             val currentRoute = navController
                 .currentBackStackEntryAsState().value?.destination?.route
@@ -61,9 +68,14 @@ class MainActivity : ComponentActivity() {
                         ) {
                             composable("login") { LoginScreen(navController, this@MainActivity, tokenProvider) }
                             composable("registration") { RegistrationScreen(navController, tokenProvider) }
-                            composable("workersSearchScreen") { WorkerSearchScreen(navController) }
+
                             composable("myUserProfileScreen") { userProfileScreen(navController,this@MainActivity, tokenProvider, userProfileViewModel) }
                             composable("editUserProfileScreen") { EditProfileScreen(navController, this@MainActivity, tokenProvider, userProfileViewModel) }
+
+                            composable("workersSearchScreen") { WorkerSearchScreen(navController,tokenProvider,"Vodoinstalater") }
+                            composable("jobDetailsScreen") { JobDetailsScreen(navController, jobViewModel) }
+                            composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController, jobViewModel, tokenProvider) }
+                            composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController, jobViewModel, tokenProvider) }
                         }
                     }
                 }

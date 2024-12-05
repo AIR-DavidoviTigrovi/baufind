@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogicLayer.AppLogic.Skills
-{
-    public record SkillRecord
-    {
+///summary
+/// Podaci koji se šalju u tijelu, naziv vještine
+///summary
 
-        public int Id { get; set; }
+namespace BusinessLogicLayer.AppLogic.Workers.GetWorkers {
+    public record GetWorkersBody {
         public string Title { get; set; }
     }
 }

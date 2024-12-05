@@ -12,26 +12,26 @@ namespace BusinessLogicLayer.Infrastructure
 {
     public class SkillService : ISkillService
     {
-        private readonly ISkillRepository _repository;
+        private readonly ISkillRepository _skillRepository;
         private readonly IJwtService _jwtService;
 
-        public SkillService(ISkillRepository repository, IJwtService jwtService)
+        public SkillService(ISkillRepository skillRepository, IJwtService jwtService)
         {
-            _repository = repository;
+            _skillRepository = skillRepository;
             _jwtService = jwtService;
         }
         /// <summary>
-        /// Metoda koja dohvaca sve skillove povezane s korisnikom
+        /// Vraća sve skillove ili error message ako je tablica prazna
         /// </summary>
-        /// <returns>GetAllSkillsResponse()</returns>
+        /// <returns></returns>
         public GetAllSkillsResponse GetAllSkills()
         {
-            var query = _repository.GetAllSkills();
-            if(query == null || !query.Any())
+            var query = _skillRepository.GetAll();
+            if (query == null || !query.Any())
             {
                 return new GetAllSkillsResponse()
                 {
-                    Error = "U bazi nema skill-ova"
+                    Error = "U bazi nema pozicija!"
                 };
             }
             var skills = query.Select(x => new SkillRecord()

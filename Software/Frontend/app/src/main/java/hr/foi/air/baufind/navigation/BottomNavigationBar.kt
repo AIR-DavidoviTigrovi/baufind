@@ -21,10 +21,10 @@ fun BottomNavigationBar(navController: NavController) {
             route = "workersSearchScreen",
             icon = IconType.Vector(imageVector = Icons.Default.Search),
             label = "Search"),
-
             BottomNavItem(
             route = "myUserProfileScreen",
             icon = IconType.Vector(imageVector = Icons.Default.Person), label = "Profile")
+
     )
 
     NavigationBar {
