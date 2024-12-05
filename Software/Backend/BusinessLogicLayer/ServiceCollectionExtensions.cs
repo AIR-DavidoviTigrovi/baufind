@@ -33,6 +33,7 @@ public static class ServiceCollectionExtensions
 
         // Repozitoriji
         services.AddScoped<IUserRepository, UserRepository>();
+
         services.AddScoped<IWorkerRepository,WorkerRepository>();
         services.AddScoped<ISkillRepository, SkillRepository>();
         services.AddScoped<IJobRepository, JobRepository>();

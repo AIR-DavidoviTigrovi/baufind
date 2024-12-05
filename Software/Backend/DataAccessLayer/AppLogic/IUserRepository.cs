@@ -27,4 +27,31 @@ public interface IUserRepository
     /// <param name="user">korisnik koji se dodaje</param>
     /// <returns>ID ako je uspješno dodan, u protivnom null</returns>
     public int? AddUser(UserModel user);
+
+    /// <summary>
+    /// Metoda za dohvacanje profila korisnika
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>UserProfileModel</returns>
+    public UserProfileModel GetUserProfile(int id);
+
+    /// <summary>
+    /// Metoda za ažuriranje profila
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns></returns>
+    public string? UpdateUserProfile(UserProfileUpdateModel user);
+
+    /// <summary>
+    /// Metoda za dodavanje skillova povezanih s nekim korisnikom
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="addSkills"></param>
+    void AddUserSkills(int userId, List<int> addSkills);
+    /// <summary>
+    /// Uklanja sve skillove povezane s nekim korisnikom
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="removeSkills"></param>
+    void RemoveUserSkills(int userId, List<int> removeSkills);
 }

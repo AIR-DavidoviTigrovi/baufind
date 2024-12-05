@@ -1,7 +1,9 @@
 ﻿using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
 using BusinessLogicLayer.AppLogic.Users.GetUser;
+using BusinessLogicLayer.AppLogic.Users.GetUserProfile;
 using BusinessLogicLayer.AppLogic.Users.Login;
 using BusinessLogicLayer.AppLogic.Users.RegisterUser;
+using BusinessLogicLayer.AppLogic.Users.UpdateUserProfile;
 
 namespace BusinessLogicLayer.AppLogic.Users;
 
@@ -25,6 +27,13 @@ public interface IUserService
     public GetUserResponse GetOneUser(int id);
 
     /// <summary>
+    /// Metoda za dohvat podataka povezane s profilom nekog korisnika
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Vraća podatke tj userProfileModel ili se vraća poruka greške</returns>
+    public UserProfileResponse GetUserProfileData(int id);
+
+    /// <summary>
     /// Metoda za registriranje novog korisnika
     /// </summary>
     /// <param name="request">podaci za registraciju</param>
@@ -36,5 +45,7 @@ public interface IUserService
     /// </summary>
     /// <param name="request">podaci za prijavu</param>
     /// <returns>token ako je uspješno registriran, a ako ne, onda poruku greške</returns>
+    /// 
+    public UpdateUserResponse UpdateUser(UpdateUserRequest request);
     public LoginResponse Login(LoginRequest request);
 }

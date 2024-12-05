@@ -24,6 +24,9 @@ import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobDetailsScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobPositionsLocationScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobViewModel
 import hr.foi.air.baufind.ui.screens.LoginScreen.LoginScreen
+import hr.foi.air.baufind.ui.screens.UserProfileScreen.EditProfileScreen
+import hr.foi.air.baufind.ui.screens.UserProfileScreen.UserProfileViewModel
+import hr.foi.air.baufind.ui.screens.UserProfileScreen.userProfileScreen
 import hr.foi.air.baufind.ui.screens.WorkerSearchScreen.WorkerSearchScreen
 import hr.foi.air.baufind.ui.theme.BaufindTheme
 import hr.foi.air.baufind.ws.network.AppTokenProvider
@@ -34,6 +37,7 @@ class MainActivity : ComponentActivity() {
         val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val tokenProvider = AppTokenProvider(sharedPreferences)
         val jwtToken = sharedPreferences.getString("jwt_token", null)
+        val userProfileViewModel = UserProfileViewModel(tokenProvider)
 
         setContent {
             val jobViewModel : JobViewModel = viewModel()
@@ -57,13 +61,18 @@ class MainActivity : ComponentActivity() {
                     ) {
                         val startDestination : String
                         if (jwtToken == null) startDestination ="login"
-                        else startDestination = "workersSearchScreen"
+                        else startDestination = "login" // promijeniti kada se doda token refresh
                         NavHost(
                             navController = navController,
                             startDestination = startDestination
                         ) {
                             composable("login") { LoginScreen(navController, this@MainActivity, tokenProvider) }
                             composable("registration") { RegistrationScreen(navController, tokenProvider) }
+
+                            composable("myUserProfileScreen") { userProfileScreen(navController,this@MainActivity, tokenProvider, userProfileViewModel) }
+                            composable("editUserProfileScreen") { EditProfileScreen(navController, this@MainActivity, tokenProvider, userProfileViewModel) }
+
+
                             composable("workersSearchScreen") { WorkerSearchScreen(navController,tokenProvider,"Vodoinstalater") }
                             composable("jobDetailsScreen") { JobDetailsScreen(navController, jobViewModel) }
                             composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController, jobViewModel, tokenProvider) }
