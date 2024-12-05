@@ -7,41 +7,44 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.Infrastructure;
-public class SkillRepository : ISkillRepository
+namespace DataAccessLayer.Infrastructure
 {
-    private readonly DB _db;
-
-    public SkillRepository(DB db)
-    {
-        _db = db;
-    }
-
     /// <summary>
-    /// Metoda za dohvat svih skillova
+    /// Repozitorij za dohvaćanje skillova tj pozicija
     /// </summary>
-    /// <returns>Listu skillova</returns>
-    public List<SkillModel> GetAllSkills()
+    public class SkillRepository: ISkillRepository
     {
-        string query = "SELECT * FROM skill;";
-        using (var reader = _db.ExecuteReader(query))
+        private readonly DB _db;
+        public SkillRepository(DB db)
         {
-            var result = new List<SkillModel>();
-            while (reader.Read())
+            _db = db;
+        }
+        /// <summary>
+        /// Funkcija koja dohvaća sve skillove u bazi
+        /// </summary>
+        /// <returns>Listu skillova</returns>
+        public List<SkillModel> GetAll()
+        {
+            string query = "SELECT * FROM skill;";
+            using (var reader = _db.ExecuteReader(query))
             {
-                result.Add(SkillModelFromReader(reader));
+                var result = new List<SkillModel>();
+                while (reader.Read())
+                {
+                    result.Add(SkillModelFromReader(reader));
+                }
+
+                return result;
             }
-            return result;
+        }
+
+        private SkillModel SkillModelFromReader(SqlDataReader reader)
+        {
+            return new SkillModel()
+            {
+                Id = (int)reader["id"],
+                Title = (string)reader["title"]
+            };
         }
     }
-
-    private SkillModel SkillModelFromReader(SqlDataReader reader)
-    {
-        return new SkillModel()
-        {
-            Id = (int)reader["id"],
-            Title = (string)reader["title"]
-        };
-    }
 }
-

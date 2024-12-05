@@ -5,8 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.AppLogic;
-public interface ISkillRepository
+
+namespace DataAccessLayer.AppLogic
 {
-    public List<SkillModel> GetAllSkills();
+    /// <summary>
+    /// Interface za skillove
+    /// </summary>
+    public interface ISkillRepository
+    {
+        /// <summary>
+        /// Funkcija koja dohvaća sve skillove u bazi
+        /// </summary>
+        /// <returns>Listu svih skillova</returns>
+        public List<SkillModel> GetAll();
+    }
 }
