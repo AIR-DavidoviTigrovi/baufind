@@ -35,12 +35,11 @@ import kotlin.text.contains
 @Composable
 fun JobAddSkillsScreen(navController: NavController, jobViewModel: JobViewModel, tokenProvider: TokenProvider){
     val skillViewModel : SkillViewModel = viewModel()
-    skillViewModel.tokenProvider.value = tokenProvider
-
-    LaunchedEffect(key1 = Unit){
-        skillViewModel.loadSkills()
+    LaunchedEffect(Unit) {
+        if (skillViewModel.tokenProvider == null) {
+            skillViewModel.tokenProvider = tokenProvider
+        }
     }
-
     val skills = skillViewModel.skill.value
 
     var searchText by remember { mutableStateOf("") }

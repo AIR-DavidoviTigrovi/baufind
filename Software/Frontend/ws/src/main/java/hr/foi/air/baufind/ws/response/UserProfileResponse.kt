@@ -1,5 +1,7 @@
 package hr.foi.air.baufind.ws.response
 
+import hr.foi.air.baufind.ws.model.Skill
+
 data class UserProfileWrapper(
     val userProfileModel: UserProfileResponse?,
     val error: String?
@@ -13,13 +15,8 @@ data class UserProfileResponse(
     val address: String?,
     val profilePicture: String?,
     val joined: String,
-    val skills: List<SkillsWithIdResponse>?,
+    val skills: List<Skill>?,
     val reviews: ReviewResponse?
-)
-
-data class SkillsWithIdResponse(
-    val id: Int,
-    val title: String
 )
 
 data class ReviewResponse(

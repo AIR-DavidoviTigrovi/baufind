@@ -1,5 +1,7 @@
 package hr.foi.air.baufind.service.UserProfileService
 
+import hr.foi.air.baufind.ws.model.Skill
+
 data class UserProfileResponse(
     val name: String,
     val email: String,
@@ -7,15 +9,9 @@ data class UserProfileResponse(
     val address: String?,
     val profilePicture: String?,
     val joined: String,
-    val skills: List<SkillResponse>?,
+    val skills: List<Skill>?,
     val reviews: ReviewResponse?
 )
-
-data class SkillResponse(
-    val id: Int,
-    val title: String
-)
-
 data class ReviewResponse(
     val averageRating: Double,
     val totalReviews: Int,
