@@ -18,7 +18,7 @@ fun BottomNavigationBar(navController: NavController) {
 
     val items = listOf(
         BottomNavItem(
-            route = "jobPositionsLocationScreen",
+            route = "jobDetailsScreen",
             icon = IconType.Vector(imageVector = Icons.Default.Search),
             label = "Search"),
             BottomNavItem(

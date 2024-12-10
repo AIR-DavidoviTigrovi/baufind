@@ -129,7 +129,7 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
                         )
                         if (response.successfulLogin){
                             JwtService.saveJwt(context, response.jwt)
-                            navController.navigate("jobPositionsLocationScreen")
+                            navController.navigate("jobDetailsScreen")
                         }
                         else {
                             email = ""
