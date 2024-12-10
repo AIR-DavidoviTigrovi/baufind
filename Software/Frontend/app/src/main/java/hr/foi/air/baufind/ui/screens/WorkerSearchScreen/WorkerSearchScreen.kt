@@ -74,7 +74,7 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
     }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Pronađite poziciju ${skill}")
+        Text("Pronađite pozicije ${skill}")
 
 
         Row(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
