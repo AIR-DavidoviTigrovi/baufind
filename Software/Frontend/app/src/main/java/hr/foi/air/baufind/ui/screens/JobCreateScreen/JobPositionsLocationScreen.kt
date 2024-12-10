@@ -1,5 +1,6 @@
 package hr.foi.air.baufind.ui.screens.JobCreateScreen
 
+import android.util.Log
 import com.google.gson.Gson
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -154,7 +155,8 @@ fun JobPositionsLocationScreen(navController: NavController, jobViewModel: JobVi
                             tokenProvider
                         )
                         if (response.added) {
-                            var positions = gson.toJson(jobViewModel.jobPositions)
+                            var positions = gson.toJson(jobViewModel.getPositionsArray())
+                            Log.d("ugbug12", "Position: $positions")
                             navController.navigate("workersSearchScreen/${positions}")
                         } else {
                             Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()

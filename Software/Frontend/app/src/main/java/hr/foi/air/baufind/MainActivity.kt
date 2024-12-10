@@ -20,6 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.gson.Gson
 import hr.foi.air.baufind.navigation.BottomNavigationBar
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobAddSkillsScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobDetailsScreen
@@ -40,7 +41,7 @@ class MainActivity : ComponentActivity() {
         val tokenProvider = AppTokenProvider(sharedPreferences)
         val jwtToken = sharedPreferences.getString("jwt_token", null)
         val userProfileViewModel = UserProfileViewModel(tokenProvider)
-
+        val gson: Gson = Gson()
         setContent {
             val jobViewModel : JobViewModel = viewModel()
             val navController = rememberNavController()
@@ -50,7 +51,16 @@ class MainActivity : ComponentActivity() {
             BaufindTheme {
                 Scaffold(
                     bottomBar = {
-                        if (currentRoute in listOf("workersSearchScreen")) {
+                        if (currentRoute in listOf("jobPositionsLocationScreen")) {
+                            BottomNavigationBar(navController = navController)
+                        }
+                        if (currentRoute in listOf("jobAddSkillsScreen")) {
+                            BottomNavigationBar(navController = navController)
+                        }
+                        if (currentRoute in listOf("jobDetailsScreen")) {
+                            BottomNavigationBar(navController = navController)
+                        }
+                        if (currentRoute in listOf("myUserProfileScreen")) {
                             BottomNavigationBar(navController = navController)
                         }
                     }
@@ -77,7 +87,12 @@ class MainActivity : ComponentActivity() {
 
                             composable("workersSearchScreen/{position}",
                                 arguments = listOf(navArgument("position") { type = NavType.StringType })
-                                ) { WorkerSearchScreen(navController,tokenProvider,"Vodoinstalater") }
+                                ) { backStackEntry ->
+                                val position = backStackEntry.arguments?.getString("position")
+                                Log.d("ugbug1", "Position: $position")
+                                val deserializedList = gson.fromJson(position, Array<Int>::class.java).toList()
+                                WorkerSearchScreen(navController,tokenProvider,deserializedList)
+                            }
                             composable("jobDetailsScreen") { JobDetailsScreen(navController, jobViewModel) }
                             composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController, jobViewModel, tokenProvider) }
                             composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController, jobViewModel, tokenProvider) }
