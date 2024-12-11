@@ -1,6 +1,7 @@
 package hr.foi.air.baufind.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -18,12 +19,13 @@ fun BottomNavigationBar(navController: NavController) {
 
     val items = listOf(
         BottomNavItem(
-            route = "workersSearchScreen",
-            icon = IconType.Vector(imageVector = Icons.Default.Search),
-            label = "Search"),
+            route = "jobDetailsScreen",
+            icon = IconType.Vector(imageVector = Icons.Default.Add),
+            label = "Add job"),
             BottomNavItem(
             route = "myUserProfileScreen",
-            icon = IconType.Vector(imageVector = Icons.Default.Person), label = "Profile")
+            icon = IconType.Vector(imageVector = Icons.Default.Person), label = "Profile"),
+
 
     )
 
