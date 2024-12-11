@@ -39,7 +39,7 @@ namespace BusinessLogicLayer.Infrastructure {
             }).ToList();
 
             return new GetWorkersResponse() {
-                workerRecords = workers
+                WorkerRecords = workers
             };
 
         }
