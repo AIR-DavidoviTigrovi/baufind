@@ -52,7 +52,7 @@ public class JobController : ControllerBase
 
         if (userIdFromJwt == null)
         {
-            return Unauthorized(new AddJobResponse()
+            return Unauthorized(new GetJobsForCurrentUserResponse()
             {
                 Error = "Ne možete pristupiti tom resursu!"
             });
