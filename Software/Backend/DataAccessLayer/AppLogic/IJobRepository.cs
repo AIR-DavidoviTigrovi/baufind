@@ -21,8 +21,8 @@ namespace DataAccessLayer.AppLogic
         /// Uzima poslove koji traže pozicije koje se daju kroz argument, tj. gdje su te pozicije otvorene.
         /// Pretpostavka je da će working_status_id = 1 biti nekakav "Pozicija otvorena" status tj kad se tek kreira posao
         /// </summary>
-        /// <param name="skill_ids"></param>
+        /// <param name="skillIds"></param>
         /// <returns>Vraća sve poslove koji imaju otvorene pozicije koje smo dali kroz argument funkcije</returns>
-        public List<JobModel> GetJobsWhereSkillPositionsOpen(List<int> skill_ids);
+        public List<JobModel> GetJobsWhereSkillPositionsOpen(List<int> skillIds);
     }
 }

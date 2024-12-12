@@ -12,7 +12,8 @@ namespace DataAccessLayer.Infrastructure
     public class JobRepository : IJobRepository
     {
         private readonly DB _db;
-        public JobRepository(DB db) {
+        public JobRepository(DB db)
+        {
             _db = db;
         }
 
@@ -65,19 +66,21 @@ namespace DataAccessLayer.Infrastructure
         }
         /// <summary>
         /// Uzima poslove koji traže pozicije koje se daju kroz argument, tj. gdje su te pozicije otvorene.
-        /// Pretpostavka je da će working_status_id = 1 biti nekakav "Pozicija otvorena" status tj kad se tek kreira posao
         /// </summary>
-        /// <param name="skill_ids"></param>
+        /// <param name="skillIds"></param>
         /// <returns>Vraća sve poslove koji imaju otvorene pozicije koje smo dali kroz argument funkcije</returns>
-        public List<JobModel> GetJobsWhereSkillPositionsOpen(List<int> skill_ids)
+        public List<JobModel> GetJobsWhereSkillPositionsOpen(List<int> skillIds)
         {
-            string query = @"
+            string skillIdsString = string.Join(",", skillIds);
+
+            string query = $@"
                 SELECT * FROM job
                 WHERE id IN (
                     SELECT job_id FROM working
-                    WHERE skill_id IN @skill_ids
-                    AND working_status_id = 1
+                    WHERE skill_id IN ({skillIdsString})
+                    AND worker_id IS NULL
                 );";
+
             using (var reader = _db.ExecuteReader(query))
             {
                 var result = new List<JobModel>();
@@ -105,4 +108,5 @@ namespace DataAccessLayer.Infrastructure
                 Lng = reader["lng"] as decimal?
             };
         }
+    }
 }
