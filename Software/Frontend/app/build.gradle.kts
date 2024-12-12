@@ -68,5 +68,8 @@ dependencies {
     implementation(libs.androidx.runtime)
 
     implementation(project(":core"))
+
+    // Ako uspijem refleksivnost i DI ovo napraviti na drukčiji način
     implementation(project(":example_map"))
+    implementation(project(":google_map"))
 }
