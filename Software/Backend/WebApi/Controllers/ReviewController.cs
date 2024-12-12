@@ -20,10 +20,10 @@ public class ReviewController : ControllerBase
 
     // GET: /review/{userId}
     [HttpGet("{userId}")]
-    [AllowAnonymous]
+    [Authorize]
     public ActionResult<GetUserReviewsResponse> GetUserReviews(int userId)
     {
-       /* var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
 
         if (userIdFromJwt == null)
         {
@@ -31,7 +31,7 @@ public class ReviewController : ControllerBase
             {
                 Error = "Ne mozete pristupiti tom resursu!"
             });
-        }*/
+        }
         try
         {
             var reviews = _reviewService.GetUserReviews(userId);

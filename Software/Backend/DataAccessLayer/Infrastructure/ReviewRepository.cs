@@ -45,7 +45,7 @@ namespace DataAccessLayer.Infrastructure
                         er.job_id AS ReviewedJobId,
                         j.title AS JobTitle,
                         er.comment AS Comment,
-                        er.rating AS Rating,
+                        CAST(er.rating AS INT) AS Rating,
                         p.picture AS PictureData,
                         erp.picture_id AS PictureId
                     FROM Employer_Review er
@@ -103,7 +103,7 @@ namespace DataAccessLayer.Infrastructure
                             w.job_id AS ReviewedJobId,
                             j.title AS JobTitle,
                             wr.comment AS Comment,
-                            wr.rating AS Rating,
+                            CAST(wr.rating AS INT) AS Rating,
                             p.picture AS PictureData,
                             wrp.picture_id AS PictureId
                         FROM Worker_Review wr
