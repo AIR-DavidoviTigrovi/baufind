@@ -30,13 +30,13 @@ public class JobController : ControllerBase
             });
         }
 
-        var job = _jobService.AddJob(request, userIdFromJwt.Value);
+        var response = _jobService.AddJob(request, userIdFromJwt.Value);
 
-        if (job.Error != null)
+        if (!string.IsNullOrEmpty(response.Error))
         {
-            return BadRequest(job);
+            return BadRequest(response);
         }
 
-        return job;
+        return response;
     }
 }
