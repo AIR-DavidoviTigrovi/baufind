@@ -34,9 +34,28 @@ public class JobController : ControllerBase
 
         if (!string.IsNullOrEmpty(response.Error))
         {
+
             return BadRequest(response);
         }
 
         return response;
     }
+
+    // GET: /jobsForCurrentUser
+    [HttpGet("jobsForCurrentUser")]
+    [Authorize]
+    public ActionResult<List<GetJobForCurrentUserResponse> GetJobsForCurrentUser([FromBody] GetJobForCurrentUserRequest request)
+    {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+
+        if (userIdFromJwt == null)
+        {
+            return Unauthorized();
+        }
+
+        var jobs = _jobService.GetJobsForCurrentUser(userIdFromJwt.Value);
+
+        return jobs;
+    }
+
 }

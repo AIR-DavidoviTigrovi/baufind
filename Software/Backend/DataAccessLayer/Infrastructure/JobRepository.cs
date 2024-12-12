@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer.AppLogic;
 using DataAccessLayer.Models;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,5 +63,46 @@ namespace DataAccessLayer.Infrastructure
                 _db.ExecuteNonQuery(query, parameters);
             }
         }
-    }
+        /// <summary>
+        /// Uzima poslove koji traže pozicije koje se daju kroz argument, tj. gdje su te pozicije otvorene.
+        /// Pretpostavka je da će working_status_id = 1 biti nekakav "Pozicija otvorena" status tj kad se tek kreira posao
+        /// </summary>
+        /// <param name="skill_ids"></param>
+        /// <returns>Vraća sve poslove koji imaju otvorene pozicije koje smo dali kroz argument funkcije</returns>
+        public List<JobModel> GetJobsWhereSkillPositionsOpen(List<int> skill_ids)
+        {
+            string query = @"
+                SELECT * FROM job
+                WHERE id IN (
+                    SELECT job_id FROM working
+                    WHERE skill_id IN @skill_ids
+                    AND working_status_id = 1
+                );";
+            using (var reader = _db.ExecuteReader(query))
+            {
+                var result = new List<JobModel>();
+                while (reader.Read())
+                {
+                    result.Add(JobModelFromReader(reader));
+                }
+
+                return result;
+            }
+        }
+
+        private JobModel JobModelFromReader(SqlDataReader reader)
+        {
+            return new JobModel()
+            {
+                Id = (int)reader["id"],
+                Employer_id = (int)reader["employer_id"],
+                Job_status_id = (int)reader["job_status_id"],
+                Title = (string)reader["title"],
+                Description = (string)reader["description"],
+                Allow_worker_invite = (bool)reader["allow_worker_invite"],
+                Location = (string)reader["location"],
+                Lat = reader["lat"] as decimal?,
+                Lng = reader["lng"] as decimal?
+            };
+        }
 }

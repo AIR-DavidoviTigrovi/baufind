@@ -17,5 +17,12 @@ namespace DataAccessLayer.AppLogic
         /// <param name="skills"> lista ID-ova</param>
         /// <param name="job_id"> prenosi se od JWT-a </param>
         public void CreatePositionsForJob(List<int> skills, int job_id);
+        /// <summary>
+        /// Uzima poslove koji traže pozicije koje se daju kroz argument, tj. gdje su te pozicije otvorene.
+        /// Pretpostavka je da će working_status_id = 1 biti nekakav "Pozicija otvorena" status tj kad se tek kreira posao
+        /// </summary>
+        /// <param name="skill_ids"></param>
+        /// <returns>Vraća sve poslove koji imaju otvorene pozicije koje smo dali kroz argument funkcije</returns>
+        public List<JobModel> GetJobsWhereSkillPositionsOpen(List<int> skill_ids);
     }
 }
