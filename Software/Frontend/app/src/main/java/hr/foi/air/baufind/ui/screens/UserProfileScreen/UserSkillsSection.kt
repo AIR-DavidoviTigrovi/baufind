@@ -24,7 +24,7 @@ import hr.foi.air.baufind.ui.components.Skill
 
 @Composable
 fun UserSkillSection(skills : List<Skill>){
-    if (skills.isNotEmpty()) { // Check if the list is not empty
+    if (skills.isNotEmpty()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
