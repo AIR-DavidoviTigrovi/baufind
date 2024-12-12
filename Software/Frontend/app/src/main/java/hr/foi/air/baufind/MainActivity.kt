@@ -93,7 +93,6 @@ class MainActivity : ComponentActivity() {
                                 arguments = listOf(navArgument("position") { type = NavType.StringType })
                                 ) { backStackEntry ->
                                 val position = backStackEntry.arguments?.getString("position")
-                                Log.d("ugbug1", "Position: $position")
                                 val deserializedList = gson.fromJson(position, Array<Int>::class.java).toList()
                                 WorkerSearchScreen(navController,tokenProvider,deserializedList)
                             }
