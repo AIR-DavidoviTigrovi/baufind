@@ -5,14 +5,16 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import hr.foi.air.baufind.service.SkillsService.SkillsService
 import hr.foi.air.baufind.service.WorkerService.WorkerSkillService
 import hr.foi.air.baufind.ws.model.Worker
+import hr.foi.air.baufind.ws.network.SkillService
 import hr.foi.air.baufind.ws.network.TokenProvider
 import hr.foi.air.baufind.ws.request.WorkersSkillBody
 
 
 class WorkerSearchViewModel() : ViewModel() {
-    val skill : MutableState<String> = mutableStateOf("")
+    val skill : MutableState<List<String>> = mutableStateOf(emptyList())
     val tokenProvider: MutableState<TokenProvider?> = mutableStateOf(null)
     val isExpandedL: MutableState<Boolean> = mutableStateOf(false)
     val isExpandedR: MutableState<Boolean> = mutableStateOf(false)
@@ -28,6 +30,17 @@ class WorkerSearchViewModel() : ViewModel() {
     val service = WorkerSkillService()
     val workers: MutableState<List<Worker>> = mutableStateOf(emptyList())
     val filteredWorkers: MutableState<List<Worker>> = mutableStateOf(emptyList())
+    val skillService = tokenProvider.value?.let { SkillsService(it) }
+    suspend fun getAllSkills (skills: List<Int>){
+        var _skills = skillService?.fetchAllSkills()
+        if (_skills != null) {
+            for (i in _skills){
+                if(skills.contains(i.id)){
+                    skill.value += i.title
+                }
+            }
+        }
+    }
     //Funkcija za filtriranje radnika
     fun updateFilteredWorkersL(option: String) {
         selectedItemL.value = option
@@ -50,7 +63,7 @@ class WorkerSearchViewModel() : ViewModel() {
     }
     suspend fun loadWorkers() {
         Log.e("tokenss", tokenProvider.value.toString())
-        workers.value =  service.getWorkersBySkill(workersSkillBody = WorkersSkillBody(skill.value),
+        workers.value =  service.getWorkersBySkill(workersSkillBody = WorkersSkillBody(skill.value.toString()),
             tokenProvider = tokenProvider.value!!)
         Log.e("getWorkersBySkill", workers.value.toString())
         filteredWorkers.value = workers.value

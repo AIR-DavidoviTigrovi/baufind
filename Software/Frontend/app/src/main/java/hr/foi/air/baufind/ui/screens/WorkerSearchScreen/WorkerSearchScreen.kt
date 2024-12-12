@@ -49,12 +49,15 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider,skill: String) {
+fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider,skills: List<Int>) {
     val viewModel: WorkerSearchViewModel = viewModel()
     viewModel.tokenProvider.value = tokenProvider
     //Logika za dropdown meni
     /// Preporučeno je za manji broj opcija koristiti chip
-    viewModel.skill.value = skill
+    LaunchedEffect(Unit) {
+        viewModel.getAllSkills(skills)
+    }
+    var skill by viewModel.skill
     var isLoading by remember { mutableStateOf(true) }
     val isExpandedL by viewModel.isExpandedL
     val isExpandedR by viewModel.isExpandedR
@@ -74,7 +77,7 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
     }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Pronađite poziciju ${skill}")
+        Text("Pronađite pozicije ${skill}")
 
 
         Row(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -212,5 +215,5 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
 @Composable
 fun WorkerSearchScreenPreview() {
     val navController = rememberNavController()
-    WorkerSearchScreen(navController,tokenProvider = object : TokenProvider { override fun getToken(): String? { return null }},"")
+    WorkerSearchScreen(navController,tokenProvider = object : TokenProvider { override fun getToken(): String? { return null }},listOf(1,2))
 }
