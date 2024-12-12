@@ -81,7 +81,7 @@ namespace BusinessLogicLayer.Infrastructure
             }
             var skillIds = query.Select(x => x.Id).ToList();
 
-            var newQuery = _jobRepository.GetJobsWhereSkillPositionsOpen(skillIds);
+            var newQuery = _jobRepository.GetJobsWhereSkillPositionsOpen(skillIds, userId);
             if (newQuery == null || !newQuery.Any())
             {
                 return new GetJobsForCurrentUserResponse()

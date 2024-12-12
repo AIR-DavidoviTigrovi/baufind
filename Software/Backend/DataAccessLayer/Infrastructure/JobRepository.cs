@@ -66,10 +66,11 @@ namespace DataAccessLayer.Infrastructure
         }
         /// <summary>
         /// Uzima poslove koji traže pozicije koje se daju kroz argument, tj. gdje su te pozicije otvorene.
+        /// Ne uzima poslove koji je korisnik koji traži poslove postavio
         /// </summary>
         /// <param name="skillIds"></param>
         /// <returns>Vraća sve poslove koji imaju otvorene pozicije koje smo dali kroz argument funkcije</returns>
-        public List<JobModel> GetJobsWhereSkillPositionsOpen(List<int> skillIds)
+        public List<JobModel> GetJobsWhereSkillPositionsOpen(List<int> skillIds, int userId)
         {
             string skillIdsString = string.Join(",", skillIds);
 
@@ -79,9 +80,15 @@ namespace DataAccessLayer.Infrastructure
                     SELECT job_id FROM working
                     WHERE skill_id IN ({skillIdsString})
                     AND worker_id IS NULL
-                );";
+                )
+                AND employer_id != @userId;";
 
-            using (var reader = _db.ExecuteReader(query))
+            var parameters = new Dictionary<string, object>
+            {
+                { "@userId", userId }
+            };
+
+            using (var reader = _db.ExecuteReader(query, parameters))
             {
                 var result = new List<JobModel>();
                 while (reader.Read())
