@@ -89,14 +89,14 @@ namespace BusinessLogicLayer.Infrastructure
                     Error = "Nema poslova za vaše vještine!"
                 };
             }
-            var jobs = newQuery.Select(x => new JobRecord()
+            var jobs = newQuery.Select(x => new JobSearchModel()
             {
                 Id = x.Id,
                 Title = x.Title,
                 Description = x.Description,
                 Allow_worker_invite = x.Allow_worker_invite,
-                Latitude = x.Lat,
-                Longitude = x.Lng,
+                Lat = x.Lat,
+                Lng = x.Lng,
                 Location = x.Location,
                 Job_status_id = x.Job_status_id,
                 Employer_id = x.Employer_id

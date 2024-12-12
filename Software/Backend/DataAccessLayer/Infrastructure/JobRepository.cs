@@ -70,7 +70,7 @@ namespace DataAccessLayer.Infrastructure
         /// </summary>
         /// <param name="skillIds"></param>
         /// <returns>Vraća sve poslove koji imaju otvorene pozicije koje smo dali kroz argument funkcije</returns>
-        public List<JobModel> GetJobsWhereSkillPositionsOpen(List<int> skillIds, int userId)
+        public List<JobSearchModel> GetJobsWhereSkillPositionsOpen(List<int> skillIds, int userId)
         {
             string skillIdsString = string.Join(",", skillIds);
 
@@ -90,7 +90,7 @@ namespace DataAccessLayer.Infrastructure
 
             using (var reader = _db.ExecuteReader(query, parameters))
             {
-                var result = new List<JobModel>();
+                var result = new List<JobSearchModel>();
                 while (reader.Read())
                 {
                     result.Add(JobModelFromReader(reader));
@@ -100,9 +100,9 @@ namespace DataAccessLayer.Infrastructure
             }
         }
 
-        private JobModel JobModelFromReader(SqlDataReader reader)
+        private JobSearchModel JobModelFromReader(SqlDataReader reader)
         {
-            return new JobModel()
+            return new JobSearchModel()
             {
                 Id = (int)reader["id"],
                 Employer_id = (int)reader["employer_id"],
@@ -150,11 +150,12 @@ namespace DataAccessLayer.Infrastructure
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns>Vještine za posao</returns>
-        public List<int> GetSkillsForJobWhereSkillPositionsOpen(int jobId)
+        public List<SkillModel> GetSkillsForJobWhereSkillPositionsOpen(int jobId)
         {
-            string query = $@"
-                SELECT skill_id FROM working
-                WHERE job_id = @jobId;";
+            string query = @"
+                SELECT s.id, s.title FROM working w
+                INNER JOIN skill s ON w.skill_id = s.id
+                WHERE w.job_id = @jobId;";
 
             var parameters = new Dictionary<string, object>
             {
@@ -163,13 +164,18 @@ namespace DataAccessLayer.Infrastructure
 
             using (var reader = _db.ExecuteReader(query, parameters))
             {
-                var skills = new List<int>();
+                var skills = new List<SkillModel>();
                 while (reader.Read())
                 {
-                    skills.Add((int)reader["skill_id"]);
+                    skills.Add(new SkillModel
+                    {
+                        Id = (int)reader["id"],
+                        Title = (string)reader["title"]
+                    });
                 }
                 return skills;
             }
         }
+
     }
 }
