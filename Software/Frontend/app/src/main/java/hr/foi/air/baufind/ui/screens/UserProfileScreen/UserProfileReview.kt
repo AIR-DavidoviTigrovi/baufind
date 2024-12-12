@@ -90,10 +90,13 @@ fun UserProfileReview(
                 )
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
-
             Column(modifier = Modifier.weight(2f)) {
-                ratings.forEachIndexed { index, percentage ->
+                ratings.forEachIndexed { index, count ->
+                    val percentage = if (totalReviews > 0) {
+                        (count.toFloat() / totalReviews) * 100
+                    } else {
+                        0f
+                    }
                     RatingProgressBar(
                         label = (5 - index).toString(),
                         percentage = percentage
@@ -105,7 +108,7 @@ fun UserProfileReview(
 }
 
 @Composable
-fun RatingProgressBar(label: String, percentage: Int) {
+fun RatingProgressBar(label: String, percentage: Float) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -132,7 +135,7 @@ fun RatingProgressBar(label: String, percentage: Int) {
         Spacer(modifier = Modifier.width(8.dp))
 
         Text(
-            text = "$percentage%",
+            text = "${percentage.toInt()}%",
             style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface)
         )
     }
