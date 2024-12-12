@@ -195,7 +195,7 @@ fun userProfileScreen(
                         averageRating = it.averageRating,
                         totalReviews = it.totalReviews,
                         ratings = it.ratings,
-                        onReviewsClick = { /* Navigate to Reviews Screen */ }
+                        onReviewsClick = { navController.navigate("reviewsScreen/${profile.id}") }
                     )
                 }
             }

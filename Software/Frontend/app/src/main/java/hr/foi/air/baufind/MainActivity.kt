@@ -3,7 +3,6 @@ package hr.foi.air.baufind
 import RegistrationScreen
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -26,6 +25,7 @@ import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobViewModel
 import hr.foi.air.baufind.ui.screens.LoginScreen.LoginScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.EditProfileScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.UserProfileViewModel
+import hr.foi.air.baufind.ui.screens.UserProfileScreen.ReviewsScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.userProfileScreen
 import hr.foi.air.baufind.ui.screens.WorkerSearchScreen.WorkerSearchScreen
 import hr.foi.air.baufind.ui.theme.BaufindTheme
@@ -71,6 +71,10 @@ class MainActivity : ComponentActivity() {
 
                             composable("myUserProfileScreen") { userProfileScreen(navController,this@MainActivity, tokenProvider, userProfileViewModel) }
                             composable("editUserProfileScreen") { EditProfileScreen(navController, this@MainActivity, tokenProvider, userProfileViewModel) }
+                            composable("reviewsScreen/{userId}") { backStackEntry ->
+                                val userId = backStackEntry.arguments?.getString("userId")?.toInt() ?: 0
+                                ReviewsScreen(navController, userId, tokenProvider)
+                            }
 
 
                             composable("workersSearchScreen") { WorkerSearchScreen(navController,tokenProvider,"Vodoinstalater") }
