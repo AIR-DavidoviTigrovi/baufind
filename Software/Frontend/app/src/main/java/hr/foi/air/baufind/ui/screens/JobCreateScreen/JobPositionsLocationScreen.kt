@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.R
+import hr.foi.air.baufind.core.map.MapProvider
 import hr.foi.air.baufind.service.JobService.JobDao
 import hr.foi.air.baufind.service.JobService.JobService
 import hr.foi.air.baufind.ui.components.PositionAndNumber
@@ -38,7 +39,12 @@ import hr.foi.air.baufind.ws.network.TokenProvider
 import kotlinx.coroutines.launch
 
 @Composable
-fun JobPositionsLocationScreen(navController: NavController, jobViewModel: JobViewModel, tokenProvider: TokenProvider){
+fun JobPositionsLocationScreen(
+    navController: NavController,
+    jobViewModel: JobViewModel,
+    tokenProvider: TokenProvider,
+    mapProvider: MapProvider
+){
     jobViewModel.tokenProvider.value = tokenProvider
     val coroutineScope = rememberCoroutineScope()
 
@@ -110,31 +116,34 @@ fun JobPositionsLocationScreen(navController: NavController, jobViewModel: JobVi
                 navController.navigate("jobAddSkillsScreen")
             }
         )
-        Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = "Lokacija posla",
-            modifier = Modifier.align(Alignment.Start),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
+//        Spacer(modifier = Modifier.height(24.dp))
+//        Text(
+//            text = "Lokacija posla",
+//            modifier = Modifier.align(Alignment.Start),
+//            fontSize = 20.sp,
+//            fontWeight = FontWeight.Bold
+//        )
+//        Spacer(modifier = Modifier.height(24.dp))
+//        PrimaryTextField(
+//            value = latText,
+//            onValueChange = { latText = it },
+//            label = "Lat",
+//            modifier = Modifier.fillMaxWidth(),
+//            isError = latError.isNotEmpty(),
+//            errorMessage = latError
+//        )
+//        PrimaryTextField(
+//            value = longText,
+//            onValueChange = { longText = it },
+//            label = "Lng",
+//            modifier = Modifier.fillMaxWidth(),
+//            isError = longError.isNotEmpty(),
+//            errorMessage = longError
+//        )
+//        Spacer(modifier = Modifier.height(24.dp))
+        mapProvider.MapScreen(
+            modifier = Modifier
         )
-        Spacer(modifier = Modifier.height(24.dp))
-        PrimaryTextField(
-            value = latText,
-            onValueChange = { latText = it },
-            label = "Lat",
-            modifier = Modifier.fillMaxWidth(),
-            isError = latError.isNotEmpty(),
-            errorMessage = latError
-        )
-        PrimaryTextField(
-            value = longText,
-            onValueChange = { longText = it },
-            label = "Lng",
-            modifier = Modifier.fillMaxWidth(),
-            isError = longError.isNotEmpty(),
-            errorMessage = longError
-        )
-        Spacer(modifier = Modifier.height(24.dp))
         PrimaryButton(
             text = "Postavi oglas",
             onClick = {
@@ -172,5 +181,13 @@ fun JobPositionsLocationScreen(navController: NavController, jobViewModel: JobVi
 @Composable
 fun JobPositionsLocationScreenPreview() {
     val navController = rememberNavController()
-    JobPositionsLocationScreen(navController, JobViewModel(), object : TokenProvider { override fun getToken(): String? { return null } })
+    JobPositionsLocationScreen(
+        navController,
+        JobViewModel(),
+        object : TokenProvider { override fun getToken(): String? { return null } },
+        object : MapProvider {
+            @Composable
+            override fun MapScreen(modifier: Modifier) { }
+        }
+    )
 }

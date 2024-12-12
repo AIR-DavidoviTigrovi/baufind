@@ -6,6 +6,6 @@ import androidx.compose.ui.Modifier
 interface MapProvider {
     @Composable
     fun MapScreen(
-        modifier: Modifier = Modifier
+        modifier: Modifier
     )
 }
