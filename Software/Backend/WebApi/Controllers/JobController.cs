@@ -1,5 +1,7 @@
+using Azure;
 using BusinessLogicLayer.AppLogic.Jobs;
 using BusinessLogicLayer.AppLogic.Jobs.AddJob;
+using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,17 +46,23 @@ public class JobController : ControllerBase
     // GET: /jobsForCurrentUser
     [HttpGet("jobsForCurrentUser")]
     [Authorize]
-    public ActionResult<List<GetJobForCurrentUserResponse> GetJobsForCurrentUser([FromBody] GetJobForCurrentUserRequest request)
+    public ActionResult<GetJobsForCurrentUserResponse> GetJobsForCurrentUser()
     {
         var userIdFromJwt = HttpContext.Items["UserId"] as int?;
 
         if (userIdFromJwt == null)
         {
-            return Unauthorized();
+            return Unauthorized(new AddJobResponse()
+            {
+                Error = "Ne možete pristupiti tom resursu!"
+            });
         }
 
         var jobs = _jobService.GetJobsForCurrentUser(userIdFromJwt.Value);
-
+        if (!string.IsNullOrEmpty(jobs.Error))
+        {
+            return BadRequest(jobs);
+        }
         return jobs;
     }
 
