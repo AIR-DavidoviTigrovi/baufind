@@ -7,18 +7,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -35,7 +32,6 @@ import hr.foi.air.baufind.service.JobService.JobDao
 import hr.foi.air.baufind.service.JobService.JobService
 import hr.foi.air.baufind.ui.components.PositionAndNumber
 import hr.foi.air.baufind.ui.components.PrimaryButton
-import hr.foi.air.baufind.ui.components.PrimaryTextField
 import hr.foi.air.baufind.ws.network.TokenProvider
 import kotlinx.coroutines.launch
 
@@ -52,10 +48,10 @@ fun JobPositionsLocationScreen(
     var context = LocalContext.current
     val gson = Gson()
 
-    var locationInformation = LocationInformation(0.0, 0.0)
+    var locationInformation = remember { mutableStateOf(LocationInformation(0.0, 0.0)) }
 
     fun validateInputs(): Boolean {
-        if (!locationInformation.isValid) {
+        if (!locationInformation.value.isValid) {
             Toast.makeText(context, "Morate unijeti ispravnu lokaciju", Toast.LENGTH_SHORT).show()
             return false
         }
@@ -67,9 +63,10 @@ fun JobPositionsLocationScreen(
         return true
     }
 
-    fun updateCoordinates() {
-        jobViewModel.lat.doubleValue = locationInformation.lat
-        jobViewModel.long.doubleValue = locationInformation.long
+    fun updateLocation() {
+        jobViewModel.location.value = locationInformation.value.location
+        jobViewModel.lat.doubleValue = locationInformation.value.lat
+        jobViewModel.long.doubleValue = locationInformation.value.long
     }
 
     Column(
@@ -114,14 +111,14 @@ fun JobPositionsLocationScreen(
         Spacer(modifier = Modifier.height(24.dp))
         mapProvider.MapScreen(
             modifier = Modifier,
-            locationInformation = locationInformation
+            locationInformation = locationInformation.value
         )
         Spacer(modifier = Modifier.height(24.dp))
         PrimaryButton(
             text = "Postavi oglas",
             onClick = {
                 if (validateInputs()) {
-                    updateCoordinates()
+                    updateLocation()
                     val service = JobService()
                     coroutineScope.launch{
                         val response = service.addJobAsync(
@@ -132,7 +129,8 @@ fun JobPositionsLocationScreen(
                                 positions = jobViewModel.getPositionsArray(),
                                 images = jobViewModel.getImagesAsByteArrayList(context),
                                 lat = jobViewModel.lat.doubleValue,
-                                long = jobViewModel.long.doubleValue
+                                long = jobViewModel.long.doubleValue,
+                                location = jobViewModel.location.value
                             ),
                             tokenProvider
                         )

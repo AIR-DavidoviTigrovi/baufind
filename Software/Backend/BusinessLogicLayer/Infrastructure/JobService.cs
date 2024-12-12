@@ -44,7 +44,7 @@ namespace BusinessLogicLayer.Infrastructure
                 Lat = request.Latitude,
                 Lng = request.Longitude,
                 Employer_id = user_id,
-                Location = "Fiksno zasad",
+                Location = request.Location,
                 Job_status_id = 1
             };
 

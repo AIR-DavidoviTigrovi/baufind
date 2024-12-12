@@ -1,6 +1,7 @@
 package hr.foi.air.baufind.example_map
 
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,12 +24,43 @@ class ExampleMapProvider : MapProvider {
         modifier: Modifier,
         locationInformation: LocationInformation
     ) {
-        var latText by remember { mutableStateOf("") }
-        var longText by remember { mutableStateOf("") }
+        var locationText by remember { mutableStateOf("") }
+        var latText by remember { mutableStateOf("0.0") }
+        var longText by remember { mutableStateOf("0.0") }
 
+        var locationError by remember { mutableStateOf("") }
         var latError by remember { mutableStateOf("") }
         var longError by remember { mutableStateOf("") }
 
+        TextField(
+            value = locationText,
+            onValueChange = {
+                locationText = it
+                locationInformation.location = locationText
+                if (locationText != "") {
+                    locationError = ""
+                    locationInformation.isValid = (latError == "" && longError == "")
+                } else {
+                    locationError = "Morate unijeti lokaciju"
+                    locationInformation.isValid = true
+                }
+            },
+            label = { Text(text = "Lokacija") },
+            isError = (locationError != ""),
+            supportingText = {
+                if (locationError != "") {
+                    Text(locationError, color = Color.Red)
+                }
+            },
+            colors = TextFieldDefaults.colors(
+                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                errorContainerColor = MaterialTheme.colorScheme.errorContainer
+            ),
+            modifier = modifier.fillMaxWidth(),
+            singleLine = true
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         TextField(
             value = latText,
             onValueChange = {
@@ -37,7 +69,7 @@ class ExampleMapProvider : MapProvider {
                 if (lat != null) {
                     locationInformation.lat = lat
                     latError = ""
-                    locationInformation.isValid = (longError == "")
+                    locationInformation.isValid = (longError == "" && locationError == "" && locationText != "")
                 } else {
                     locationInformation.lat = 0.0
                     locationInformation.isValid = false
@@ -56,7 +88,8 @@ class ExampleMapProvider : MapProvider {
                 focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                 errorContainerColor = MaterialTheme.colorScheme.errorContainer
             ),
-            modifier = modifier
+            modifier = modifier.fillMaxWidth(),
+            singleLine = true
         )
         Spacer(modifier = Modifier.height(16.dp))
         TextField(
@@ -67,7 +100,7 @@ class ExampleMapProvider : MapProvider {
                 if (long != null) {
                     locationInformation.long = long
                     longError = ""
-                    locationInformation.isValid = (latError == "")
+                    locationInformation.isValid = (latError == "" && locationError == "" && locationText != "")
                 } else {
                     locationInformation.long = 0.0
                     locationInformation.isValid = false
@@ -86,7 +119,8 @@ class ExampleMapProvider : MapProvider {
                 focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                 errorContainerColor = MaterialTheme.colorScheme.errorContainer
             ),
-            modifier = modifier
+            modifier = modifier.fillMaxWidth(),
+            singleLine = true
         )
     }
 }
