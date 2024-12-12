@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -269,11 +270,13 @@ fun ReviewItem(review: Review) {
                     modifier = Modifier.fillMaxSize()
                 )
             } else {
-                Text(
-                    text = "N/A",
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.align(Alignment.Center)
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "Placeholder",
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(40.dp),
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                 )
             }
         }
