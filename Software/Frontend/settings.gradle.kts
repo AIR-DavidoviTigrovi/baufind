@@ -22,3 +22,5 @@ dependencyResolutionManagement {
 rootProject.name = "Baufind"
 include(":app")
 include(":ws")
+include(":core")
+include(":example_map")
