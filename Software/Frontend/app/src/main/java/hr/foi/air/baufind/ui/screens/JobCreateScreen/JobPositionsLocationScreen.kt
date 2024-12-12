@@ -30,6 +30,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.R
 import hr.foi.air.baufind.core.map.MapProvider
+import hr.foi.air.baufind.core.map.models.LocationInformation
 import hr.foi.air.baufind.service.JobService.JobDao
 import hr.foi.air.baufind.service.JobService.JobService
 import hr.foi.air.baufind.ui.components.PositionAndNumber
@@ -48,39 +49,27 @@ fun JobPositionsLocationScreen(
     jobViewModel.tokenProvider.value = tokenProvider
     val coroutineScope = rememberCoroutineScope()
 
-    var latError by remember { mutableStateOf("") }
-    var longError by remember { mutableStateOf("") }
     var context = LocalContext.current
     val gson = Gson()
-    var latText by remember { mutableStateOf("") }
-    var longText by remember { mutableStateOf("") }
+
+    var locationInformation = LocationInformation(0.0, 0.0)
 
     fun validateInputs(): Boolean {
-        var valid = true
-
-        latError = ""
-        longError = ""
-
-        if (latText.isEmpty() || latText.toDoubleOrNull() == null) {
-            latError = "Morate unijeti validan lat"
-            valid = false
-        }
-        if (longText.isEmpty() || longText.toDoubleOrNull() == null) {
-            longError = "Morate unijeti validan long"
-            valid = false
+        if (!locationInformation.isValid) {
+            Toast.makeText(context, "Morate unijeti ispravnu lokaciju", Toast.LENGTH_SHORT).show()
+            return false
         }
         if (jobViewModel.jobPositions.isEmpty()) {
             Toast.makeText(context, "Morate unijeti bar jednu poziciju", Toast.LENGTH_SHORT).show()
-            valid = false
+            return false
         }
-        return valid
+
+        return true
     }
 
     fun updateCoordinates() {
-        val latValue = latText.toDoubleOrNull() ?: 0.0
-        val longValue = longText.toDoubleOrNull() ?: 0.0
-        jobViewModel.lat.doubleValue = latValue
-        jobViewModel.long.doubleValue = longValue
+        jobViewModel.lat.doubleValue = locationInformation.lat
+        jobViewModel.long.doubleValue = locationInformation.long
     }
 
     Column(
@@ -116,34 +105,18 @@ fun JobPositionsLocationScreen(
                 navController.navigate("jobAddSkillsScreen")
             }
         )
-//        Spacer(modifier = Modifier.height(24.dp))
-//        Text(
-//            text = "Lokacija posla",
-//            modifier = Modifier.align(Alignment.Start),
-//            fontSize = 20.sp,
-//            fontWeight = FontWeight.Bold
-//        )
-//        Spacer(modifier = Modifier.height(24.dp))
-//        PrimaryTextField(
-//            value = latText,
-//            onValueChange = { latText = it },
-//            label = "Lat",
-//            modifier = Modifier.fillMaxWidth(),
-//            isError = latError.isNotEmpty(),
-//            errorMessage = latError
-//        )
-//        PrimaryTextField(
-//            value = longText,
-//            onValueChange = { longText = it },
-//            label = "Lng",
-//            modifier = Modifier.fillMaxWidth(),
-//            isError = longError.isNotEmpty(),
-//            errorMessage = longError
-//        )
-//        Spacer(modifier = Modifier.height(24.dp))
-        mapProvider.MapScreen(
-            modifier = Modifier
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = "Lokacija posla",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
         )
+        Spacer(modifier = Modifier.height(24.dp))
+        mapProvider.MapScreen(
+            modifier = Modifier,
+            locationInformation = locationInformation
+        )
+        Spacer(modifier = Modifier.height(24.dp))
         PrimaryButton(
             text = "Postavi oglas",
             onClick = {
@@ -187,7 +160,10 @@ fun JobPositionsLocationScreenPreview() {
         object : TokenProvider { override fun getToken(): String? { return null } },
         object : MapProvider {
             @Composable
-            override fun MapScreen(modifier: Modifier) { }
+            override fun MapScreen(
+                modifier: Modifier,
+                locationInformation: LocationInformation
+            ) { }
         }
     )
 }
