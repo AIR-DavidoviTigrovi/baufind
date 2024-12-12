@@ -108,5 +108,61 @@ namespace DataAccessLayer.Infrastructure
                 Lng = reader["lng"] as decimal?
             };
         }
+
+
+        /// <summary>
+        /// Dohvaća slike za posao čiji je ID dan
+        /// </summary>
+        /// <param name="jobIds"></param>
+        /// <returns>Slike za posao</returns>
+        public List<byte[]> GetPicturesForJobWhereSkillPositionsOpen(int jobId)
+        {
+            string query = $@"
+                SELECT p.picture FROM job j
+                INNER JOIN job_picture jp ON j.id = jp.job_id
+                INNER JOIN picture p ON jp.picture_id = p.id
+                WHERE j.id = @jobId;";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@jobId", jobId }
+            };
+
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                var pictures = new List<byte[]>();
+                while (reader.Read())
+                {
+                    pictures.Add((byte[])reader["picture"]);
+                }
+                return pictures;
+            }
+        }
+        /// <summary>
+        /// Dohvaća sve vještine za posao
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns>Vještine za posao</returns>
+        public List<int> GetSkillsForJobWhereSkillPositionsOpen(int jobId)
+        {
+            string query = $@"
+                SELECT skill_id FROM working
+                WHERE job_id = @jobId;";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@jobId", jobId }
+            };
+
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                var skills = new List<int>();
+                while (reader.Read())
+                {
+                    skills.Add((int)reader["skill_id"]);
+                }
+                return skills;
+            }
+        }
     }
 }

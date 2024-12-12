@@ -102,6 +102,17 @@ namespace BusinessLogicLayer.Infrastructure
                 Employer_id = x.Employer_id
             }).ToList();
 
+            foreach (var job in jobs)
+            {
+                job.Skills = _jobRepository.GetSkillsForJobWhereSkillPositionsOpen(job.Id);
+            }
+
+            foreach (var job in jobs)
+            {
+                job.Pictures = _jobRepository.GetPicturesForJobWhereSkillPositionsOpen(job.Id);
+            }
+
+
             return new GetJobsForCurrentUserResponse()
             {
                 Jobs = jobs
