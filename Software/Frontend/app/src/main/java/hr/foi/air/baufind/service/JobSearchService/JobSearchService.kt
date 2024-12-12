@@ -28,6 +28,6 @@ class JobSearchService() {
                 "Pogreska pri fetchanju",
                 listOf()
             )
-            }
+        }
     }
 }
