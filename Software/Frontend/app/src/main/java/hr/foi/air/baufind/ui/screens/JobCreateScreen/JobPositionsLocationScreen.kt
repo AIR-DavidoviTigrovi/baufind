@@ -50,7 +50,7 @@ fun JobPositionsLocationScreen(
     var context = LocalContext.current
     val gson = Gson()
 
-    var locationInformation = remember { mutableStateOf(LocationInformation(0.0, 0.0)) }
+    var locationInformation = remember { mutableStateOf(LocationInformation(45.33295293903444, 17.702489909850566)) }
 
     fun validateInputs(): Boolean {
         if (!locationInformation.value.isValid) {
@@ -108,6 +108,7 @@ fun JobPositionsLocationScreen(
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = "Lokacija posla",
+            modifier = Modifier.align(Alignment.Start),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
