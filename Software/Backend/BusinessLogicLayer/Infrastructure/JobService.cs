@@ -1,4 +1,4 @@
-﻿using BusinessLogicLayer.AppLogic;
+using BusinessLogicLayer.AppLogic;
 using BusinessLogicLayer.AppLogic.Jobs;
 using BusinessLogicLayer.AppLogic.Jobs.AddJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
@@ -47,8 +47,8 @@ namespace BusinessLogicLayer.Infrastructure
                 Allow_worker_invite = request.Allow_worker_invite,
                 Lat = request.Latitude,
                 Lng = request.Longitude,
+                Location = request.Location,
                 Employer_id = userId,
-                Location = "Fiksno zasad",
                 Job_status_id = 1
             };
 

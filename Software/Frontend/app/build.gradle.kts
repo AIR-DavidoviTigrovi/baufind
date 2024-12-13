@@ -37,6 +37,9 @@ android {
     buildFeatures {
         compose = true
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeBom.get()
+    }
 }
 
 dependencies {
@@ -62,4 +65,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation("io.coil-kt.coil3:coil-compose:3.0.4")
+    implementation(libs.androidx.runtime)
+
+    implementation(project(":core"))
+
+    // Ako uspijem refleksivnost i DI ovo napraviti na drukčiji način
+    implementation(project(":example_map"))
+    implementation(project(":google_map"))
 }

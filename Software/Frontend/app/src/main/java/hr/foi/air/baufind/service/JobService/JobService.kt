@@ -18,7 +18,7 @@ class JobService(){
             pictures = jobDao.images.map{ Base64.getEncoder().encodeToString(it)},
             latitude = jobDao.lat,
             longitude = jobDao.long,
-            location = "Fiksni zasad"
+            location = jobDao.location
         )
 
         Log.d("jobBody", jobBody.toString())

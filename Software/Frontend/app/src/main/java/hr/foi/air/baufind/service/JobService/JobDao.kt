@@ -7,5 +7,6 @@ data class JobDao(
     val positions : List<Int>,
     val images : List<ByteArray>,
     val lat : Double,
-    val long : Double
+    val long : Double,
+    val location : String
 )

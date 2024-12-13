@@ -26,6 +26,7 @@ class JobViewModel : ViewModel(){
     val jobPositions = mutableStateListOf<JobPosition>()
     val lat = mutableDoubleStateOf(0.0)
     val long = mutableDoubleStateOf(0.0)
+    val location = mutableStateOf("")
     val tokenProvider: MutableState<TokenProvider?> = mutableStateOf(null)
 
     fun getImagesAsByteArrayList(context: Context): List<ByteArray> {
