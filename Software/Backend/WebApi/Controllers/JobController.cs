@@ -59,10 +59,7 @@ public class JobController : ControllerBase
         }
 
         var jobs = _jobService.GetJobsForCurrentUser(userIdFromJwt.Value);
-        if (!string.IsNullOrEmpty(jobs.Error))
-        {
-            return BadRequest(jobs);
-        }
+        
         return jobs;
     }
 
