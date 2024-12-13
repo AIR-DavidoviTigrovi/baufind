@@ -53,10 +53,7 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
     val viewModel: WorkerSearchViewModel = viewModel()
     viewModel.tokenProvider.value = tokenProvider
     //Logika za dropdown meni
-    /// Preporučeno je za manji broj opcija koristiti chip
-    LaunchedEffect(Unit) {
-        viewModel.getAllSkills(skills)
-    }
+    /// Preporučeno je za manji broj opcija koristiti chip6
     var skill by viewModel.skill
     var isLoading by remember { mutableStateOf(true) }
     val isExpandedL by viewModel.isExpandedL
@@ -72,6 +69,7 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
     val coroutine = rememberCoroutineScope()
     LaunchedEffect(Unit) {
         isLoading = true
+        viewModel.getAllSkills(skills)
         viewModel.loadWorkers()
         isLoading = false
     }
