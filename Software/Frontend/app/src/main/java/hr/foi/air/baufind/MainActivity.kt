@@ -52,16 +52,13 @@ class MainActivity : ComponentActivity() {
             BaufindTheme {
                 Scaffold(
                     bottomBar = {
-                        if (currentRoute in listOf("jobPositionsLocationScreen")) {
-                            BottomNavigationBar(navController = navController)
-                        }
-                        if (currentRoute in listOf("jobAddSkillsScreen")) {
-                            BottomNavigationBar(navController = navController)
-                        }
-                        if (currentRoute in listOf("jobDetailsScreen")) {
-                            BottomNavigationBar(navController = navController)
-                        }
-                        if (currentRoute in listOf("myUserProfileScreen")) {
+                        if (currentRoute in listOf(
+                                "jobPositionsLocationScreen",
+                                "jobAddSkillsScreen",
+                                "jobDetailsScreen",
+                                "myUserProfileScreen",
+                                "jobSearchScreen"
+                            )) {
                             BottomNavigationBar(navController = navController)
                         }
                     }
