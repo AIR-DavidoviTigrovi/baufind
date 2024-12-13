@@ -157,7 +157,7 @@ public class UserRepository : IUserRepository
         FROM worker_review wr
         JOIN working w ON w.id = wr.working_id
         WHERE w.worker_id = @id
-        AND w.working_status_id = (SELECT id FROM working_status WHERE status = 'done')
+        AND w.working_status_id = (SELECT id FROM working_status WHERE status = 'Completed')
         GROUP BY rating;";
         using (var reader = _db.ExecuteReader(reviewsQuery, idParameter))
         {
@@ -167,7 +167,7 @@ public class UserRepository : IUserRepository
 
             while (reader.Read())
             {
-                int rating = (int)reader["rating"];
+                int rating = Convert.ToInt32(reader["rating"]);
                 int count = (int)reader["count"];
 
                 totalReviews += count;

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace BusinessLogicLayer.AppLogic.Workers.GetWorkers {
 
     public record GetWorkersResponse {
-        public List<WorkerRecord> workerRecords { get; set; } = new List<WorkerRecord>();
+        public List<WorkerRecord> WorkerRecords { get; set; } = new List<WorkerRecord>();
         public string? Error { get; set; } = string.Empty;
     }
 }

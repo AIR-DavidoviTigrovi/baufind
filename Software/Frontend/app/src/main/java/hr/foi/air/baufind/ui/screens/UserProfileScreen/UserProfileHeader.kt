@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -59,10 +62,13 @@ fun UserProfileHeader(name: String, address:String, profilePicture: ByteArray?){
                     )
                 }
             } else {
-                Text(
-                    text = "No Image",
-                    color = Color.White,
-                    style = TextStyle(fontSize = 16.sp, textAlign = TextAlign.Center)
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "Placeholder",
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(40.dp),
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                 )
             }
         }
