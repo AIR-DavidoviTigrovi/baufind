@@ -5,12 +5,14 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import hr.foi.air.baufind.service.SkillsService.SkillsService
 import hr.foi.air.baufind.service.WorkerService.WorkerSkillService
 import hr.foi.air.baufind.ws.model.Worker
 import hr.foi.air.baufind.ws.network.SkillService
 import hr.foi.air.baufind.ws.network.TokenProvider
 import hr.foi.air.baufind.ws.request.WorkersSkillBody
+import kotlinx.coroutines.launch
 
 
 class WorkerSearchViewModel() : ViewModel() {
@@ -30,16 +32,19 @@ class WorkerSearchViewModel() : ViewModel() {
     val service = WorkerSkillService()
     val workers: MutableState<List<Worker>> = mutableStateOf(emptyList())
     val filteredWorkers: MutableState<List<Worker>> = mutableStateOf(emptyList())
-    val skillService = tokenProvider.value?.let { SkillsService(it) }
+
     suspend fun getAllSkills (skills: List<Int>){
-        var _skills = skillService?.fetchAllSkills()
-        if (_skills != null) {
-            for (i in _skills){
+
+        val skillService = SkillsService(tokenProvider.value!!)
+        var skillToFilter = skillService.fetchAllSkills().orEmpty()
+        if (skillToFilter.isNotEmpty()) {
+            for (i in skillToFilter){
                 if(skills.contains(i.id)){
                     skill.value += i.title
                 }
             }
         }
+
     }
     //Funkcija za filtriranje radnika
     fun updateFilteredWorkersL(option: String) {
@@ -56,16 +61,17 @@ class WorkerSearchViewModel() : ViewModel() {
     }
     //Funkcija za učitavanje radnika
      fun loadWorkersMock() {
+         viewModelScope.launch {
          Log.e("loadWorkers", workers.value.toString())
          workers.value = WorkerMock.workers
          filteredWorkers.value = workers.value
-
+        }
     }
     suspend fun loadWorkers() {
         Log.e("tokenss", tokenProvider.value.toString())
         workers.value =  service.getWorkersBySkill(workersSkillBody = WorkersSkillBody(skill.value.toString()),
             tokenProvider = tokenProvider.value!!)
-        Log.e("getWorkersBySkill", workers.value.toString())
+        Log.e("getWorkersBySkill", skill.value.toString())
         filteredWorkers.value = workers.value
     }
     //Funkcija za filtriranje radnika
