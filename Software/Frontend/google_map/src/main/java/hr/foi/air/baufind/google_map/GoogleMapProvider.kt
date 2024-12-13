@@ -14,10 +14,8 @@ import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.android.gms.maps.model.CameraPosition
@@ -92,14 +90,14 @@ class GoogleMapProvider : MapProvider {
 
                 locationInformation.lat = coordinates.latitude
                 locationInformation.long = coordinates.longitude
-                locationInformation.isValid = locationError != ""
+                locationInformation.isValid = locationError == "" && locationText != ""
 
                 lat = locationInformation.lat
                 long = locationInformation.long
                 valid = locationInformation.isValid
             }
         ) {
-            if (valid) {
+            if (markerValid) {
                 Marker(
                     state = rememberMarkerState(position = LatLng(lat, long)),
                     title = "Odabrana lokacija"
