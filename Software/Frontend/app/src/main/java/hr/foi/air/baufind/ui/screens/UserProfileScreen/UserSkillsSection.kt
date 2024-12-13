@@ -24,32 +24,38 @@ import hr.foi.air.baufind.ui.components.Skill
 
 @Composable
 fun UserSkillSection(skills : List<Skill>){
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(16.dp))
-    {
-        Text(
-            text = "Skills",
-            style = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.ExtraBold),
-            modifier = Modifier.padding(bottom = 8.dp),
-            color = MaterialTheme.colorScheme.primary
-        )
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-
-        ){
-          skills.forEach{ skill ->
-              Box(modifier = Modifier
-                  .clip(CircleShape)
-                  .background(MaterialTheme.colorScheme.primaryContainer)
-                  .padding(horizontal = 12.dp, vertical = 6.dp)
-              ){
-                  Text(text = skill.name, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium), color = MaterialTheme.colorScheme.primary)
-              }
-
-          }
+    if (skills.isNotEmpty()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "Skills",
+                style = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.ExtraBold),
+                modifier = Modifier.padding(bottom = 8.dp),
+                color = MaterialTheme.colorScheme.primary
+            )
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                skills.forEach { skill ->
+                    Box(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = skill.name,
+                            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
         }
     }
 }

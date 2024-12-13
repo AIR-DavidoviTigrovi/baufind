@@ -20,7 +20,7 @@ namespace WebApi.Controllers {
         public ActionResult<GetWorkersResponse> GetWorkers(string skill)
         {
             var workers = _workersService.GetWorkers(skill);
-            if (workers.workerRecords == null || !workers.workerRecords.Any())
+            if (workers.WorkerRecords == null || !workers.WorkerRecords.Any())
             {
                 return NotFound(workers);
             }
