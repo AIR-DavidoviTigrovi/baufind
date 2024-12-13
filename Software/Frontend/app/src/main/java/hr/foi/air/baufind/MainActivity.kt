@@ -40,7 +40,7 @@ import hr.foi.air.baufind.ws.network.AppTokenProvider
 
 class MainActivity : ComponentActivity() {
     private val mapProviders: List<MapProvider> = listOf(ExampleMapProvider(), GoogleMapProvider()) // TODO: ubaciti module pomoću refleksije (a ne ručno)
-    private val mapProvider = mapProviders.first() // TODO: da se može odabrati u postavkama
+    private val mapProvider = mapProviders[1] // TODO: da se može odabrati u postavkama
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

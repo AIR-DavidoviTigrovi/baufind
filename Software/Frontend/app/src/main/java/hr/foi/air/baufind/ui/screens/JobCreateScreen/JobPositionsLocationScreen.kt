@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -72,7 +74,8 @@ fun JobPositionsLocationScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(22.dp),
+            .padding(22.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
@@ -82,10 +85,10 @@ fun JobPositionsLocationScreen(
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(24.dp))
-        LazyColumn(
+        Column(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(jobViewModel.jobPositions) { position ->
+            jobViewModel.jobPositions.forEach { position ->
                 PositionAndNumber(
                     text = position.name,
                     count = position.count.value,
