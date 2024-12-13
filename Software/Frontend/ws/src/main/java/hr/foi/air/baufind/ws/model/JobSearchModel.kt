@@ -10,6 +10,6 @@ data class JobSearchModel(
     val location: String,
     val lat: Double?,
     val lng: Double?,
-    val pictures: List<ByteArray>,
+    val pictures: List<String>,
     val skills: List<Skill>
 )
