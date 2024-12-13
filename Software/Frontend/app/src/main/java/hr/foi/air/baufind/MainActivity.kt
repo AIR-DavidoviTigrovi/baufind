@@ -25,6 +25,7 @@ import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobAddSkillsScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobDetailsScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobPositionsLocationScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobViewModel
+import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchScreen
 import hr.foi.air.baufind.ui.screens.LoginScreen.LoginScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.EditProfileScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.UserProfileViewModel
@@ -51,16 +52,13 @@ class MainActivity : ComponentActivity() {
             BaufindTheme {
                 Scaffold(
                     bottomBar = {
-                        if (currentRoute in listOf("jobPositionsLocationScreen")) {
-                            BottomNavigationBar(navController = navController)
-                        }
-                        if (currentRoute in listOf("jobAddSkillsScreen")) {
-                            BottomNavigationBar(navController = navController)
-                        }
-                        if (currentRoute in listOf("jobDetailsScreen")) {
-                            BottomNavigationBar(navController = navController)
-                        }
-                        if (currentRoute in listOf("myUserProfileScreen")) {
+                        if (currentRoute in listOf(
+                                "jobPositionsLocationScreen",
+                                "jobAddSkillsScreen",
+                                "jobDetailsScreen",
+                                "myUserProfileScreen",
+                                "jobSearchScreen"
+                            )) {
                             BottomNavigationBar(navController = navController)
                         }
                     }
@@ -99,6 +97,8 @@ class MainActivity : ComponentActivity() {
                             composable("jobDetailsScreen") { JobDetailsScreen(navController, jobViewModel) }
                             composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController, jobViewModel, tokenProvider) }
                             composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController, jobViewModel, tokenProvider) }
+
+                            composable("jobSearchScreen") { JobSearchScreen(navController, tokenProvider) }
 
                         }
                     }
