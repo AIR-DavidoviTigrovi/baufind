@@ -54,4 +54,11 @@ public interface IUserRepository
     /// <param name="userId"></param>
     /// <param name="removeSkills"></param>
     void RemoveUserSkills(int userId, List<int> removeSkills);
+
+    /// <summary>
+    /// Metoda koja izvodi brisanje korirsnika u bazi (samo postavlja deleted na 1 u app_user)
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public bool DeleteUser(int userId);
 }

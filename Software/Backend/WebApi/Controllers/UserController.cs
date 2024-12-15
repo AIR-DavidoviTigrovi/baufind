@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using BusinessLogicLayer.AppLogic.Users;
+using BusinessLogicLayer.AppLogic.Users.DeleteUser;
 using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
 using BusinessLogicLayer.AppLogic.Users.GetUser;
 using BusinessLogicLayer.AppLogic.Users.GetUserProfile;
@@ -8,7 +9,6 @@ using BusinessLogicLayer.AppLogic.Users.RegisterUser;
 using BusinessLogicLayer.AppLogic.Users.UpdateUserProfile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebApi.Controllers;
 
@@ -62,7 +62,7 @@ public class UserController : ControllerBase
 
         return user;
     }
-
+    
     // POST: /users/register
     [HttpPost("register")]
     [AllowAnonymous]
@@ -152,5 +152,28 @@ public class UserController : ControllerBase
         }
 
         return user;
+    }
+    [HttpGet("delete")]
+    [Authorize]
+    public ActionResult<DeleteUserResponse> DeleteUser()
+    {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+
+        if (userIdFromJwt == null)
+        {
+            return Unauthorized(new DeleteUserResponse()
+            {
+                Success = false,
+                Message = "Niste autorizirani da obrišete tog korisnika."
+            });
+        }
+        var response = _userService.DeleteUser(userIdFromJwt.Value);
+
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
+
+        return Ok(response);
     }
 }
