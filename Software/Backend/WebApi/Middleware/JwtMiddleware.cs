@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BusinessLogicLayer.AppLogic.Users;
+using BusinessLogicLayer.Infrastructure;
+using DataAccessLayer.AppLogic;
+using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
 namespace WebApi.Middleware;
@@ -9,10 +12,11 @@ namespace WebApi.Middleware;
 public class JwtMiddleware
 {
     private readonly RequestDelegate _next;
-
-    public JwtMiddleware(RequestDelegate next)
+    private readonly IServiceScopeFactory _scopeFactory; 
+    public JwtMiddleware(RequestDelegate next, IServiceScopeFactory scopeFactory)
     {
         _next = next;
+        _scopeFactory = scopeFactory;
     }
 
     public async Task Invoke(HttpContext context)
@@ -32,8 +36,20 @@ public class JwtMiddleware
             await context.Response.WriteAsync("Nemate pristup.");
             return;
         }
+        using (var scope = _scopeFactory.CreateScope())
+        {
+            var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+            var user = userService.GetOneUser(userId);
 
-        context.Items["UserId"] = userId;
+            if (user == null || user.User.Deleted)
+            {
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                await context.Response.WriteAsync("Vaš račun je obrisan ili ne postoji.");
+                return;
+            }
+
+            context.Items["UserId"] = userId;
+        }
 
         await _next(context);
     }
