@@ -262,7 +262,24 @@ public class UserRepository : IUserRepository
             _db.ExecuteNonQuery(query, parameters);
         }
     }
-
+    /// <summary>
+    /// Metoda koja izvodi brisanje korirsnika u bazi (samo postavlja deleted na 1 u app_user)
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public bool DeleteUser(int userId)
+    {
+        string query = @"
+            UPDATE app_user
+            SET deleted = 1
+            WHERE id = @UserId;";
+        var parameter = new Dictionary<string, object>
+        {
+            { "UserId", userId },
+        };
+        int rowsAffected = _db.ExecuteNonQuery(query, parameter);
+        return rowsAffected > 0;
+    }
 
     private UserModel UserModelFromReader(SqlDataReader reader)
     {
@@ -279,5 +296,7 @@ public class UserRepository : IUserRepository
             Deleted = (bool)reader["deleted"],
             GoogleId = reader["google_id"] == DBNull.Value ? null : (string)reader["google_id"]
         };
-    }    
+    }
+
+    
 }

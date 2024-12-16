@@ -18,23 +18,33 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -113,7 +123,9 @@ fun userProfileScreen(
     val jwt = tokenProvider.getToken()
     val userProfileService = UserProfileService(tokenProvider)
     val userProfile by userProfileViewModel.userProfile.collectAsState()
-
+    var showMenu by remember { mutableStateOf(false) }
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
 
     LaunchedEffect(Unit) {
@@ -133,6 +145,9 @@ fun userProfileScreen(
     if (userProfile != null) {
 
         Scaffold(
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarHostState)
+            },
             topBar = {
                 CenterAlignedTopAppBar(
                     modifier = Modifier.fillMaxWidth(),
@@ -155,17 +170,37 @@ fun userProfileScreen(
                             )
                         }
                     }, actions = {
-                        IconButton(onClick = {
-                            JwtService.clearJwt(context)
-                            navController.navigate("login") {
-                                popUpTo(0) { inclusive = true }
+                        Box {
+                            IconButton(onClick = { showMenu = !showMenu }) {
+                                Icon(
+                                    imageVector = Icons.Default.MoreVert,
+                                    contentDescription = "Options",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
                             }
-                        }) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                                contentDescription = "Logout",
-                                tint = MaterialTheme.colorScheme.error
-                            )
+
+                            DropdownMenu(
+                                expanded = showMenu,
+                                onDismissRequest = { showMenu = false }
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text("Delete account") },
+                                    onClick = {
+                                        showMenu = false
+                                        showDeleteConfirmation = true
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Logout") },
+                                    onClick = {
+                                        showMenu = false
+                                        JwtService.clearJwt(context)
+                                        navController.navigate("login") {
+                                            popUpTo(0) { inclusive = true }
+                                        }
+                                    }
+                                )
+                            }
                         }
                     },
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
@@ -199,6 +234,38 @@ fun userProfileScreen(
                     )
                 }
             }
+        }
+        if (showDeleteConfirmation) {
+            AlertDialog(
+                onDismissRequest = { showDeleteConfirmation = false },
+                title = { Text("Delete Account") },
+                text = { Text("Are you sure you want to delete your account? This action cannot be undone.") },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                val deleteResponse = userProfileService.deleteUser()
+                                if (deleteResponse?.success == true) {
+                                    JwtService.clearJwt(context)
+                                    navController.navigate("login") {
+                                        popUpTo(0) { inclusive = true }
+                                    }
+                                } else {
+                                    snackbarHostState.showSnackbar("Failed to delete account. Please try again.")
+                                }
+                            }
+                            showDeleteConfirmation = false
+                        }
+                    ) {
+                        Text("Delete")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteConfirmation = false }) {
+                        Text("Cancel")
+                    }
+                }
+            )
         }
     } else {
         Box(

@@ -17,3 +17,7 @@ data class ReviewResponse(
     val totalReviews: Int,
     val ratings: List<Int>
 )
+data class DeleteUserResponse(
+    val success: Boolean,
+    val message: String
+)
