@@ -31,14 +31,18 @@ import hr.foi.air.baufind.ui.components.PrimaryTextField
 import hr.foi.air.baufind.ws.network.TokenProvider
 import kotlinx.coroutines.launch
 
-//moram za oba errora prikazat tako gdje bi bila lista poruku pogreške
-
 @Composable
 fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider){
     val coroutineScope = rememberCoroutineScope()
     var jobSearchResponse by remember { mutableStateOf<JobSearchResponse?>(null) }
 
     var searchText by remember { mutableStateOf("") }
+    val filteredJobs = remember(jobSearchResponse, searchText){
+        jobSearchResponse?.jobs?.filter { job ->
+            job.title.contains(searchText, ignoreCase = true) ||
+                    job.skills.any { skill -> skill.title.contains(searchText, ignoreCase = true)}
+        } ?: emptyList()
+    }
     val context = LocalContext.current
 
 
@@ -74,16 +78,11 @@ fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider){
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ){
-                jobSearchResponse?.jobs?.let { jobs ->
-                    items(jobs.size) { index ->
-                        val job = jobs[index]
-                        Log.d("JobSearchScreen poslovi", job.toString())
-                        JobListItem(
-                            job = job,
-                            onItemClick = {
-                                Toast.makeText(context, "Stisnut posao", Toast.LENGTH_SHORT).show()
-                            }
-                        )
+                items(filteredJobs.size) { index ->
+                    val job = filteredJobs[index]
+                    Log.d("JobSearchScreen poslovi", job.toString())
+                    JobListItem(job = job){
+                        Toast.makeText(context, "Otvoreno: " + job.title, Toast.LENGTH_SHORT).show()
                     }
                 }
             }
