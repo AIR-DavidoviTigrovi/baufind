@@ -75,8 +75,9 @@ fun JobAddSkillsScreen(navController: NavController, jobViewModel: JobViewModel,
                         if (!jobViewModel.jobPositions.any { it.name == skill.title }){
                             jobViewModel.jobPositions.add(JobPosition(skill.title, mutableIntStateOf(1), skill.id))
                             navController.popBackStack()
+                        }else{
+                            Toast.makeText(context, "Pozicija već postoji", Toast.LENGTH_SHORT).show()
                         }
-                        Toast.makeText(context, "Pozicija već postoji", Toast.LENGTH_SHORT).show()
                     }
                 )
             }
