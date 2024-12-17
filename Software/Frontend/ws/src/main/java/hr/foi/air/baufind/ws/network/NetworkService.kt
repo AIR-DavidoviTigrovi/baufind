@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 object NetworkService {
-    private const val BASE_URL = "http://10.0.2.2:5009/"
+    private const val BASE_URL = "http://10.24.40.114:5009/"
 
     private fun createRetrofit(tokenProvider: TokenProvider): Retrofit {
         val client = OkHttpClient.Builder()

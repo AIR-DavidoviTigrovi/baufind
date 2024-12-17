@@ -82,7 +82,7 @@ class GoogleMapProvider : MapProvider {
         GoogleMap(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(1f),
+                .aspectRatio(4f/3f),
             onMapLoaded = { isMapLoaded = true },
             cameraPositionState = cameraPositionState,
             onMapLongClick = { coordinates ->
