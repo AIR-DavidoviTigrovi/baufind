@@ -35,6 +35,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider, jobSearchViewModel: JobSearchViewModel){
     LaunchedEffect(Unit){
+        jobSearchViewModel.clearData()
         jobSearchViewModel.tokenProvider = tokenProvider
     }
 
@@ -46,7 +47,6 @@ fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider, 
                     job.skills.any { skill -> skill.title.contains(searchText, ignoreCase = true)}
         }
     }
-    val context = LocalContext.current
 
 
     Column(

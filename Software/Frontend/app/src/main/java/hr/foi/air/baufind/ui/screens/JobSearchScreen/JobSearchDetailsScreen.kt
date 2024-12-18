@@ -61,7 +61,7 @@ fun JobSearchDetailsScreen(navController: NavController, tokenProvider: TokenPro
             PrimaryButton(
                 text = "Profil poslodavca",
                 icon = Icons.Default.Person,
-                onClick = {}
+                onClick = { /*ide na profil poslodavca*/}
             )
             Spacer(modifier = Modifier.height(24.dp))
             Text(
@@ -96,7 +96,11 @@ fun JobSearchDetailsScreen(navController: NavController, tokenProvider: TokenPro
             PrimaryButton(
                 text = "Pridruži se poslu",
                 icon = Icons.Default.Add,
-                onClick = {}
+                onClick = {
+                    //salje zahtjev za pridruzenje poslu
+                    //jobSearchViewModel.clearData()
+                    //navController.navigate()
+                }
             )
         }
     }
