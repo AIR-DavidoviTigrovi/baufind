@@ -34,8 +34,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider, jobSearchViewModel: JobSearchViewModel){
-
-    val jobSearchViewModel : JobSearchViewModel = viewModel()
     LaunchedEffect(Unit){
         jobSearchViewModel.tokenProvider = tokenProvider
     }
@@ -80,7 +78,6 @@ fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider, 
             ){
                 items(filteredJobs.size) { index ->
                     val job = filteredJobs[index]
-                    Log.d("JobSearchScreen poslovi", job.toString())
                     JobListItem(job = job){
                         jobSearchViewModel.selectedJob.value = job
                         navController.navigate("jobSearchDetailsScreen")
