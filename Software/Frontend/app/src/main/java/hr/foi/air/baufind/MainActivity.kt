@@ -28,7 +28,9 @@ import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobAddSkillsScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobDetailsScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobPositionsLocationScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobViewModel
+import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchDetailsScreen
 import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchScreen
+import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchViewModel
 import hr.foi.air.baufind.ui.screens.LoginScreen.LoginScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.EditProfileScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.UserProfileViewModel
@@ -49,8 +51,9 @@ class MainActivity : ComponentActivity() {
         val jwtToken = sharedPreferences.getString("jwt_token", null)
         val userProfileViewModel = UserProfileViewModel(tokenProvider)
         val gson: Gson = Gson()
+        val jobViewModel = JobViewModel()
+        val jobSearchViewModel = JobSearchViewModel()
         setContent {
-            val jobViewModel : JobViewModel = viewModel()
             val navController = rememberNavController()
             val currentRoute = navController
                 .currentBackStackEntryAsState().value?.destination?.route
@@ -104,7 +107,8 @@ class MainActivity : ComponentActivity() {
                             composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController, jobViewModel, tokenProvider, mapProvider) }
                             composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController, jobViewModel, tokenProvider) }
 
-                            composable("jobSearchScreen") { JobSearchScreen(navController, tokenProvider) }
+                            composable("jobSearchScreen") { JobSearchScreen(navController, tokenProvider, jobSearchViewModel) }
+                            composable("jobSearchDetailsScreen") { JobSearchDetailsScreen(navController, tokenProvider, jobSearchViewModel) }
 
                         }
                     }

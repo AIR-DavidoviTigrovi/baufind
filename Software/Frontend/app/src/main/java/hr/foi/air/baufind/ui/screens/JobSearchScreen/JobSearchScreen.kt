@@ -33,7 +33,7 @@ import hr.foi.air.baufind.ws.network.TokenProvider
 import kotlinx.coroutines.launch
 
 @Composable
-fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider){
+fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider, jobSearchViewModel: JobSearchViewModel){
 
     val jobSearchViewModel : JobSearchViewModel = viewModel()
     LaunchedEffect(Unit){
@@ -83,7 +83,7 @@ fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider){
                     Log.d("JobSearchScreen poslovi", job.toString())
                     JobListItem(job = job){
                         jobSearchViewModel.selectedJob.value = job
-                        Toast.makeText(context, "Selected job: " + jobSearchViewModel.selectedJob.value?.title, Toast.LENGTH_SHORT).show()
+                        navController.navigate("jobSearchDetailsScreen")
                     }
                 }
             }
@@ -95,5 +95,5 @@ fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider){
 @Composable
 fun JobSearchScreenPreview() {
     val navController = rememberNavController()
-    JobSearchScreen(navController, tokenProvider = object : TokenProvider { override fun getToken(): String? { return null } })
+    JobSearchScreen(navController, tokenProvider = object : TokenProvider { override fun getToken(): String? { return null } }, jobSearchViewModel = JobSearchViewModel())
 }
