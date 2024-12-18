@@ -1,6 +1,7 @@
 package hr.foi.air.baufind.ui.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,7 +34,9 @@ fun DisplayTextField(
                 disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
                 disabledTextColor = MaterialTheme.colorScheme.onSurface
             ),
-            modifier = Modifier.padding(top = 4.dp)
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .fillMaxWidth()
         )
     }
 }
