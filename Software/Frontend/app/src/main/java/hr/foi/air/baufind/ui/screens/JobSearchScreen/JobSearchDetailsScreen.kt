@@ -1,11 +1,18 @@
 package hr.foi.air.baufind.ui.screens.JobSearchScreen
 
+import android.graphics.BitmapFactory
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -15,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,18 +34,18 @@ import hr.foi.air.baufind.navigation.IconType
 import hr.foi.air.baufind.ui.components.DisplayTextField
 import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ui.components.PrimaryTextField
+import hr.foi.air.baufind.ui.screens.UserProfileScreen.decodeBase64ToByteArray
 import hr.foi.air.baufind.ws.network.TokenProvider
 
 @Composable
 fun JobSearchDetailsScreen(navController: NavController, tokenProvider: TokenProvider, jobSearchViewModel: JobSearchViewModel){
     val selectedJob = jobSearchViewModel.selectedJob.value
-    Log.d("JobSearchDetailsScreen", "Selected job: $selectedJob")
 
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(22.dp,0.dp)
+            .padding(22.dp, 0.dp)
             .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
@@ -62,7 +70,27 @@ fun JobSearchDetailsScreen(navController: NavController, tokenProvider: TokenPro
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
-            //tu idu fotografije
+            Spacer(modifier = Modifier.height(24.dp))
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ){
+                items(selectedJob.pictures) { base64Image ->
+                    val imageData = decodeBase64ToByteArray(base64Image)
+                    val bitmap = imageData?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
+
+                    if (bitmap != null) {
+                        Image(
+                            bitmap = bitmap.asImageBitmap(),
+                            contentDescription = "Slika posla",
+                            modifier = Modifier
+                                .size(200.dp)
+                                .padding(8.dp)
+                        )
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
             PrimaryButton(
