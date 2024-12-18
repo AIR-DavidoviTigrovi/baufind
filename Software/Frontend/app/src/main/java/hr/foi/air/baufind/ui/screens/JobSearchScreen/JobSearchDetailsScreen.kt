@@ -30,11 +30,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.R
+import hr.foi.air.baufind.helpers.PictureHelper
 import hr.foi.air.baufind.navigation.IconType
 import hr.foi.air.baufind.ui.components.DisplayTextField
 import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ui.components.PrimaryTextField
-import hr.foi.air.baufind.ui.screens.UserProfileScreen.decodeBase64ToByteArray
 import hr.foi.air.baufind.ws.network.TokenProvider
 
 @Composable
@@ -77,7 +77,7 @@ fun JobSearchDetailsScreen(navController: NavController, tokenProvider: TokenPro
                     .padding(horizontal = 16.dp)
             ){
                 items(selectedJob.pictures) { base64Image ->
-                    val imageData = decodeBase64ToByteArray(base64Image)
+                    val imageData = PictureHelper.decodeBase64ToByteArray(base64Image)
                     val bitmap = imageData?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
 
                     if (bitmap != null) {
