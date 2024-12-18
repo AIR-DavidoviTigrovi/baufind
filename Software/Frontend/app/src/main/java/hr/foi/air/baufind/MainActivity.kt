@@ -66,7 +66,8 @@ class MainActivity : ComponentActivity() {
                                 "jobAddSkillsScreen",
                                 "jobDetailsScreen",
                                 "myUserProfileScreen",
-                                "jobSearchScreen"
+                                "jobSearchScreen",
+                                "jobSearchDetailsScreen"
                             )) {
                             BottomNavigationBar(navController = navController)
                         }
