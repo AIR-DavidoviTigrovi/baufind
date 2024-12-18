@@ -50,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import hr.foi.air.baufind.helpers.PictureHelper
 import hr.foi.air.baufind.service.UserProfileService.UserProfileService
 import hr.foi.air.baufind.service.jwtService.JwtService
 import hr.foi.air.baufind.ui.components.Skill
@@ -75,15 +76,6 @@ fun EditProfileButton(onClick: () -> Unit) {
                 text = "Edit Profile",
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
-        }
-    }
-}
-fun decodeBase64ToByteArray(base64: String?): ByteArray? {
-    return base64?.let {
-        try {
-            android.util.Base64.decode(it, android.util.Base64.DEFAULT)
-        } catch (e: IllegalArgumentException) {
-            null
         }
     }
 }
@@ -220,7 +212,7 @@ fun userProfileScreen(
                     .background(MaterialTheme.colorScheme.background)
                     .verticalScroll(rememberScrollState())
             ) {
-                UserProfileHeader(profile.name, profile.address ?: "N/A", decodeBase64ToByteArray(profile.profilePicture))
+                UserProfileHeader(profile.name, profile.address ?: "N/A", PictureHelper.decodeBase64ToByteArray(profile.profilePicture))
                 EditProfileButton(onClick = {navController.navigate("editUserProfileScreen")})
                 UserProfileContactInformation(profile.address ?: "N/A", profile.phone ?: "N/A", profile.email)
                 UserSkillSection(profile.skills.orEmpty().map { skill -> Skill(skill.id, skill.title) })

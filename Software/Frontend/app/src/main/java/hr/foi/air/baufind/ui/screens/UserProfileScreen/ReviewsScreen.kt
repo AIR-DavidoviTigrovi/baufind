@@ -50,6 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import hr.foi.air.baufind.helpers.PictureHelper
 import hr.foi.air.baufind.service.ReviewService.ReviewService
 import hr.foi.air.baufind.ws.model.Review
 import hr.foi.air.baufind.ws.network.TokenProvider
@@ -259,7 +260,7 @@ fun ReviewItem(review: Review) {
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), CircleShape)
         ) {
-            val imageData = review.reviewerImage?.let { decodeBase64ToByteArray(it) }
+            val imageData = review.reviewerImage?.let { PictureHelper.decodeBase64ToByteArray(it) }
             val bitmap = imageData?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
 
             if (bitmap != null) {
@@ -352,7 +353,7 @@ fun ReviewItem(review: Review) {
                         val endIndex = (startIndex + 5).coerceAtMost(review.pictures.size)
 
                         items(review.pictures.subList(startIndex, endIndex)) { picture ->
-                            val decodedBytes = decodeBase64ToByteArray(picture.picture)
+                            val decodedBytes = PictureHelper.decodeBase64ToByteArray(picture.picture)
 
                             val imageBitmap = decodedBytes?.let {
                                 BitmapFactory.decodeByteArray(it, 0, it.size).asImageBitmap()
