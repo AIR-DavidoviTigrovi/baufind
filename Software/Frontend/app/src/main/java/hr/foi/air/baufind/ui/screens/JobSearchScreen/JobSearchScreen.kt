@@ -65,12 +65,9 @@ fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider){
             modifier = Modifier.fillMaxWidth(),
             isError = false
         )
-        //ako je empty i message empty onda znaci da nije jos ucitao
-        //ako je empty a ima message onda je error
-        //ako nije empty onda ucitavaj
-        if(jobSearchViewModel.jobs.value.isEmpty() && jobSearchViewModel.message == null){
+        if(jobSearchViewModel.isLoading()){
             Text(text = "Učitavam...")
-        }else if(jobSearchViewModel.jobs.value.isEmpty() && jobSearchViewModel.message != null){
+        }else if(jobSearchViewModel.hasError()){
             Text(text = jobSearchViewModel.message!!)
         }
         else{

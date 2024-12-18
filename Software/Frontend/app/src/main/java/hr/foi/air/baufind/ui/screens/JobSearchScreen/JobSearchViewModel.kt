@@ -32,4 +32,12 @@ class JobSearchViewModel : ViewModel(){
             jobs.value = response.jobs
         }
     }
+
+    fun isLoading() : Boolean{
+        return jobs.value.isEmpty() && message == null
+    }
+
+    fun hasError() : Boolean{
+        return jobs.value.isEmpty() && message != null
+    }
 }
