@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.service.JobSearchService.JobSearchResponse
@@ -32,27 +33,21 @@ import hr.foi.air.baufind.ws.network.TokenProvider
 import kotlinx.coroutines.launch
 
 @Composable
-fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider){
-    val coroutineScope = rememberCoroutineScope()
-    var jobSearchResponse by remember { mutableStateOf<JobSearchResponse?>(null) }
+fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider, jobSearchViewModel: JobSearchViewModel){
+    LaunchedEffect(Unit){
+        jobSearchViewModel.clearData()
+        jobSearchViewModel.tokenProvider = tokenProvider
+    }
 
     var searchText by remember { mutableStateOf("") }
-    val filteredJobs = remember(jobSearchResponse, searchText){
-        jobSearchResponse?.jobs?.filter { job ->
+
+    val filteredJobs = remember(jobSearchViewModel, searchText, jobSearchViewModel.jobs.value){
+        jobSearchViewModel.jobs.value.filter { job ->
             job.title.contains(searchText, ignoreCase = true) ||
                     job.skills.any { skill -> skill.title.contains(searchText, ignoreCase = true)}
-        } ?: emptyList()
-    }
-    val context = LocalContext.current
-
-
-    LaunchedEffect(key1 = Unit){
-        coroutineScope.launch{
-            val jobSearchService = JobSearchService()
-            jobSearchResponse = jobSearchService.fetchJobsForCurrentUserAsync(tokenProvider)
-            Log.d("JobSearchScreen", jobSearchResponse.toString())
         }
     }
+
 
     Column(
         modifier = Modifier
@@ -68,9 +63,12 @@ fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider){
             modifier = Modifier.fillMaxWidth(),
             isError = false
         )
-        if(jobSearchResponse != null && !jobSearchResponse!!.success){
-            Text(text = jobSearchResponse!!.message!!)
-        }else{
+        if(jobSearchViewModel.isLoading()){
+            Text(text = "Učitavam...")
+        }else if(jobSearchViewModel.hasError()){
+            Text(text = jobSearchViewModel.message!!)
+        }
+        else{
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -80,9 +78,9 @@ fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider){
             ){
                 items(filteredJobs.size) { index ->
                     val job = filteredJobs[index]
-                    Log.d("JobSearchScreen poslovi", job.toString())
                     JobListItem(job = job){
-                        Toast.makeText(context, "Otvoreno: " + job.title, Toast.LENGTH_SHORT).show()
+                        jobSearchViewModel.selectedJob.value = job
+                        navController.navigate("jobSearchDetailsScreen")
                     }
                 }
             }
@@ -94,5 +92,5 @@ fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider){
 @Composable
 fun JobSearchScreenPreview() {
     val navController = rememberNavController()
-    JobSearchScreen(navController, tokenProvider = object : TokenProvider { override fun getToken(): String? { return null } })
+    JobSearchScreen(navController, tokenProvider = object : TokenProvider { override fun getToken(): String? { return null } }, jobSearchViewModel = JobSearchViewModel())
 }
