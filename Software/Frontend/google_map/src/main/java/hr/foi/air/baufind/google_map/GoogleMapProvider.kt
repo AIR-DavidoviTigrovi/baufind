@@ -1,5 +1,6 @@
 package hr.foi.air.baufind.google_map
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,8 +17,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -45,6 +46,8 @@ class GoogleMapProvider : MapProvider {
 
         var locationError by remember { mutableStateOf("") }
         var markerValid by remember { mutableStateOf(false) }
+
+        val context = LocalContext.current
 
         TextField(
             value = locationText,
@@ -75,10 +78,6 @@ class GoogleMapProvider : MapProvider {
             singleLine = true
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Držite dugi klik na karti da biste odabrali lokaciju.",
-            fontSize = 16.sp,
-        )
         GoogleMap(
             modifier = Modifier
                 .fillMaxWidth()
@@ -95,6 +94,9 @@ class GoogleMapProvider : MapProvider {
                 lat = locationInformation.lat
                 long = locationInformation.long
                 valid = locationInformation.isValid
+            },
+            onMapClick = {
+                Toast.makeText(context, "Držite dugi klik da biste odabrali lokaciju", Toast.LENGTH_SHORT).show()
             }
         ) {
             if (markerValid) {
