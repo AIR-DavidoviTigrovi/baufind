@@ -40,6 +40,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IJobRepository, JobRepository>();
         services.AddScoped<IPictureRepository, PictureRepository>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
+        services.AddScoped<IWorkingRepository, WorkingRepository>(); 
         // Servisi
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IUserService, UserService>();

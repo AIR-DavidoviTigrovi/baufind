@@ -1,6 +1,7 @@
 using BusinessLogicLayer.AppLogic;
 using BusinessLogicLayer.AppLogic.Jobs;
 using BusinessLogicLayer.AppLogic.Jobs.AddJob;
+using BusinessLogicLayer.AppLogic.Jobs.AddUserToJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
 using BusinessLogicLayer.AppLogic.Skills;
 using DataAccessLayer.AppLogic;
@@ -18,14 +19,16 @@ namespace BusinessLogicLayer.Infrastructure
         private readonly IJobRepository _jobRepository;
         private readonly IPictureRepository _pictureRepository;
         private readonly ISkillRepository _skillRepository;
+        private readonly IWorkingRepository _workingRepository;
         private readonly IJwtService _jwtService;
 
-        public JobService(IJobRepository jobRepository, IJwtService jwtService, IPictureRepository pictureRepository, ISkillRepository skillRepository)
+        public JobService(IJobRepository jobRepository, IJwtService jwtService, IPictureRepository pictureRepository, ISkillRepository skillRepository, IWorkingRepository workingRepository)
         {
             _jobRepository = jobRepository;
             _jwtService = jwtService;
             _pictureRepository = pictureRepository;
             _skillRepository = skillRepository;
+            _workingRepository = workingRepository;
         }
 
         public AddJobResponse AddJob(AddJobRequest request, int userId)
@@ -67,6 +70,23 @@ namespace BusinessLogicLayer.Infrastructure
             {
                 Success = $"Posao uspješno dodan sa id-em {jobId}"
             };
+        }
+
+        public CallWarkerToJobResponse CallWorkerToJob(CallWorkerToJobRequest request)
+        {
+            bool added = _workingRepository.CallWorkerToFirstAvailableEntry(request.WorkerId, request.JobId, request.SkillId);
+            CallWarkerToJobResponse response = new CallWarkerToJobResponse();
+            if (added)
+            {
+                response.Success = true;
+                response.Message = "Radnik uspjesno pozvan na posao";
+            }
+            else
+            {
+                response.Success = false;
+                response.Message = "Greska";
+            }
+            return response;
         }
 
         public GetJobsForCurrentUserResponse GetJobsForCurrentUser(int userId)
