@@ -74,17 +74,20 @@ namespace BusinessLogicLayer.Infrastructure
 
         public CallWarkerToJobResponse CallWorkerToJob(CallWorkerToJobRequest request, int userId)
         {
-            bool added = _workingRepository.CallWorkerToFirstAvailableEntry(request.WorkerId, request.JobId, request.SkillId, userId);
+            var (added, message) = _workingRepository.AddNewWorkingEntry(request.WorkerId, request.JobId, request.SkillId, userId);
             CallWarkerToJobResponse response = new CallWarkerToJobResponse();
-            if (added)
+            response.Success = added;
+            if (added && message =="")
             {
-                response.Success = true;
                 response.Message = "Radnik uspjesno pozvan na posao";
+            }
+            else if (!added && message =="")
+            {
+                response.Message = "Greska";
             }
             else
             {
-                response.Success = false;
-                response.Message = "Greska";
+                response.Message = message;
             }
             return response;
         }

@@ -18,75 +18,70 @@ namespace DataAccessLayer.Infrastructure
             _db = db;
         }
 
-        public bool CallWorkerToFirstAvailableEntry(int workerId, int jobId, int skillId, int userId)
+        public (bool, string) AddNewWorkingEntry(int workerId, int jobId, int skillId, int userId)
         {
-
             if (!ValidateUsersId(userId, jobId))
             {
                 Console.WriteLine("Pristup odbijen: Korisnik nije vlasnik posla.");
-                return false;
+                return (false, "Pristup odbijen: Korisnik nije vlasnik posla.");
             }
-
-            var entries = GetWorkingEntriesByJobId(jobId);
-
-            if (entries == null || !entries.Any())
+            if (IsWorkerAlreadyAssigned(workerId, jobId))
             {
-                Console.WriteLine("Nema dostupnih redaka za zadani posao.");
-                return false;
+                Console.WriteLine("Radnik je već dodijeljen za ovaj posao.");
+                return (false, "Radnik je već dodijeljen za ovaj posao.");
             }
-
-            var entryToUpdate = entries.FirstOrDefault(e => e.WorkerId == null && e.SkillId == skillId);
-            if (entryToUpdate == null)
+            if (!IsSkillValidForJob(skillId, jobId))
             {
-                Console.WriteLine("Nema dostupnih redaka bez dodijeljenog radnika s odgovarajućim skill_id.");
-                return false;
+                Console.WriteLine($"Skill_id {skillId} nije potreban za posao {jobId}.");
+                return (false, $"Skill {skillId} nije potreban za vaš posao.");
             }
-
             string query = @"
-    UPDATE Working
-    SET worker_id = @workerId,
-        working_status_id = 3
-    WHERE id = @entryId
-      AND skill_id = @skillId;";
+        INSERT INTO Working (worker_id, skill_id, job_id, working_status_id)
+        VALUES (@workerId, @skillId, @jobId, 3);";
 
-            var parameters = new Dictionary<string, object>
-    {
-        { "@workerId", workerId },
-        { "@entryId", entryToUpdate.Id },
-        { "@skillId", skillId }
-    };
-
-            try
-            {
-                return _db.ExecuteNonQuery(query, parameters) > 0; 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Greška prilikom dodjeljivanja radnika: {ex.Message}");
-                return false;
-            }
-        }
-
-
-
-        public List<WorkingModel> GetWorkingEntriesByJobId(int jobId)
-        {
-            string query = "SELECT * FROM Working WHERE job_id = @jobId;";
             var parameters = new Dictionary<string, object>
                 {
+                    { "@workerId", workerId },
+                    { "@skillId", skillId },
                     { "@jobId", jobId }
                 };
 
-            using (var reader = _db.ExecuteReader(query, parameters))
+            try
             {
-                var result = new List<WorkingModel>();
-                while (reader.Read())
-                {
-                    result.Add(WorkingModelFromReader(reader)); 
-                }
-                return result;
+                return (_db.ExecuteNonQuery(query, parameters) > 0, "");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Greška prilikom dodavanja novog zapisa: {ex.Message}");
+                return (false, "Greška prilikom dodavanja novog zapisa") ;
             }
         }
+        private bool IsSkillValidForJob(int skillId, int jobId)
+        {
+            string query = @"
+            SELECT COUNT(*)
+            FROM Working
+            WHERE job_id = @jobId AND skill_id = @skillId;";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@jobId", jobId },
+                { "@skillId", skillId }
+            };
+
+            try
+            {
+                var result = _db.ExecuteScalar(query, parameters);
+                return Convert.ToInt32(result) > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Greška prilikom provjere validnosti skillova: {ex.Message}");
+                return false;
+            }
+        }
+
+
         private bool ValidateUsersId(int userId, int jobId)
         {
             string query = @"
@@ -108,6 +103,34 @@ namespace DataAccessLayer.Infrastructure
             }
             return false;
         }
+
+
+
+        private bool IsWorkerAlreadyAssigned(int workerId, int jobId)
+        {
+            string query = @"
+        SELECT COUNT(*)
+        FROM Working
+        WHERE worker_id = @workerId AND job_id = @jobId;";
+
+            var parameters = new Dictionary<string, object>
+    {
+        { "@workerId", workerId },
+        { "@jobId", jobId }
+    };
+
+            try
+            {
+                var result = _db.ExecuteScalar(query, parameters);
+                return Convert.ToInt32(result) > 0; 
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Greška prilikom provjere dodjele radnika: {ex.Message}");
+                return true; 
+            }
+        }
+
 
 
         private WorkingModel WorkingModelFromReader(SqlDataReader reader)
