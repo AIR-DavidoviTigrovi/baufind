@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace BusinessLogicLayer.AppLogic.Geocoding.ReverseGeocoding;
+﻿namespace BusinessLogicLayer.AppLogic.Geocoding.ReverseGeocoding;
 
 /// <summary>
 /// Odgovor što naša aplikacija šalje na putanji
@@ -19,6 +17,17 @@ public record ReverseGeocodingResponse
     public string? Location { get; set; }
 
     /// <summary>
+    /// Prepisano iz odgovora API-ja "amenity"
+    /// </summary>
+    public string? Amenity { get; set; }
+
+    /// <summary>
+    /// Kućni broj
+    /// Prepisano iz odgovora API-ja "house_number"
+    /// </summary>
+    public string? HouseNumber { get; set; }
+
+    /// <summary>
     /// Ulica
     /// Prepisano iz odgovora API-ja "road"
     /// </summary>
@@ -28,6 +37,11 @@ public record ReverseGeocodingResponse
     /// Prepisano iz odgovora API-ja "quarter"
     /// </summary>
     public string? Quarter { get; set; }
+
+    /// <summary>
+    /// Prepisano iz odgovora API-ja "neighbourhood"
+    /// </summary>
+    public string? Neighbourhood { get; set; }
 
     /// <summary>
     /// Prepisano iz odgovora API-ja "suburb"
@@ -45,6 +59,12 @@ public record ReverseGeocodingResponse
     /// Prepisano iz odgovora API-ja "town"
     /// </summary>
     public string? Town { get; set; }
+
+    /// <summary>
+    /// Dugo ime grada
+    /// Prepisano iz odgovora API-ja "municipality"
+    /// </summary>
+    public string? Municipality { get; set; }
 
     /// <summary>
     /// Županija

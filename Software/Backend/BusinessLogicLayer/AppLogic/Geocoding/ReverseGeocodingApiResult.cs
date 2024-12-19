@@ -8,7 +8,7 @@ namespace BusinessLogicLayer.AppLogic.Geocoding;
 internal record ReverseGeocodingApiResult
 {
     [JsonPropertyName("place_id")]
-    public int PlaceId { get; set; }
+    public long PlaceId { get; set; }
 
     [JsonPropertyName("licence")]
     public string Licence { get; set; }
@@ -17,7 +17,7 @@ internal record ReverseGeocodingApiResult
     public string OsmType { get; set; }
 
     [JsonPropertyName("osm_id")]
-    public int OsmId { get; set; }
+    public long OsmId { get; set; }
 
     [JsonPropertyName("lat")]
     public string Lat { get; set; }
@@ -40,20 +40,32 @@ internal record ReverseGeocodingApiResult
 /// </summary>
 internal record ReverseGeocodingApiAddressResult
 {
+    [JsonPropertyName("amenity")]
+    public string? Amenity { get; set; }
+
+    [JsonPropertyName("house_number")]
+    public string? HouseNumber { get; set; }
+
     [JsonPropertyName("road")]
     public string Road { get; set; }
 
     [JsonPropertyName("quarter")]
     public string Quarter { get; set; }
 
+    [JsonPropertyName("neighbourhood")]
+    public string? Neighbourhood { get; set; }
+
     [JsonPropertyName("suburb")]
-    public string Suburb { get; set; }
+    public string Suburb { get; set; } 
 
     [JsonPropertyName("city_district")]
     public string CityDistrict { get; set; }
 
     [JsonPropertyName("town")]
-    public string Town { get; set; }
+    public string? Town { get; set; }
+
+    [JsonPropertyName("municipality")]
+    public string? Municipality { get; set; }
 
     [JsonPropertyName("county")]
     public string County { get; set; }

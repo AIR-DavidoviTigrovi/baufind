@@ -64,11 +64,15 @@ public class GeocodingService : IGeocodingService
             return new ReverseGeocodingResponse
             {
                 Location = responseObject.DisplayName,
+                Amenity = responseObject.Address.Amenity,
+                HouseNumber = responseObject.Address.HouseNumber,
                 Street = responseObject.Address.Road,
                 Quarter = responseObject.Address.Quarter,
+                Neighbourhood = responseObject.Address.Neighbourhood,
                 Suburb = responseObject.Address.Suburb,
                 CityDistrict = responseObject.Address.CityDistrict,
                 Town = responseObject.Address.Town,
+                Municipality = responseObject.Address.Municipality,
                 County = responseObject.Address.County,
                 Postcode = responseObject.Address.Postcode,
                 Country = responseObject.Address.Country
