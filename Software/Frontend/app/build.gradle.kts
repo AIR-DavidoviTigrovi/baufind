@@ -72,4 +72,5 @@ dependencies {
     // Ako uspijem refleksivnost i DI ovo napraviti na drukčiji način
     implementation(project(":example_map"))
     implementation(project(":google_map"))
+    implementation(project(":open_street_map"))
 }

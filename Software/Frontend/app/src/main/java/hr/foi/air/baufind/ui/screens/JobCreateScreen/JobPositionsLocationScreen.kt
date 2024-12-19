@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -72,8 +73,7 @@ fun JobPositionsLocationScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(22.dp)
-            .verticalScroll(rememberScrollState()),
+            .padding(22.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
@@ -84,25 +84,32 @@ fun JobPositionsLocationScreen(
         )
         Spacer(modifier = Modifier.height(24.dp))
         Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            jobViewModel.jobPositions.forEach { position ->
-                PositionAndNumber(
-                    text = position.name,
-                    count = position.count.value,
-                    onCountChange = { newCount -> position.count.value = newCount },
-                    onDelete = { jobViewModel.jobPositions.remove(position) }
-                )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                jobViewModel.jobPositions.forEach { position ->
+                    PositionAndNumber(
+                        text = position.name,
+                        count = position.count.value,
+                        onCountChange = { newCount -> position.count.value = newCount },
+                        onDelete = { jobViewModel.jobPositions.remove(position) }
+                    )
+                }
             }
+            Spacer(modifier = Modifier.height(24.dp))
+            PrimaryButton(
+                drawableId = R.drawable.add_person_icon,
+                text = "Dodaj poziciju",
+                onClick = {
+                    navController.navigate("jobAddSkillsScreen")
+                }
+            )
         }
-        Spacer(modifier = Modifier.height(24.dp))
-        PrimaryButton(
-            drawableId = R.drawable.add_person_icon,
-            text = "Dodaj poziciju",
-            onClick = {
-                navController.navigate("jobAddSkillsScreen")
-            }
-        )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = "Lokacija posla",
