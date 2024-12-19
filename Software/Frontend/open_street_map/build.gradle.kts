@@ -53,4 +53,5 @@ dependencies {
     implementation(libs.osm.android.compose)
 
     implementation(project(":core"))
+    implementation(project(":ws"))
 }

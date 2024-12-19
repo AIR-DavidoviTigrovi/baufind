@@ -16,7 +16,7 @@ public class GeocodingController : ControllerBase
         _service = service;
     }
 
-    [HttpGet]
+    [HttpGet("reverse")]
     [Authorize]
     public async Task<ActionResult<ReverseGeocodingResponse>> ReverseGeocode([FromQuery] double? lat, [FromQuery] double? lng)
     {
