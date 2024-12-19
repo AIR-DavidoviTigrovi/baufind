@@ -53,4 +53,15 @@ class JobViewModel : ViewModel(){
             List(jobPosition.count.value) { jobPosition.id }
         }
     }
+
+    fun clearData() {
+        jobName.value = ""
+        jobDescription.value = ""
+        allowInvitations.value = false
+        selectedImages.clear()
+        jobPositions.clear()
+        lat.doubleValue = 0.0
+        long.doubleValue = 0.0
+        location.value = ""
+    }
 }

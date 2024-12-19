@@ -1,5 +1,6 @@
 ﻿using BusinessLogicLayer.AppLogic;
 using BusinessLogicLayer.AppLogic.Users;
+using BusinessLogicLayer.AppLogic.Users.DeleteUser;
 using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
 using BusinessLogicLayer.AppLogic.Users.GetUser;
 using BusinessLogicLayer.AppLogic.Users.GetUserProfile;
@@ -292,5 +293,26 @@ public class UserService : IUserService
 
             return hash.ToString();
         }
+    }
+    /// <summary>
+    /// Metoda za brisanje korisnika, zahtjeva ID kao argument
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public DeleteUserResponse DeleteUser(int id)
+    {
+        bool deleted = _repository.DeleteUser(id);
+        if (!deleted)
+        {
+            return new DeleteUserResponse { 
+                Message="Greška prilikom brisanja korisnika", 
+                Success = false 
+            };
+        }
+        return new DeleteUserResponse {
+            Message="Korisnik je uspješno obrisan",
+            Success=true 
+        };
+
     }
 }
