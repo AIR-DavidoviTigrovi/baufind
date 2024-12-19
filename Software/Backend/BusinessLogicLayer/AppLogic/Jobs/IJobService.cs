@@ -1,4 +1,5 @@
 ﻿using BusinessLogicLayer.AppLogic.Jobs.AddJob;
+using BusinessLogicLayer.AppLogic.Jobs.AddUserToJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
 using System;
 using System.Collections.Generic;
@@ -12,5 +13,7 @@ namespace BusinessLogicLayer.AppLogic.Jobs
     {
         public AddJobResponse AddJob(AddJobRequest request, int userId);
         public GetJobsForCurrentUserResponse GetJobsForCurrentUser(int userId);
+        public CallWarkerToJobResponse CallWorkerToJob(CallWorkerToJobRequest request, int userId);
     }
 }
+     
