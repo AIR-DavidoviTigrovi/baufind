@@ -78,7 +78,7 @@ public class JobController : ControllerBase
                 Message = "Ne možete pristupiti tom resursu!"
             });
         }
-        return _jobService.CallWorkerToJob(request);
+        return _jobService.CallWorkerToJob(request, userIdFromJwt.Value);
 
     }
 

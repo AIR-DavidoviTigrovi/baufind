@@ -9,7 +9,7 @@ namespace DataAccessLayer.AppLogic
 {
     public interface IWorkingRepository
     {
-        public bool CallWorkerToFirstAvailableEntry(int workerId, int jobId, int skillId);
+        public bool CallWorkerToFirstAvailableEntry(int workerId, int jobId, int skillId, int userId);
         public List<WorkingModel> GetWorkingEntriesByJobId(int jobId);
     }
 }

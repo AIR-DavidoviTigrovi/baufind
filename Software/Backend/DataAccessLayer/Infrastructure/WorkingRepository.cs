@@ -18,9 +18,15 @@ namespace DataAccessLayer.Infrastructure
             _db = db;
         }
 
-        public bool CallWorkerToFirstAvailableEntry(int workerId, int jobId, int skillId)
+        public bool CallWorkerToFirstAvailableEntry(int workerId, int jobId, int skillId, int userId)
         {
-            // Dohvati sve retke za zadani job_id i skill_id
+
+            if (!ValidateUsersId(userId, jobId))
+            {
+                Console.WriteLine("Pristup odbijen: Korisnik nije vlasnik posla.");
+                return false;
+            }
+
             var entries = GetWorkingEntriesByJobId(jobId);
 
             if (entries == null || !entries.Any())
@@ -29,7 +35,6 @@ namespace DataAccessLayer.Infrastructure
                 return false;
             }
 
-            // Uzmi prvi redak koji nema dodijeljen worker_id i ima odgovarajući skill_id
             var entryToUpdate = entries.FirstOrDefault(e => e.WorkerId == null && e.SkillId == skillId);
             if (entryToUpdate == null)
             {
@@ -37,7 +42,6 @@ namespace DataAccessLayer.Infrastructure
                 return false;
             }
 
-            // Ažuriraj worker_id i working_status_id za odabrani redak
             string query = @"
     UPDATE Working
     SET worker_id = @workerId,
@@ -54,7 +58,7 @@ namespace DataAccessLayer.Infrastructure
 
             try
             {
-                return _db.ExecuteNonQuery(query, parameters) > 0; // Vraća true ako je ažuriranje uspjelo.
+                return _db.ExecuteNonQuery(query, parameters) > 0; 
             }
             catch (Exception ex)
             {
@@ -69,9 +73,9 @@ namespace DataAccessLayer.Infrastructure
         {
             string query = "SELECT * FROM Working WHERE job_id = @jobId;";
             var parameters = new Dictionary<string, object>
-    {
-        { "@jobId", jobId }
-    };
+                {
+                    { "@jobId", jobId }
+                };
 
             using (var reader = _db.ExecuteReader(query, parameters))
             {
@@ -83,6 +87,28 @@ namespace DataAccessLayer.Infrastructure
                 return result;
             }
         }
+        private bool ValidateUsersId(int userId, int jobId)
+        {
+            string query = @"
+            SELECT COUNT(*)
+            FROM Job
+            WHERE id = @jobId AND employer_id = @userId";
+            var parameters = new Dictionary<string, object>
+            {
+                { "@jobId", jobId },
+                { "@userId", userId }
+            };
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                if (reader.Read()) 
+                {
+                    int result = reader.GetInt32(0); 
+                    return result > 0; 
+                }
+            }
+            return false;
+        }
+
 
         private WorkingModel WorkingModelFromReader(SqlDataReader reader)
         {

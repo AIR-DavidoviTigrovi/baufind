@@ -72,9 +72,9 @@ namespace BusinessLogicLayer.Infrastructure
             };
         }
 
-        public CallWarkerToJobResponse CallWorkerToJob(CallWorkerToJobRequest request)
+        public CallWarkerToJobResponse CallWorkerToJob(CallWorkerToJobRequest request, int userId)
         {
-            bool added = _workingRepository.CallWorkerToFirstAvailableEntry(request.WorkerId, request.JobId, request.SkillId);
+            bool added = _workingRepository.CallWorkerToFirstAvailableEntry(request.WorkerId, request.JobId, request.SkillId, userId);
             CallWarkerToJobResponse response = new CallWarkerToJobResponse();
             if (added)
             {
