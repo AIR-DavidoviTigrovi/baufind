@@ -17,7 +17,7 @@ public class GeocodingController : ControllerBase
     }
 
     [HttpGet("reverse")]
-    [Authorize]
+    [AllowAnonymous]
     public async Task<ActionResult<ReverseGeocodingResponse>> ReverseGeocode([FromQuery] double? lat, [FromQuery] double? lng)
     {
         if (lat == null || lng == null)

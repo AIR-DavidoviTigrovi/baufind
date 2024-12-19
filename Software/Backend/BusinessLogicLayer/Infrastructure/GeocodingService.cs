@@ -64,18 +64,18 @@ public class GeocodingService : IGeocodingService
             return new ReverseGeocodingResponse
             {
                 Location = responseObject.DisplayName,
-                Amenity = responseObject.Address.Amenity,
-                HouseNumber = responseObject.Address.HouseNumber,
-                Street = responseObject.Address.Road,
-                Quarter = responseObject.Address.Quarter,
-                Neighbourhood = responseObject.Address.Neighbourhood,
-                Suburb = responseObject.Address.Suburb,
-                CityDistrict = responseObject.Address.CityDistrict,
-                Town = responseObject.Address.Town,
-                Municipality = responseObject.Address.Municipality,
-                County = responseObject.Address.County,
-                Postcode = responseObject.Address.Postcode,
-                Country = responseObject.Address.Country
+                Amenity = responseObject.Address?.Amenity ?? null,
+                HouseNumber = responseObject.Address?.HouseNumber ?? null,
+                Street = responseObject.Address?.Road ?? null,
+                Quarter = responseObject.Address?.Quarter ?? null,
+                Neighbourhood = responseObject.Address?.Neighbourhood ?? null,
+                Suburb = responseObject.Address?.Suburb ?? null,
+                CityDistrict = responseObject.Address?.CityDistrict ?? null,
+                Town = responseObject.Address?.Town ?? null,
+                Municipality = responseObject.Address?.Municipality ?? null,
+                County = responseObject.Address?.County ?? null,
+                Postcode = responseObject.Address?.Postcode ?? null,
+                Country = responseObject.Address?.Country ?? null
             };
         }
         catch (Exception ex)
