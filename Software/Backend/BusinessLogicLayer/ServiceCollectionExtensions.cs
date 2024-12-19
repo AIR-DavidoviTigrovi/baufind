@@ -1,4 +1,4 @@
-﻿using BusinessLogicLayer.AppLogic;
+using BusinessLogicLayer.AppLogic;
 using BusinessLogicLayer.AppLogic.Geocoding;
 using BusinessLogicLayer.AppLogic.Jobs;
 using BusinessLogicLayer.AppLogic.Reviews;
@@ -43,7 +43,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IJobRepository, JobRepository>();
         services.AddScoped<IPictureRepository, PictureRepository>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
-
+        services.AddScoped<IWorkingRepository, WorkingRepository>(); 
         // Servisi
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IUserService, UserService>();
