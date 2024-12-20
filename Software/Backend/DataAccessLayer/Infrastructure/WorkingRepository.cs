@@ -146,5 +146,146 @@ namespace DataAccessLayer.Infrastructure
 
         }
 
+        public List<JobSearchModel> GetPendingInvitations(int workerId)
+        {
+            var jobs = GetJobs(workerId); 
+            var pictures = GetPictures(workerId); 
+            var skills = GetSkills(workerId); 
+
+            foreach (var job in jobs)
+            {
+                if (pictures.ContainsKey(job.Id))
+                {
+                    job.Pictures = pictures[job.Id];
+                }
+
+                if (skills.ContainsKey(job.Id))
+                {
+                    job.Skills = skills[job.Id];
+                }
+            }
+
+            return jobs;
+        }
+
+        public List<JobSearchModel> GetJobs(int workerId)
+        {
+            string query = @"
+            SELECT 
+                j.id AS job_id,
+                j.employer_id,
+                j.job_status_id,
+                j.title,
+                j.description,
+                j.allow_worker_invite,
+                j.location,
+                j.lat,
+                j.lng
+            FROM working w
+            INNER JOIN job j ON w.job_id = j.id
+            WHERE w.working_status_id = 3 AND w.worker_id = @WorkerId";
+
+                    var parameters = new Dictionary<string, object>
+            {
+                { "@WorkerId", workerId }
+            };
+
+            var jobs = new List<JobSearchModel>();
+
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                while (reader.Read())
+                {
+                    jobs.Add(new JobSearchModel
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("job_id")),
+                        Employer_id = reader.GetInt32(reader.GetOrdinal("employer_id")),
+                        Job_status_id = reader.GetInt32(reader.GetOrdinal("job_status_id")),
+                        Title = reader.GetString(reader.GetOrdinal("title")),
+                        Description = reader.GetString(reader.GetOrdinal("description")),
+                        Allow_worker_invite = reader.GetBoolean(reader.GetOrdinal("allow_worker_invite")),
+                        Location = reader.GetString(reader.GetOrdinal("location")),
+                        Lat = reader.IsDBNull(reader.GetOrdinal("lat")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("lat")),
+                        Lng = reader.IsDBNull(reader.GetOrdinal("lng")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("lng")),
+                        Pictures = new List<byte[]>(),
+                        Skills = new List<SkillModel>()
+                    });
+                }
+            }
+
+            return jobs;
+        }
+        public Dictionary<int, List<byte[]>> GetPictures(int workerId)
+        {
+            string query = @"
+                SELECT 
+                    w.job_id,
+                    p.picture
+                FROM working w
+                INNER JOIN job_picture jp ON w.job_id = jp.job_id
+                INNER JOIN picture p ON jp.picture_id = p.id
+                WHERE w.working_status_id = 3 AND w.worker_id = @WorkerId";
+
+                        var parameters = new Dictionary<string, object>
+                {
+                    { "@WorkerId", workerId }
+                };
+
+            var pictures = new Dictionary<int, List<byte[]>>();
+
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                while (reader.Read())
+                {
+                    int jobId = reader.GetInt32(reader.GetOrdinal("job_id"));
+                    if (!pictures.ContainsKey(jobId))
+                    {
+                        pictures[jobId] = new List<byte[]>();
+                    }
+                    pictures[jobId].Add((byte[])reader["picture"]);
+                }
+            }
+
+            return pictures;
+        }
+        public Dictionary<int, List<SkillModel>> GetSkills(int workerId)
+        {
+            string query = @"
+                SELECT 
+                    w.job_id,
+                    s.id AS skill_id,
+                    s.title AS skill_name
+                FROM working w
+                INNER JOIN skill s ON w.skill_id = s.id
+                WHERE w.working_status_id = 3 AND w.worker_id = @WorkerId";
+
+                        var parameters = new Dictionary<string, object>
+                {
+                    { "@WorkerId", workerId }
+                };
+
+            var skills = new Dictionary<int, List<SkillModel>>();
+
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                while (reader.Read())
+                {
+                    int jobId = reader.GetInt32(reader.GetOrdinal("job_id"));
+                    if (!skills.ContainsKey(jobId))
+                    {
+                        skills[jobId] = new List<SkillModel>();
+                    }
+                    skills[jobId].Add(new SkillModel
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("skill_id")),
+                        Title = reader.GetString(reader.GetOrdinal("skill_name"))
+                    });
+                }
+            }
+
+            return skills;
+        }
+
+
     }
 }
