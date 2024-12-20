@@ -1,4 +1,5 @@
-﻿using BusinessLogicLayer.AppLogic;
+using BusinessLogicLayer.AppLogic;
+using BusinessLogicLayer.AppLogic.Geocoding;
 using BusinessLogicLayer.AppLogic.Jobs;
 using BusinessLogicLayer.AppLogic.Reviews;
 using BusinessLogicLayer.AppLogic.Skills;
@@ -29,12 +30,14 @@ public static class ServiceCollectionExtensions
         services.Configure<JWTOptions>(
             configuration.GetSection("JWTOptions")
         );
+        services.Configure<GeocodingOptions>(
+            configuration.GetSection("Geocoding")
+        );
 
         services.AddScoped<DB>(); // Zbog DI u repozitorije
 
         // Repozitoriji
         services.AddScoped<IUserRepository, UserRepository>();
-
         services.AddScoped<IWorkerRepository,WorkerRepository>();
         services.AddScoped<ISkillRepository, SkillRepository>();
         services.AddScoped<IJobRepository, JobRepository>();
@@ -48,6 +51,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISkillService, SkillService>();
         services.AddScoped<IJobService, JobService>();
         services.AddScoped<IReviewService, ReviewService>();
+        services.AddScoped<IGeocodingService, GeocodingService>();
 
         return services;
     }
