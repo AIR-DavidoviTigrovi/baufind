@@ -1,8 +1,10 @@
 package hr.foi.air.baufind.service.UserProfileService
 
+import android.net.http.HttpException
 import hr.foi.air.baufind.ws.network.NetworkService
 import hr.foi.air.baufind.ws.network.TokenProvider
 import hr.foi.air.baufind.ws.request.UpdateUserRequest
+import hr.foi.air.baufind.ws.request.UserProfileViewRequest
 import hr.foi.air.baufind.ws.response.DeleteUserResponse
 import hr.foi.air.baufind.ws.response.UpdateUserResponse
 import hr.foi.air.baufind.ws.response.UserProfileResponse
@@ -42,6 +44,19 @@ class UserProfileService(tokenProvider: TokenProvider){
         }catch (e: Exception){
             e.printStackTrace()
             null
+        }
+    }
+
+    suspend fun fetchUserViewProfile(request: UserProfileViewRequest): UserProfileResponse? {
+        try {
+            val response = userProfileNetworkService.getUserProfile(request)
+            return response
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return null
         }
     }
 
