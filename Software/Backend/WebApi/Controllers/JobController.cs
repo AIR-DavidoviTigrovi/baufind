@@ -82,4 +82,23 @@ public class JobController : ControllerBase
 
     }
 
+    [HttpGet("CheckPendingInvitations")]
+    [Authorize]
+    public ActionResult<PendingInvitationResponse> GetPendindInvitations()
+    {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+
+        if (userIdFromJwt == null)
+        {
+            return Unauthorized(new GetJobsForCurrentUserResponse()
+            {
+                Error = "Ne možete pristupiti tom resursu!"
+            });
+        }
+
+        var jobs = _jobService.GetPendingInvitations(userIdFromJwt.Value);
+
+        return jobs;
+    }
+
 }
