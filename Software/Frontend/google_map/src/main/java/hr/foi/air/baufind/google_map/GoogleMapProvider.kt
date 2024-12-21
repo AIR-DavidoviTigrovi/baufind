@@ -30,7 +30,7 @@ import hr.foi.air.baufind.core.map.models.LocationInformation
 
 class GoogleMapProvider : MapProvider {
     @Composable
-    override fun MapScreen(modifier: Modifier, locationInformation: LocationInformation) {
+    override fun LocationPickerMapScreen(modifier: Modifier, locationInformation: LocationInformation) {
         var isMapLoaded by remember { mutableStateOf(false) }
         val cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(
@@ -106,5 +106,13 @@ class GoogleMapProvider : MapProvider {
                 )
             }
         }
+    }
+
+    @Composable
+    override fun LocationShowMapScreen(
+        modifier: Modifier,
+        locationInformation: LocationInformation
+    ) {
+        Text("TODO")
     }
 }

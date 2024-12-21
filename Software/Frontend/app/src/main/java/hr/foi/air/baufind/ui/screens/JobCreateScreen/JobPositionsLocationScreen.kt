@@ -118,7 +118,7 @@ fun JobPositionsLocationScreen(
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(24.dp))
-        mapProvider.MapScreen(
+        mapProvider.LocationPickerMapScreen(
             modifier = Modifier,
             locationInformation = locationInformation.value
         )
@@ -168,7 +168,13 @@ fun JobPositionsLocationScreenPreview() {
         object : TokenProvider { override fun getToken(): String? { return null } },
         object : MapProvider {
             @Composable
-            override fun MapScreen(
+            override fun LocationPickerMapScreen(
+                modifier: Modifier,
+                locationInformation: LocationInformation
+            ) { }
+
+            @Composable
+            override fun LocationShowMapScreen(
                 modifier: Modifier,
                 locationInformation: LocationInformation
             ) { }

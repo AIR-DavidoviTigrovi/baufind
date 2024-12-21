@@ -6,7 +6,13 @@ import hr.foi.air.baufind.core.map.models.LocationInformation
 
 interface MapProvider {
     @Composable
-    fun MapScreen(
+    fun LocationPickerMapScreen(
+        modifier: Modifier,
+        locationInformation: LocationInformation
+    )
+
+    @Composable
+    fun LocationShowMapScreen(
         modifier: Modifier,
         locationInformation: LocationInformation
     )

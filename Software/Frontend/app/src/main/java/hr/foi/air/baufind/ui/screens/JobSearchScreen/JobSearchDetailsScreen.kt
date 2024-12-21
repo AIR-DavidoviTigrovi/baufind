@@ -33,14 +33,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import hr.foi.air.baufind.core.map.MapProvider
+import hr.foi.air.baufind.core.map.models.LocationInformation
 import hr.foi.air.baufind.helpers.PictureHelper
 import hr.foi.air.baufind.ui.components.DisplayTextField
 import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ws.network.TokenProvider
 
 @Composable
-fun JobSearchDetailsScreen(navController: NavController, tokenProvider: TokenProvider, jobSearchViewModel: JobSearchViewModel){
+fun JobSearchDetailsScreen(
+    navController: NavController,
+    tokenProvider: TokenProvider,
+    jobSearchViewModel: JobSearchViewModel,
+    mapProvider: MapProvider
+){
     val selectedJob = jobSearchViewModel.selectedJob.value
+
+    var locationInformation = remember { mutableStateOf(LocationInformation(selectedJob?.lat ?: 0.0, selectedJob?.lng ?: 0.0)) }
 
     var selectedImageIndex by remember { mutableStateOf<Int?>(null) }
     val employerId = selectedJob?.employer_id
@@ -60,6 +69,12 @@ fun JobSearchDetailsScreen(navController: NavController, tokenProvider: TokenPro
             DisplayTextField(title = "Opis posla", text = selectedJob.description)
             Spacer(modifier = Modifier.height(24.dp))
             DisplayTextField(title = "Lokacija posla", text = selectedJob.location)
+            if (selectedJob.lat != null && selectedJob.lng != null) {
+                mapProvider.LocationShowMapScreen(
+                    modifier = Modifier,
+                    locationInformation = locationInformation.value
+                )
+            }
             Spacer(modifier = Modifier.height(24.dp))
 
             PrimaryButton(
@@ -119,6 +134,25 @@ fun JobSearchDetailsScreen(navController: NavController, tokenProvider: TokenPro
 @Composable
 fun JobSearchDetailsScreenPreview() {
     val navController = rememberNavController()
-    JobSearchDetailsScreen(navController, tokenProvider = object : TokenProvider { override fun getToken(): String? { return null } }, jobSearchViewModel = JobSearchViewModel())
+    JobSearchDetailsScreen(
+        navController,
+        tokenProvider = object : TokenProvider {
+            override fun getToken(): String? { return null }
+        },
+        jobSearchViewModel = JobSearchViewModel(),
+        object : MapProvider {
+            @Composable
+            override fun LocationPickerMapScreen(
+                modifier: Modifier,
+                locationInformation: LocationInformation
+            ) { }
+
+            @Composable
+            override fun LocationShowMapScreen(
+                modifier: Modifier,
+                locationInformation: LocationInformation
+            ) { }
+        }
+    )
 }
 

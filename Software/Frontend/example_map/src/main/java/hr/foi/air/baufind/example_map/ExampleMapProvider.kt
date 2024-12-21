@@ -20,7 +20,7 @@ import hr.foi.air.baufind.core.map.models.LocationInformation
 
 class ExampleMapProvider : MapProvider {
     @Composable
-    override fun MapScreen(
+    override fun LocationPickerMapScreen(
         modifier: Modifier,
         locationInformation: LocationInformation
     ) {
@@ -122,5 +122,13 @@ class ExampleMapProvider : MapProvider {
             modifier = modifier.fillMaxWidth(),
             singleLine = true
         )
+    }
+
+    @Composable
+    override fun LocationShowMapScreen(
+        modifier: Modifier,
+        locationInformation: LocationInformation
+    ) {
+        Text("TODO")
     }
 }

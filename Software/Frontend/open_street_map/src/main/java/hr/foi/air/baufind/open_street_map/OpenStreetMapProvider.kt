@@ -32,7 +32,7 @@ import org.osmdroid.util.GeoPoint
 
 class OpenStreetMapProvider : MapProvider {
     @Composable
-    override fun MapScreen(modifier: Modifier, locationInformation: LocationInformation) {
+    override fun LocationPickerMapScreen(modifier: Modifier, locationInformation: LocationInformation) {
         val geocodingService = NetworkService.createGeocodingService()
 
         val cameraState = rememberCameraState {
@@ -110,5 +110,13 @@ class OpenStreetMapProvider : MapProvider {
                 )
             }
         }
+    }
+
+    @Composable
+    override fun LocationShowMapScreen(
+        modifier: Modifier,
+        locationInformation: LocationInformation
+    ) {
+        Text("TODO")
     }
 }

@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
         GoogleMapProvider(),
         OpenStreetMapProvider()
     ) // TODO: ubaciti module pomoću refleksije (a ne ručno)
-    private val mapProvider = mapProviders[0] // TODO: da se može odabrati u postavkama
+    private val mapProvider = mapProviders[2] // TODO: da se može odabrati u postavkama
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -136,7 +136,7 @@ class MainActivity : ComponentActivity() {
                             composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController, jobViewModel, tokenProvider) }
 
                             composable("jobSearchScreen") { JobSearchScreen(navController, tokenProvider, jobSearchViewModel) }
-                            composable("jobSearchDetailsScreen") { JobSearchDetailsScreen(navController, tokenProvider, jobSearchViewModel) }
+                            composable("jobSearchDetailsScreen") { JobSearchDetailsScreen(navController, tokenProvider, jobSearchViewModel, mapProvider) }
 
                         }
                     }
