@@ -117,6 +117,26 @@ class OpenStreetMapProvider : MapProvider {
         modifier: Modifier,
         locationInformation: LocationInformation
     ) {
-        Text("TODO")
+        val cameraState = rememberCameraState {
+            geoPoint = GeoPoint(locationInformation.lat, locationInformation.long)
+            zoom = 15.0
+        }
+
+        OpenStreetMap(
+            modifier = modifier
+                .fillMaxWidth()
+                .aspectRatio(4f/3f)
+                .clip(AbsoluteCutCornerShape(0.dp)),
+            cameraState = cameraState
+        ) {
+            Marker(
+                state = rememberMarkerState(
+                    geoPoint = GeoPoint(locationInformation.lat, locationInformation.long)
+                ),
+                infoWindowContent = {
+                    Text(locationInformation.location)
+                }
+            )
+        }
     }
 }

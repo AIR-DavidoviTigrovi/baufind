@@ -49,7 +49,11 @@ fun JobSearchDetailsScreen(
 ){
     val selectedJob = jobSearchViewModel.selectedJob.value
 
-    var locationInformation = remember { mutableStateOf(LocationInformation(selectedJob?.lat ?: 0.0, selectedJob?.lng ?: 0.0)) }
+    var locationInformation = remember { mutableStateOf(LocationInformation(
+        selectedJob?.lat ?: 0.0,
+        selectedJob?.lng ?: 0.0,
+        selectedJob?.location ?: "Lokacija posla"
+    )) }
 
     var selectedImageIndex by remember { mutableStateOf<Int?>(null) }
     val employerId = selectedJob?.employer_id

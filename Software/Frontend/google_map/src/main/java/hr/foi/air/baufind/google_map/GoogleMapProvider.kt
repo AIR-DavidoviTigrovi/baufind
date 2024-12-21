@@ -113,6 +113,25 @@ class GoogleMapProvider : MapProvider {
         modifier: Modifier,
         locationInformation: LocationInformation
     ) {
-        Text("TODO")
+        var isMapLoaded by remember { mutableStateOf(false) }
+        val cameraPositionState = rememberCameraPositionState {
+            position = CameraPosition.fromLatLngZoom(
+                LatLng(locationInformation.lat, locationInformation.long),
+                15.0f
+            )
+        }
+
+        GoogleMap(
+            modifier = modifier
+                .fillMaxWidth()
+                .aspectRatio(4f/3f),
+            onMapLoaded = { isMapLoaded = true },
+            cameraPositionState = cameraPositionState
+        ) {
+            Marker(
+                state = rememberMarkerState(position = LatLng(locationInformation.lat, locationInformation.long)),
+                title = locationInformation.location
+            )
+        }
     }
 }

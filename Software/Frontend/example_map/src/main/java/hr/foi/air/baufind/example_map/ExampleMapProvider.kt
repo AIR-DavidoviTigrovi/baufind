@@ -129,6 +129,11 @@ class ExampleMapProvider : MapProvider {
         modifier: Modifier,
         locationInformation: LocationInformation
     ) {
-        Text("TODO")
+        Text(
+            text = "Lat: ${locationInformation.lat}",
+        )
+        Text(
+            text = "Lng: ${locationInformation.long}",
+        )
     }
 }
