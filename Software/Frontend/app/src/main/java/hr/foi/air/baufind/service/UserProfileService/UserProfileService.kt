@@ -44,5 +44,22 @@ class UserProfileService(tokenProvider: TokenProvider){
             null
         }
     }
+    suspend fun getUserProfileById(id: Int?): UserProfileResponse? {
+        return try {
+            val wrapper = id?.let { userProfileNetworkService.getUserProfileById(it) }
+            if (wrapper?.error.isNullOrEmpty()) {
+                wrapper?.userProfileModel
+            } else {
+                println("Error from backend: ${wrapper?.error}")
+                null
+            }
+        } catch (e: HttpException) {
+            e.printStackTrace()
+            null
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
+        }
+    }
 
 }

@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +32,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -109,7 +109,8 @@ fun userProfileScreen(
     navController: NavController,
     context: Context,
     tokenProvider: TokenProvider,
-    userProfileViewModel: UserProfileViewModel
+    userProfileViewModel: UserProfileViewModel,
+    userId: Int?
 ) {
     val coroutineScope = rememberCoroutineScope()
     val jwt = tokenProvider.getToken()
@@ -119,12 +120,14 @@ fun userProfileScreen(
     var showDeleteConfirmation by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
 
-
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             try {
-                //znaci da ce jwt biti argument
-                val fetchedProfile = jwt?.let { userProfileService.fetchUserProfile() }
+                val fetchedProfile = if (userId == null || userId == -1) {
+                    jwt?.let { userProfileService.fetchUserProfile() }
+                } else {
+                    userProfileService.getUserProfileById(userId)
+                }
                 if (fetchedProfile != null) {
                     userProfileViewModel.setUserProfile(fetchedProfile)
                 }
@@ -133,7 +136,7 @@ fun userProfileScreen(
             }
         }
     }
-
+    val isOwnProfile = (userId == null || userId == -1)
     if (userProfile != null) {
 
         Scaffold(
@@ -162,36 +165,37 @@ fun userProfileScreen(
                             )
                         }
                     }, actions = {
-                        Box {
-                            IconButton(onClick = { showMenu = !showMenu }) {
-                                Icon(
-                                    imageVector = Icons.Default.MoreVert,
-                                    contentDescription = "Options",
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                            }
-
-                            DropdownMenu(
-                                expanded = showMenu,
-                                onDismissRequest = { showMenu = false }
-                            ) {
-                                DropdownMenuItem(
-                                    text = { Text("Delete account") },
-                                    onClick = {
-                                        showMenu = false
-                                        showDeleteConfirmation = true
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Logout") },
-                                    onClick = {
-                                        showMenu = false
-                                        JwtService.clearJwt(context)
-                                        navController.navigate("login") {
-                                            popUpTo(0) { inclusive = true }
+                        if (isOwnProfile) {
+                            Box {
+                                IconButton(onClick = { showMenu = !showMenu }) {
+                                    Icon(
+                                        imageVector = Icons.Default.MoreVert,
+                                        contentDescription = "Options",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                                DropdownMenu(
+                                    expanded = showMenu,
+                                    onDismissRequest = { showMenu = false }
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text("Delete account") },
+                                        onClick = {
+                                            showMenu = false
+                                            showDeleteConfirmation = true
                                         }
-                                    }
-                                )
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Logout") },
+                                        onClick = {
+                                            showMenu = false
+                                            JwtService.clearJwt(context)
+                                            navController.navigate("login") {
+                                                popUpTo(0) { inclusive = true }
+                                            }
+                                        }
+                                    )
+                                }
                             }
                         }
                     },
@@ -213,7 +217,9 @@ fun userProfileScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 UserProfileHeader(profile.name, profile.address ?: "N/A", PictureHelper.decodeBase64ToByteArray(profile.profilePicture))
-                EditProfileButton(onClick = {navController.navigate("editUserProfileScreen")})
+                if (isOwnProfile) {
+                    EditProfileButton(onClick = { navController.navigate("editUserProfileScreen") })
+                }
                 UserProfileContactInformation(profile.address ?: "N/A", profile.phone ?: "N/A", profile.email)
                 UserSkillSection(profile.skills.orEmpty().map { skill -> Skill(skill.id, skill.title) })
                 Spacer(modifier = Modifier.width(22.dp))
