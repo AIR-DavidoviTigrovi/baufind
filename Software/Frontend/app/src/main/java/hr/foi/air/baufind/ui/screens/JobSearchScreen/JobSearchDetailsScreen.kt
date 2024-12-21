@@ -43,7 +43,7 @@ fun JobSearchDetailsScreen(navController: NavController, tokenProvider: TokenPro
     val selectedJob = jobSearchViewModel.selectedJob.value
 
     var selectedImageIndex by remember { mutableStateOf<Int?>(null) }
-    val employerId = selectedJob?.employerId
+    val employerId = selectedJob?.employer_id
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
@@ -61,7 +61,6 @@ fun JobSearchDetailsScreen(navController: NavController, tokenProvider: TokenPro
             Spacer(modifier = Modifier.height(24.dp))
             DisplayTextField(title = "Lokacija posla", text = selectedJob.location)
             Spacer(modifier = Modifier.height(24.dp))
-            Log.d("USERIDDDDDD", selectedJob.toString())
 
             PrimaryButton(
                 text = "Profil poslodavca",
