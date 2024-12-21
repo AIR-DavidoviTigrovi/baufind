@@ -129,7 +129,10 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
                         )
                         if (response.successfulLogin){
                             JwtService.saveJwt(context, response.jwt)
-                            navController.navigate("jobDetailsScreen")
+                            navController.navigate("jobDetailsScreen") {
+                                popUpTo("login") { inclusive = true }
+                            }
+
                         }
                         else {
                             email = ""
