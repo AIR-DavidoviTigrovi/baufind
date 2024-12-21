@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -33,8 +32,8 @@ import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchScreen
 import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchViewModel
 import hr.foi.air.baufind.ui.screens.LoginScreen.LoginScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.EditProfileScreen
-import hr.foi.air.baufind.ui.screens.UserProfileScreen.UserProfileViewModel
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.ReviewsScreen
+import hr.foi.air.baufind.ui.screens.UserProfileScreen.UserProfileViewModel
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.userProfileScreen
 import hr.foi.air.baufind.ui.screens.WorkerSearchScreen.WorkerSearchScreen
 import hr.foi.air.baufind.ui.theme.BaufindTheme
@@ -50,7 +49,7 @@ class MainActivity : ComponentActivity() {
         val tokenProvider = AppTokenProvider(sharedPreferences)
         val jwtToken = sharedPreferences.getString("jwt_token", null)
         val userProfileViewModel = UserProfileViewModel(tokenProvider)
-        val gson: Gson = Gson()
+        val gson = Gson()
         val jobViewModel = JobViewModel()
         val jobSearchViewModel = JobSearchViewModel()
         setContent {
@@ -61,14 +60,15 @@ class MainActivity : ComponentActivity() {
             BaufindTheme {
                 Scaffold(
                     bottomBar = {
-                        if (currentRoute in listOf(
+                        if (currentRoute?.startsWith("userProfileScreen") == true ||
+                            currentRoute in listOf(
                                 "jobPositionsLocationScreen",
                                 "jobAddSkillsScreen",
                                 "jobDetailsScreen",
-                                "myUserProfileScreen",
                                 "jobSearchScreen",
                                 "jobSearchDetailsScreen"
-                            )) {
+                            )
+                        ) {
                             BottomNavigationBar(navController = navController)
                         }
                     }
@@ -89,7 +89,29 @@ class MainActivity : ComponentActivity() {
                             composable("login") { LoginScreen(navController, this@MainActivity, tokenProvider) }
                             composable("registration") { RegistrationScreen(navController, tokenProvider) }
 
-                            composable("myUserProfileScreen") { userProfileScreen(navController,this@MainActivity, tokenProvider, userProfileViewModel) }
+                            composable(
+                                "userProfileScreen?userId={userId}",
+                                arguments = listOf(
+                                    navArgument("userId") {
+                                        type = NavType.IntType
+                                        defaultValue = -1
+                                        nullable = false
+                                    }
+                                )
+                            ) { backStackEntry ->
+                                val userId = backStackEntry.arguments?.getInt("userId") ?: -1
+
+                                userProfileScreen(
+                                    navController = navController,
+                                    context = this@MainActivity,
+                                    tokenProvider = tokenProvider,
+                                    userProfileViewModel = userProfileViewModel,
+                                    userId = if (userId == -1) null else userId
+                                )
+
+                            }
+
+
                             composable("editUserProfileScreen") { EditProfileScreen(navController, this@MainActivity, tokenProvider, userProfileViewModel) }
                             composable("reviewsScreen/{userId}") { backStackEntry ->
                                 val userId = backStackEntry.arguments?.getString("userId")?.toInt() ?: 0
