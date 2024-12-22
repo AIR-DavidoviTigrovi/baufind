@@ -179,6 +179,12 @@ fun userProfileScreen(
                                     onDismissRequest = { showMenu = false }
                                 ) {
                                     DropdownMenuItem(
+                                        text = { Text("Settings") },
+                                        onClick = {
+                                            navController.navigate("settingsScreen")
+                                        }
+                                    )
+                                    DropdownMenuItem(
                                         text = { Text("Delete account") },
                                         onClick = {
                                             showMenu = false
