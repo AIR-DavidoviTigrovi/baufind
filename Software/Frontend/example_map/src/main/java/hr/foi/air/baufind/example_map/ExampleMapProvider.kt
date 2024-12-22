@@ -16,10 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import hr.foi.air.baufind.core.map.MapProvider
-import hr.foi.air.baufind.core.map.annotations.MapProviderModule
 import hr.foi.air.baufind.core.map.models.Coordinates
 
-@MapProviderModule
 class ExampleMapProvider : MapProvider {
     @Composable
     override fun LocationPickerMapScreen(

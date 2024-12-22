@@ -42,9 +42,6 @@ import hr.foi.air.baufind.ui.theme.BaufindTheme
 import hr.foi.air.baufind.ws.network.AppTokenProvider
 
 class MainActivity : ComponentActivity() {
-    private val mapProviders = MapHelper.discoverMapProviders()
-    private val mapProvider = mapProviders[0] // TODO: da se može odabrati u postavkama
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
@@ -129,11 +126,11 @@ class MainActivity : ComponentActivity() {
                                 WorkerSearchScreen(navController,tokenProvider,deserializedList)
                             }
                             composable("jobDetailsScreen") { JobDetailsScreen(navController, jobViewModel) }
-                            composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController, jobViewModel, tokenProvider, mapProvider) }
+                            composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController, jobViewModel, tokenProvider) }
                             composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController, jobViewModel, tokenProvider) }
 
                             composable("jobSearchScreen") { JobSearchScreen(navController, tokenProvider, jobSearchViewModel) }
-                            composable("jobSearchDetailsScreen") { JobSearchDetailsScreen(navController, tokenProvider, jobSearchViewModel, mapProvider) }
+                            composable("jobSearchDetailsScreen") { JobSearchDetailsScreen(navController, tokenProvider, jobSearchViewModel) }
 
                         }
                     }

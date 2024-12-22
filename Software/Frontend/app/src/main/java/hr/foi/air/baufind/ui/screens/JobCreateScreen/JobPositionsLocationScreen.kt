@@ -30,6 +30,7 @@ import com.google.gson.Gson
 import hr.foi.air.baufind.R
 import hr.foi.air.baufind.core.map.MapProvider
 import hr.foi.air.baufind.core.map.models.Coordinates
+import hr.foi.air.baufind.helpers.MapHelper
 import hr.foi.air.baufind.service.JobService.JobDao
 import hr.foi.air.baufind.service.JobService.JobService
 import hr.foi.air.baufind.ui.components.ExpandableText
@@ -44,8 +45,7 @@ import kotlinx.coroutines.launch
 fun JobPositionsLocationScreen(
     navController: NavController,
     jobViewModel: JobViewModel,
-    tokenProvider: TokenProvider,
-    mapProvider: MapProvider
+    tokenProvider: TokenProvider
 ){
     jobViewModel.tokenProvider.value = tokenProvider
     val coroutineScope = rememberCoroutineScope()
@@ -135,7 +135,7 @@ fun JobPositionsLocationScreen(
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(24.dp))
-        mapProvider.LocationPickerMapScreen(
+        MapHelper.mapProvider.LocationPickerMapScreen(
             modifier = Modifier,
             coordinates = coordinates.value,
             onCoordinatesChanged = { loc ->
@@ -212,21 +212,6 @@ fun JobPositionsLocationScreenPreview() {
     JobPositionsLocationScreen(
         navController,
         JobViewModel(),
-        object : TokenProvider { override fun getToken(): String? { return null } },
-        object : MapProvider {
-            @Composable
-            override fun LocationPickerMapScreen(
-                modifier: Modifier,
-                coordinates: Coordinates,
-                onCoordinatesChanged: (Coordinates) -> Unit
-            ) { }
-
-            @Composable
-            override fun LocationShowMapScreen(
-                modifier: Modifier,
-                coordinates: Coordinates,
-                location: String
-            ) { }
-        }
+        object : TokenProvider { override fun getToken(): String? { return null } }
     )
 }

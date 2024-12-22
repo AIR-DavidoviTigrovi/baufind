@@ -35,6 +35,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.core.map.MapProvider
 import hr.foi.air.baufind.core.map.models.Coordinates
+import hr.foi.air.baufind.helpers.MapHelper
 import hr.foi.air.baufind.helpers.PictureHelper
 import hr.foi.air.baufind.ui.components.DisplayTextField
 import hr.foi.air.baufind.ui.components.PrimaryButton
@@ -44,8 +45,7 @@ import hr.foi.air.baufind.ws.network.TokenProvider
 fun JobSearchDetailsScreen(
     navController: NavController,
     tokenProvider: TokenProvider,
-    jobSearchViewModel: JobSearchViewModel,
-    mapProvider: MapProvider
+    jobSearchViewModel: JobSearchViewModel
 ){
     val selectedJob = jobSearchViewModel.selectedJob.value
 
@@ -73,7 +73,7 @@ fun JobSearchDetailsScreen(
             Spacer(modifier = Modifier.height(24.dp))
             DisplayTextField(title = "Lokacija posla", text = selectedJob.location)
             if (selectedJob.lat != null && selectedJob.lng != null) {
-                mapProvider.LocationShowMapScreen(
+                MapHelper.mapProvider.LocationShowMapScreen(
                     modifier = Modifier,
                     location = selectedJob.location,
                     coordinates = coordinates.value
@@ -143,22 +143,7 @@ fun JobSearchDetailsScreenPreview() {
         tokenProvider = object : TokenProvider {
             override fun getToken(): String? { return null }
         },
-        jobSearchViewModel = JobSearchViewModel(),
-        object : MapProvider {
-            @Composable
-            override fun LocationPickerMapScreen(
-                modifier: Modifier,
-                coordinates: Coordinates,
-                onCoordinatesChanged: (Coordinates) -> Unit
-            ) { }
-
-            @Composable
-            override fun LocationShowMapScreen(
-                modifier: Modifier,
-                coordinates: Coordinates,
-                location: String
-            ) { }
-        }
+        jobSearchViewModel = JobSearchViewModel()
     )
 }
 

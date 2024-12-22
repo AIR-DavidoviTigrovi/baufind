@@ -7,7 +7,10 @@ import hr.foi.air.baufind.open_street_map.OpenStreetMapProvider
 
 class MapHelper {
     companion object {
-        fun discoverMapProviders(): List<MapProvider> {
+        val mapProviders = discoverMapProviders()
+        var mapProvider: MapProvider = mapProviders[1]
+
+        private fun discoverMapProviders(): List<MapProvider> {
             val mapProviders = mutableListOf<MapProvider>()
 
             mapProviders.add(ExampleMapProvider())
