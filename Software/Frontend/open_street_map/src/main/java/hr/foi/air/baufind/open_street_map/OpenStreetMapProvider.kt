@@ -20,9 +20,11 @@ import com.utsman.osmandcompose.OpenStreetMap
 import com.utsman.osmandcompose.rememberCameraState
 import com.utsman.osmandcompose.rememberMarkerState
 import hr.foi.air.baufind.core.map.MapProvider
+import hr.foi.air.baufind.core.map.annotations.MapProviderModule
 import hr.foi.air.baufind.core.map.models.Coordinates
 import org.osmdroid.util.GeoPoint
 
+@MapProviderModule
 class OpenStreetMapProvider : MapProvider {
     @Composable
     override fun LocationPickerMapScreen(

@@ -18,8 +18,10 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import hr.foi.air.baufind.core.map.MapProvider
+import hr.foi.air.baufind.core.map.annotations.MapProviderModule
 import hr.foi.air.baufind.core.map.models.Coordinates
 
+@MapProviderModule
 class GoogleMapProvider : MapProvider {
     @Composable
     override fun LocationPickerMapScreen(

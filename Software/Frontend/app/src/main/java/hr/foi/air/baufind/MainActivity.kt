@@ -22,6 +22,7 @@ import com.google.gson.Gson
 import hr.foi.air.baufind.core.map.MapProvider
 import hr.foi.air.baufind.example_map.ExampleMapProvider
 import hr.foi.air.baufind.google_map.GoogleMapProvider
+import hr.foi.air.baufind.helpers.MapHelper
 import hr.foi.air.baufind.navigation.BottomNavigationBar
 import hr.foi.air.baufind.open_street_map.OpenStreetMapProvider
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobAddSkillsScreen
@@ -41,11 +42,7 @@ import hr.foi.air.baufind.ui.theme.BaufindTheme
 import hr.foi.air.baufind.ws.network.AppTokenProvider
 
 class MainActivity : ComponentActivity() {
-    private val mapProviders: List<MapProvider> = listOf(
-        ExampleMapProvider(),
-        GoogleMapProvider(),
-        OpenStreetMapProvider()
-    ) // TODO: ubaciti module pomoću refleksije (a ne ručno)
+    private val mapProviders = MapHelper.discoverMapProviders()
     private val mapProvider = mapProviders[0] // TODO: da se može odabrati u postavkama
 
     override fun onCreate(savedInstanceState: Bundle?) {
