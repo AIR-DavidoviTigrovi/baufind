@@ -1,14 +1,8 @@
 package hr.foi.air.baufind.google_map
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
@@ -16,9 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -30,7 +22,11 @@ import hr.foi.air.baufind.core.map.models.LocationInformation
 
 class GoogleMapProvider : MapProvider {
     @Composable
-    override fun LocationPickerMapScreen(modifier: Modifier, locationInformation: LocationInformation) {
+    override fun LocationPickerMapScreen(
+        modifier: Modifier,
+        locationInformation: LocationInformation,
+        onLocationChanged: (LocationInformation) -> Unit
+    ) {
         var isMapLoaded by remember { mutableStateOf(false) }
         val cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(
@@ -39,45 +35,12 @@ class GoogleMapProvider : MapProvider {
             )
         }
 
-        var locationText by remember { mutableStateOf("") }
         var lat by remember { mutableDoubleStateOf(locationInformation.lat) }
         var long by remember { mutableDoubleStateOf(locationInformation.long) }
-        var valid by remember { mutableStateOf(locationInformation.isValid) }
-
-        var locationError by remember { mutableStateOf("") }
-        var markerValid by remember { mutableStateOf(false) }
+        var valid by remember { mutableStateOf(false) }
 
         val context = LocalContext.current
 
-        TextField(
-            value = locationText,
-            onValueChange = {
-                locationText = it
-                locationInformation.location = locationText
-                if (locationText != "") {
-                    locationError = ""
-                    locationInformation.isValid = markerValid
-                } else {
-                    locationError = "Morate unijeti lokaciju"
-                    locationInformation.isValid = true
-                }
-            },
-            label = { Text(text = "Lokacija") },
-            isError = (locationError != ""),
-            supportingText = {
-                if (locationError != "") {
-                    Text(locationError, color = Color.Red)
-                }
-            },
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                errorContainerColor = MaterialTheme.colorScheme.errorContainer
-            ),
-            modifier = modifier.fillMaxWidth(),
-            singleLine = true
-        )
-        Spacer(modifier = Modifier.height(16.dp))
         GoogleMap(
             modifier = Modifier
                 .fillMaxWidth()
@@ -85,21 +48,21 @@ class GoogleMapProvider : MapProvider {
             onMapLoaded = { isMapLoaded = true },
             cameraPositionState = cameraPositionState,
             onMapLongClick = { coordinates ->
-                markerValid = true
-
                 locationInformation.lat = coordinates.latitude
                 locationInformation.long = coordinates.longitude
-                locationInformation.isValid = locationError == "" && locationText != ""
+                locationInformation.isValid = true
 
                 lat = locationInformation.lat
                 long = locationInformation.long
-                valid = locationInformation.isValid
+                valid = true
+
+                onLocationChanged(locationInformation)
             },
             onMapClick = {
                 Toast.makeText(context, "Držite dugi klik da biste odabrali lokaciju", Toast.LENGTH_SHORT).show()
             }
         ) {
-            if (markerValid) {
+            if (valid) {
                 Marker(
                     state = rememberMarkerState(position = LatLng(lat, long)),
                     title = "Odabrana lokacija"

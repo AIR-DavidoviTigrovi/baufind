@@ -22,45 +22,15 @@ class ExampleMapProvider : MapProvider {
     @Composable
     override fun LocationPickerMapScreen(
         modifier: Modifier,
-        locationInformation: LocationInformation
+        locationInformation: LocationInformation,
+        onLocationChanged: (LocationInformation) -> Unit
     ) {
-        var locationText by remember { mutableStateOf("") }
         var latText by remember { mutableStateOf("0.0") }
         var longText by remember { mutableStateOf("0.0") }
 
-        var locationError by remember { mutableStateOf("") }
         var latError by remember { mutableStateOf("") }
         var longError by remember { mutableStateOf("") }
 
-        TextField(
-            value = locationText,
-            onValueChange = {
-                locationText = it
-                locationInformation.location = locationText
-                if (locationText != "") {
-                    locationError = ""
-                    locationInformation.isValid = (latError == "" && longError == "")
-                } else {
-                    locationError = "Morate unijeti lokaciju"
-                    locationInformation.isValid = true
-                }
-            },
-            label = { Text(text = "Lokacija") },
-            isError = (locationError != ""),
-            supportingText = {
-                if (locationError != "") {
-                    Text(locationError, color = Color.Red)
-                }
-            },
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                errorContainerColor = MaterialTheme.colorScheme.errorContainer
-            ),
-            modifier = modifier.fillMaxWidth(),
-            singleLine = true
-        )
-        Spacer(modifier = Modifier.height(16.dp))
         TextField(
             value = latText,
             onValueChange = {
@@ -69,7 +39,10 @@ class ExampleMapProvider : MapProvider {
                 if (lat != null) {
                     locationInformation.lat = lat
                     latError = ""
-                    locationInformation.isValid = (longError == "" && locationError == "" && locationText != "")
+                    locationInformation.isValid = longError == ""
+                    if (locationInformation.isValid) {
+                        onLocationChanged(locationInformation)
+                    }
                 } else {
                     locationInformation.lat = 0.0
                     locationInformation.isValid = false
@@ -100,7 +73,10 @@ class ExampleMapProvider : MapProvider {
                 if (long != null) {
                     locationInformation.long = long
                     longError = ""
-                    locationInformation.isValid = (latError == "" && locationError == "" && locationText != "")
+                    locationInformation.isValid = latError == ""
+                    if (locationInformation.isValid) {
+                        onLocationChanged(locationInformation)
+                    }
                 } else {
                     locationInformation.long = 0.0
                     locationInformation.isValid = false

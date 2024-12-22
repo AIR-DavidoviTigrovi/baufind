@@ -1,7 +1,8 @@
 package hr.foi.air.baufind.ui.screens.JobCreateScreen
 
-import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,13 +14,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,6 +37,8 @@ import hr.foi.air.baufind.service.JobService.JobDao
 import hr.foi.air.baufind.service.JobService.JobService
 import hr.foi.air.baufind.ui.components.PositionAndNumber
 import hr.foi.air.baufind.ui.components.PrimaryButton
+import hr.foi.air.baufind.ui.components.PrimaryTextField
+import hr.foi.air.baufind.ws.network.NetworkService
 import hr.foi.air.baufind.ws.network.TokenProvider
 import kotlinx.coroutines.launch
 
@@ -50,9 +56,15 @@ fun JobPositionsLocationScreen(
     val gson = Gson()
 
     var locationInformation = remember { mutableStateOf(LocationInformation(45.33295293903444, 17.702489909850566)) }
+    var locationText by remember { mutableStateOf("") }
+
+    val geocodingService = NetworkService.createGeocodingService()
+    var geocodedLocation by remember { mutableStateOf("") }
+    var locationLoaded = true
+    var locationTextIsExpanded by remember { mutableStateOf(false) }
 
     fun validateInputs(): Boolean {
-        if (!locationInformation.value.isValid) {
+        if (!locationLoaded || geocodedLocation.isBlank()) {
             Toast.makeText(context, "Morate unijeti ispravnu lokaciju", Toast.LENGTH_SHORT).show()
             return false
         }
@@ -64,8 +76,16 @@ fun JobPositionsLocationScreen(
         return true
     }
 
+    fun getEntireLocation(): String {
+        var locationMiddle = ""
+        if (locationText.isNotEmpty() && geocodedLocation.isNotEmpty()) {
+            locationMiddle = ", "
+        }
+        return "$locationText$locationMiddle$geocodedLocation"
+    }
+
     fun updateLocation() {
-        jobViewModel.location.value = locationInformation.value.location
+        jobViewModel.location.value = getEntireLocation()
         jobViewModel.lat.doubleValue = locationInformation.value.lat
         jobViewModel.long.doubleValue = locationInformation.value.long
     }
@@ -120,7 +140,42 @@ fun JobPositionsLocationScreen(
         Spacer(modifier = Modifier.height(24.dp))
         mapProvider.LocationPickerMapScreen(
             modifier = Modifier,
-            locationInformation = locationInformation.value
+            locationInformation = locationInformation.value,
+            onLocationChanged = { loc ->
+                locationInformation.value = loc
+                coroutineScope.launch {
+                    if (!locationLoaded) {
+                        return@launch
+                    }
+                    geocodedLocation = "Učitavam lokaciju..."
+                    locationLoaded = false
+                    try {
+                        val geocodingResponse = geocodingService.reverseGeocode(loc.lat, loc.long)
+                        geocodedLocation = geocodingResponse.location ?: "Nepoznata"
+                    } catch (e: Exception) {
+                        geocodedLocation = "Greška"
+                    } finally {
+                        locationLoaded = true
+                    }
+                }
+            }
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        PrimaryTextField(
+            value = locationText,
+            onValueChange = { locationText = it },
+            label = "Dodatno o lokaciji (neobavezno)",
+            modifier = Modifier.fillMaxWidth(),
+            isError = false
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = getEntireLocation(),
+            maxLines = if (locationTextIsExpanded) Int.MAX_VALUE else 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.fillMaxWidth()
+                .clickable { locationTextIsExpanded = !locationTextIsExpanded }
+                .animateContentSize()
         )
         Spacer(modifier = Modifier.height(24.dp))
         PrimaryButton(
@@ -145,7 +200,6 @@ fun JobPositionsLocationScreen(
                         )
                         if (response.added) {
                             var positions = gson.toJson(jobViewModel.getPositionsArray())
-                            Log.d("ugbug12", "Position: $positions")
                             jobViewModel.clearData()
                             navController.navigate("workersSearchScreen/${positions}")
                         } else {
@@ -170,7 +224,8 @@ fun JobPositionsLocationScreenPreview() {
             @Composable
             override fun LocationPickerMapScreen(
                 modifier: Modifier,
-                locationInformation: LocationInformation
+                locationInformation: LocationInformation,
+                onLocationChanged: (LocationInformation) -> Unit
             ) { }
 
             @Composable

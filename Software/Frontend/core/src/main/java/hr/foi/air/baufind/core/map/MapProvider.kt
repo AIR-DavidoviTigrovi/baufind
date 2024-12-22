@@ -8,7 +8,8 @@ interface MapProvider {
     @Composable
     fun LocationPickerMapScreen(
         modifier: Modifier,
-        locationInformation: LocationInformation
+        locationInformation: LocationInformation,
+        onLocationChanged: (LocationInformation) -> Unit
     )
 
     @Composable
