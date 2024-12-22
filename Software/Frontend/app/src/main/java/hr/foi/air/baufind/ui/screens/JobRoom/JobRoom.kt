@@ -1,13 +1,20 @@
 package hr.foi.air.baufind.ui.screens.JobRoom
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import hr.foi.air.baufind.ui.components.PersonInRoomCard
+import hr.foi.air.baufind.ui.components.RoleInJobCard
 import hr.foi.air.baufind.ws.network.TokenProvider
 
 @Composable
@@ -18,8 +25,12 @@ fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobI
     LaunchedEffect(Unit) {
         viewModel.getJobRoom(jobID)
     }
-    Column() {
-       
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+    ) {
+        //promjenit
+        Text(text = "viewModel.jobRoom.value[0].jobTitle")
+       RoleInJobCard(peopleInRoom = viewModel.peopleInRoom.value, onItemClick = {})
     }
 }
 @Preview(showBackground = true)
