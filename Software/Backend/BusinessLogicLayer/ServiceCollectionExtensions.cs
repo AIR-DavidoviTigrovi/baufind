@@ -1,5 +1,6 @@
 using BusinessLogicLayer.AppLogic;
 using BusinessLogicLayer.AppLogic.Geocoding;
+using BusinessLogicLayer.AppLogic.JobRoom;
 using BusinessLogicLayer.AppLogic.Jobs;
 using BusinessLogicLayer.AppLogic.Reviews;
 using BusinessLogicLayer.AppLogic.Skills;
@@ -44,6 +45,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPictureRepository, PictureRepository>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
         services.AddScoped<IWorkingRepository, WorkingRepository>(); 
+        services.AddScoped<IJobRoomRepository, JobRoomRepository>(); 
         // Servisi
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IUserService, UserService>();
@@ -52,6 +54,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IJobService, JobService>();
         services.AddScoped<IReviewService, ReviewService>();
         services.AddScoped<IGeocodingService, GeocodingService>();
+        services.AddScoped<IJobRoomService, JobRoomService>();
 
         return services;
     }

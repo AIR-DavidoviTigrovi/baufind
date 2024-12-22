@@ -55,10 +55,10 @@ WHERE
                 JobId = (int)sqlDataReader["job_id"],
                 WorkingId = (int)sqlDataReader["working_id"],
                 JobTitle = (string)sqlDataReader["job_title"],
-                AllowWorkerInvite = (int)sqlDataReader["allow_worker_invite"],
+                AllowWorkerInvite = (bool)sqlDataReader["allow_worker_invite"],
                 SkillId = (int)sqlDataReader["skill_id"],
                 SkillTitle = (string)sqlDataReader["skill_title"],
-                WorkerId = sqlDataReader["worker_id"] as int?,
+                WorkerId = sqlDataReader["worker_id"] as int?, 
                 WorkerName = (string)sqlDataReader["worker_name"],
                 WorkingStatus = (string)sqlDataReader["working_status"]
             };
