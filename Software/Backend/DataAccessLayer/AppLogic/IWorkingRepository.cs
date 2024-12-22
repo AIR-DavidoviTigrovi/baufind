@@ -10,5 +10,7 @@ namespace DataAccessLayer.AppLogic
     public interface IWorkingRepository
     {
         public (bool, string) AddNewWorkingEntry(int workerId, int jobId, int skillId, int userId);
+
+        public List<JobSearchModel> GetPendingInvitations(int workerId);
     }
 }

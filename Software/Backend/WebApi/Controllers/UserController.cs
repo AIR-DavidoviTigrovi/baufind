@@ -127,17 +127,27 @@ public class UserController : ControllerBase
 
     }
 
-    /*  // GET: /users/profile/{id}
-      [HttpGet("/profile/{id}")]
-      public ActionResult<UserProfileResponse> GetUserProfile(int id)
-      {
-          var userProfileData = _userService.GetUserProfileData(id);
-          if (userProfileData.userProfileModel == null)
-          {
-              return NotFound(userProfileData);
-          }
-          return userProfileData;
-      }*/
+    // GET: /users/profile/{id}
+    [HttpGet("profile/{id}")]
+    [Authorize]
+    public ActionResult<UserProfileResponse> GetUserProfile(int id)
+    {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+
+        if (!userIdFromJwt.HasValue) 
+        {
+            return Unauthorized(new UserProfileResponse()
+            {
+                Error = "Ne možete pristupiti tom resursu!"
+            });
+        }
+        var userProfileData = _userService.GetUserProfileData(id);
+        if (userProfileData.userProfileModel == null)
+        {
+            return NotFound(userProfileData);
+        }
+        return userProfileData;
+    }
 
     // POST: /users/login
     [HttpPost("login")]

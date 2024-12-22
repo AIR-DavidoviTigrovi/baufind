@@ -141,5 +141,22 @@ namespace BusinessLogicLayer.Infrastructure
                 Jobs = jobs
             };
         }
+
+        public PendingInvitationResponse GetPendingInvitations(int userId)
+        {
+            var response = new PendingInvitationResponse();
+
+            try
+            {
+                var jobs = _workingRepository.GetPendingInvitations(userId);
+                response.Jobs = jobs;
+            }
+            catch (Exception ex)
+            {
+                response.Error = $"Došlo je do greške prilikom dohvaćanja podataka: {ex.Message}";
+            }
+
+            return response;
+        }
     }
 }

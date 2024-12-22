@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -35,12 +33,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import hr.foi.air.baufind.R
 import hr.foi.air.baufind.helpers.PictureHelper
-import hr.foi.air.baufind.navigation.IconType
 import hr.foi.air.baufind.ui.components.DisplayTextField
 import hr.foi.air.baufind.ui.components.PrimaryButton
-import hr.foi.air.baufind.ui.components.PrimaryTextField
 import hr.foi.air.baufind.ws.network.TokenProvider
 
 @Composable
@@ -48,7 +43,7 @@ fun JobSearchDetailsScreen(navController: NavController, tokenProvider: TokenPro
     val selectedJob = jobSearchViewModel.selectedJob.value
 
     var selectedImageIndex by remember { mutableStateOf<Int?>(null) }
-
+    val employerId = selectedJob?.employer_id
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
@@ -66,10 +61,12 @@ fun JobSearchDetailsScreen(navController: NavController, tokenProvider: TokenPro
             Spacer(modifier = Modifier.height(24.dp))
             DisplayTextField(title = "Lokacija posla", text = selectedJob.location)
             Spacer(modifier = Modifier.height(24.dp))
+
             PrimaryButton(
                 text = "Profil poslodavca",
                 icon = Icons.Default.Person,
-                onClick = { /*ide na profil poslodavca*/}
+                onClick = { navController.navigate("userProfileScreen?userId=$employerId")
+                }
             )
             Spacer(modifier = Modifier.height(24.dp))
             Text(
