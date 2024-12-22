@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DataAccessLayer.Infrastructure {
-    public class JobRoomRepository : IJobRoom {
+    public class JobRoomRepository : IJobRoomRepository {
         private readonly DB db;
         public JobRoomRepository(DB Database)
         {

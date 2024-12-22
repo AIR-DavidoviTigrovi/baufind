@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DataAccessLayer.AppLogic {
-    public interface IJobRoom {
+    public interface IJobRoomRepository {
 
-        public List<JobRoom>? GetJobRoom(int jobID);
+        public List<JobRoomModel>? GetJobRoom(int jobID);
 
     }
 }
