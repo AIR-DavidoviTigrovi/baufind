@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.core.map.MapProvider
-import hr.foi.air.baufind.core.map.models.LocationInformation
+import hr.foi.air.baufind.core.map.models.Coordinates
 import hr.foi.air.baufind.helpers.PictureHelper
 import hr.foi.air.baufind.ui.components.DisplayTextField
 import hr.foi.air.baufind.ui.components.PrimaryButton
@@ -49,10 +49,9 @@ fun JobSearchDetailsScreen(
 ){
     val selectedJob = jobSearchViewModel.selectedJob.value
 
-    var locationInformation = remember { mutableStateOf(LocationInformation(
+    var coordinates = remember { mutableStateOf(Coordinates(
         selectedJob?.lat ?: 0.0,
-        selectedJob?.lng ?: 0.0,
-        selectedJob?.location ?: "Lokacija posla"
+        selectedJob?.lng ?: 0.0
     )) }
 
     var selectedImageIndex by remember { mutableStateOf<Int?>(null) }
@@ -76,7 +75,8 @@ fun JobSearchDetailsScreen(
             if (selectedJob.lat != null && selectedJob.lng != null) {
                 mapProvider.LocationShowMapScreen(
                     modifier = Modifier,
-                    locationInformation = locationInformation.value
+                    location = selectedJob.location,
+                    coordinates = coordinates.value
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
@@ -148,13 +148,15 @@ fun JobSearchDetailsScreenPreview() {
             @Composable
             override fun LocationPickerMapScreen(
                 modifier: Modifier,
-                locationInformation: LocationInformation
+                coordinates: Coordinates,
+                onCoordinatesChanged: (Coordinates) -> Unit
             ) { }
 
             @Composable
             override fun LocationShowMapScreen(
                 modifier: Modifier,
-                locationInformation: LocationInformation
+                coordinates: Coordinates,
+                location: String
             ) { }
         }
     )

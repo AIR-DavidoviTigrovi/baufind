@@ -1,8 +1,6 @@
 package hr.foi.air.baufind.ui.screens.JobCreateScreen
 
 import android.widget.Toast
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,9 +29,10 @@ import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
 import hr.foi.air.baufind.R
 import hr.foi.air.baufind.core.map.MapProvider
-import hr.foi.air.baufind.core.map.models.LocationInformation
+import hr.foi.air.baufind.core.map.models.Coordinates
 import hr.foi.air.baufind.service.JobService.JobDao
 import hr.foi.air.baufind.service.JobService.JobService
+import hr.foi.air.baufind.ui.components.ExpandableText
 import hr.foi.air.baufind.ui.components.PositionAndNumber
 import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ui.components.PrimaryTextField
@@ -55,13 +53,12 @@ fun JobPositionsLocationScreen(
     var context = LocalContext.current
     val gson = Gson()
 
-    var locationInformation = remember { mutableStateOf(LocationInformation(45.33295293903444, 17.702489909850566)) }
+    var coordinates = remember { mutableStateOf(Coordinates(45.33295293903444, 17.702489909850566)) }
     var locationText by remember { mutableStateOf("") }
 
     val geocodingService = NetworkService.createGeocodingService()
     var geocodedLocation by remember { mutableStateOf("") }
     var locationLoaded = true
-    var locationTextIsExpanded by remember { mutableStateOf(false) }
 
     fun validateInputs(): Boolean {
         if (!locationLoaded || geocodedLocation.isBlank()) {
@@ -86,8 +83,8 @@ fun JobPositionsLocationScreen(
 
     fun updateLocation() {
         jobViewModel.location.value = getEntireLocation()
-        jobViewModel.lat.doubleValue = locationInformation.value.lat
-        jobViewModel.long.doubleValue = locationInformation.value.long
+        jobViewModel.lat.doubleValue = coordinates.value.lat
+        jobViewModel.long.doubleValue = coordinates.value.long
     }
 
     Column(
@@ -140,9 +137,9 @@ fun JobPositionsLocationScreen(
         Spacer(modifier = Modifier.height(24.dp))
         mapProvider.LocationPickerMapScreen(
             modifier = Modifier,
-            locationInformation = locationInformation.value,
-            onLocationChanged = { loc ->
-                locationInformation.value = loc
+            coordinates = coordinates.value,
+            onCoordinatesChanged = { loc ->
+                coordinates.value = loc
                 coroutineScope.launch {
                     if (!locationLoaded) {
                         return@launch
@@ -169,13 +166,9 @@ fun JobPositionsLocationScreen(
             isError = false
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = getEntireLocation(),
-            maxLines = if (locationTextIsExpanded) Int.MAX_VALUE else 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.fillMaxWidth()
-                .clickable { locationTextIsExpanded = !locationTextIsExpanded }
-                .animateContentSize()
+        ExpandableText(
+            modifier = Modifier.fillMaxWidth(),
+            text = getEntireLocation()
         )
         Spacer(modifier = Modifier.height(24.dp))
         PrimaryButton(
@@ -224,14 +217,15 @@ fun JobPositionsLocationScreenPreview() {
             @Composable
             override fun LocationPickerMapScreen(
                 modifier: Modifier,
-                locationInformation: LocationInformation,
-                onLocationChanged: (LocationInformation) -> Unit
+                coordinates: Coordinates,
+                onCoordinatesChanged: (Coordinates) -> Unit
             ) { }
 
             @Composable
             override fun LocationShowMapScreen(
                 modifier: Modifier,
-                locationInformation: LocationInformation
+                coordinates: Coordinates,
+                location: String
             ) { }
         }
     )

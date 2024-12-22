@@ -16,14 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import hr.foi.air.baufind.core.map.MapProvider
-import hr.foi.air.baufind.core.map.models.LocationInformation
+import hr.foi.air.baufind.core.map.models.Coordinates
 
 class ExampleMapProvider : MapProvider {
     @Composable
     override fun LocationPickerMapScreen(
         modifier: Modifier,
-        locationInformation: LocationInformation,
-        onLocationChanged: (LocationInformation) -> Unit
+        coordinates: Coordinates,
+        onCoordinatesChanged: (Coordinates) -> Unit
     ) {
         var latText by remember { mutableStateOf("0.0") }
         var longText by remember { mutableStateOf("0.0") }
@@ -37,15 +37,15 @@ class ExampleMapProvider : MapProvider {
                 latText = it
                 val lat = latText.toDoubleOrNull()
                 if (lat != null) {
-                    locationInformation.lat = lat
+                    coordinates.lat = lat
                     latError = ""
-                    locationInformation.isValid = longError == ""
-                    if (locationInformation.isValid) {
-                        onLocationChanged(locationInformation)
+                    coordinates.isValid = longError == ""
+                    if (coordinates.isValid) {
+                        onCoordinatesChanged(coordinates)
                     }
                 } else {
-                    locationInformation.lat = 0.0
-                    locationInformation.isValid = false
+                    coordinates.lat = 0.0
+                    coordinates.isValid = false
                     latError = "Morate unijeti validan lat"
                 }
             },
@@ -71,15 +71,15 @@ class ExampleMapProvider : MapProvider {
                 longText = it
                 val long = longText.toDoubleOrNull()
                 if (long != null) {
-                    locationInformation.long = long
+                    coordinates.long = long
                     longError = ""
-                    locationInformation.isValid = latError == ""
-                    if (locationInformation.isValid) {
-                        onLocationChanged(locationInformation)
+                    coordinates.isValid = latError == ""
+                    if (coordinates.isValid) {
+                        onCoordinatesChanged(coordinates)
                     }
                 } else {
-                    locationInformation.long = 0.0
-                    locationInformation.isValid = false
+                    coordinates.long = 0.0
+                    coordinates.isValid = false
                     longError = "Morate unijeti validan lat"
                 }
             },
@@ -103,13 +103,14 @@ class ExampleMapProvider : MapProvider {
     @Composable
     override fun LocationShowMapScreen(
         modifier: Modifier,
-        locationInformation: LocationInformation
+        coordinates: Coordinates,
+        location: String
     ) {
         Text(
-            text = "Lat: ${locationInformation.lat}",
+            text = "Lat: ${coordinates.lat}",
         )
         Text(
-            text = "Lng: ${locationInformation.long}",
+            text = "Lng: ${coordinates.long}",
         )
     }
 }

@@ -18,25 +18,25 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import hr.foi.air.baufind.core.map.MapProvider
-import hr.foi.air.baufind.core.map.models.LocationInformation
+import hr.foi.air.baufind.core.map.models.Coordinates
 
 class GoogleMapProvider : MapProvider {
     @Composable
     override fun LocationPickerMapScreen(
         modifier: Modifier,
-        locationInformation: LocationInformation,
-        onLocationChanged: (LocationInformation) -> Unit
+        coordinates: Coordinates,
+        onCoordinatesChanged: (Coordinates) -> Unit
     ) {
         var isMapLoaded by remember { mutableStateOf(false) }
         val cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(
-                LatLng(locationInformation.lat, locationInformation.long),
+                LatLng(coordinates.lat, coordinates.long),
                 15.0f
             )
         }
 
-        var lat by remember { mutableDoubleStateOf(locationInformation.lat) }
-        var long by remember { mutableDoubleStateOf(locationInformation.long) }
+        var lat by remember { mutableDoubleStateOf(coordinates.lat) }
+        var long by remember { mutableDoubleStateOf(coordinates.long) }
         var valid by remember { mutableStateOf(false) }
 
         val context = LocalContext.current
@@ -44,19 +44,19 @@ class GoogleMapProvider : MapProvider {
         GoogleMap(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(4f/3f),
+                .aspectRatio(16f/9f),
             onMapLoaded = { isMapLoaded = true },
             cameraPositionState = cameraPositionState,
-            onMapLongClick = { coordinates ->
-                locationInformation.lat = coordinates.latitude
-                locationInformation.long = coordinates.longitude
-                locationInformation.isValid = true
+            onMapLongClick = { coord ->
+                coordinates.lat = coord.latitude
+                coordinates.long = coord.longitude
+                coordinates.isValid = true
 
-                lat = locationInformation.lat
-                long = locationInformation.long
+                lat = coordinates.lat
+                long = coordinates.long
                 valid = true
 
-                onLocationChanged(locationInformation)
+                onCoordinatesChanged(coordinates)
             },
             onMapClick = {
                 Toast.makeText(context, "Držite dugi klik da biste odabrali lokaciju", Toast.LENGTH_SHORT).show()
@@ -74,12 +74,13 @@ class GoogleMapProvider : MapProvider {
     @Composable
     override fun LocationShowMapScreen(
         modifier: Modifier,
-        locationInformation: LocationInformation
+        coordinates: Coordinates,
+        location: String
     ) {
         var isMapLoaded by remember { mutableStateOf(false) }
         val cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(
-                LatLng(locationInformation.lat, locationInformation.long),
+                LatLng(coordinates.lat, coordinates.long),
                 15.0f
             )
         }
@@ -92,8 +93,8 @@ class GoogleMapProvider : MapProvider {
             cameraPositionState = cameraPositionState
         ) {
             Marker(
-                state = rememberMarkerState(position = LatLng(locationInformation.lat, locationInformation.long)),
-                title = locationInformation.location
+                state = rememberMarkerState(position = LatLng(coordinates.lat, coordinates.long)),
+                title = location
             )
         }
     }
