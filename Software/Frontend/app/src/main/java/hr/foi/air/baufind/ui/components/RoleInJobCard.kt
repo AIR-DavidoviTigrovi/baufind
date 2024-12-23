@@ -49,7 +49,6 @@ fun RoleInJobCard(allowedInvitations: Boolean,listOfSkills: List<Skill>,navContr
 
                 }
                 if(person.value == "Nema radnika") {
-                    //Treba implementirati dodavanje korisnika
                     if (allowedInvitations == true) {
                         Button(modifier = Modifier.padding(6.dp),
                             colors = ButtonDefaults.buttonColors(

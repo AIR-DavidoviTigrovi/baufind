@@ -23,6 +23,7 @@ fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobI
     viewModel.tokenProvider.value = tokenProvider
 
     LaunchedEffect(Unit) {
+        viewModel.getAllSkills()
         viewModel.getJobRoom(jobID)
         viewModel.loadJobPeople(jobID)
     }
