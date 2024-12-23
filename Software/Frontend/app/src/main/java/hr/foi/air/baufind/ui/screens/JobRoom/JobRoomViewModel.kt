@@ -11,13 +11,15 @@ class JobRoomViewModel: ViewModel() {
     val tokenProvider: MutableState<TokenProvider?> = mutableStateOf(null)
     val service = JobRoomService()
     //Key je ime korisnika a value je uloga radnika
-    val peopleInRoom: MutableState<Map<String, String>> = mutableStateOf(emptyMap<String,String>())
+    val peopleInRoom: MutableMap<String, String> = mutableMapOf<String,String>()
     val jobRoom: MutableState<List<JobRoom>> = mutableStateOf(emptyList())
     suspend fun getJobRoom(jobId: Int) {
         var response = service.GetRoomForJob(jobId,tokenProvider.value!!)
         jobRoom.value = response
     }
-    fun loadJobPeople(jobId: Int) {
-
+    suspend fun loadJobPeople(jobId: Int) {
+        for(room in jobRoom.value){
+            peopleInRoom[room.workerName] = room.skillTitle
+        }
     }
 }
