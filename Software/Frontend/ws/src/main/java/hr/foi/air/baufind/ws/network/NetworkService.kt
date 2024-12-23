@@ -34,7 +34,9 @@ object NetworkService {
     fun createWorkersService(tokenProvider: TokenProvider): WorkersSkillService {
         return createRetrofit(tokenProvider).create(WorkersSkillService::class.java)
     }
-
+    fun createJobRoomService(tokenProvider: TokenProvider): JobRoomService {
+        return createRetrofit(tokenProvider).create(JobRoomService::class.java)
+    }
     fun createAuthService(tokenProvider: TokenProvider): AuthenticationService {
         return createRetrofit(tokenProvider).create(AuthenticationService::class.java)
     }

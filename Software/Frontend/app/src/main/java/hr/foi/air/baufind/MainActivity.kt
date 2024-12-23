@@ -29,6 +29,7 @@ import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobAddSkillsScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobDetailsScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobPositionsLocationScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobViewModel
+import hr.foi.air.baufind.ui.screens.JobRoom.JobRoomScreen
 import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchDetailsScreen
 import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchScreen
 import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchViewModel
@@ -126,6 +127,14 @@ class MainActivity : ComponentActivity() {
                                 val position = backStackEntry.arguments?.getString("position")
                                 val deserializedList = gson.fromJson(position, Array<Int>::class.java).toList()
                                 WorkerSearchScreen(navController,tokenProvider,deserializedList)
+                            }
+                            composable("jobRoom/{jobID}",
+                                arguments = listOf(navArgument("jobID") { type = NavType.IntType })
+                            ) { backStackEntry ->
+                                val position = backStackEntry.arguments?.getInt("jobID")
+
+                                JobRoomScreen(navController,tokenProvider,position!!)
+
                             }
                             composable("jobDetailsScreen") { JobDetailsScreen(navController, jobViewModel) }
                             composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController, jobViewModel, tokenProvider) }
