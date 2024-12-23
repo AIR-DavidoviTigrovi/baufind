@@ -22,13 +22,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import hr.foi.air.baufind.R
+import hr.foi.air.baufind.service.SkillsService.SkillsService
 import hr.foi.air.baufind.ui.screens.JobRoom.JobRoomScreen
 import hr.foi.air.baufind.ui.theme.LightPrimary
 import hr.foi.air.baufind.ws.model.JobRoom
+import hr.foi.air.baufind.ws.model.Skill
 import hr.foi.air.baufind.ws.network.TokenProvider
 
 @Composable
-fun RoleInJobCard(peopleInRoom: Map<String, String>, onItemClick: () -> Unit) {
+fun RoleInJobCard(listOfSkills: List<Skill>,navController: NavController,peopleInRoom: Map<String, String>, onItemClick: () -> Unit) {
     val helperMap = mutableMapOf<String, String>()
     for (map in peopleInRoom) {
         helperMap[map.value] = map.key
@@ -51,11 +53,20 @@ fun RoleInJobCard(peopleInRoom: Map<String, String>, onItemClick: () -> Unit) {
                     Button(modifier = Modifier.padding(6.dp),colors = ButtonDefaults.buttonColors(
                         containerColor = LightPrimary,
                         contentColor = Color.White
-                    ), onClick = {}) {
+                    ), onClick = {
+                        var helperList: MutableList<Int> = mutableListOf()
+                        for(skill in listOfSkills){
+                            if(skill.title == person.key){
+                                helperList.add(skill.id)
+                            }
+                        }
+                        helperList = helperList.distinct().toMutableList()
+                        navController.navigate("workersSearchScreen/${helperList}")
+                    }) {
                         Icon(
                             painter = painterResource(id = R.drawable.add_person_icon),
                             contentDescription = "Icon",
-                            modifier = Modifier.size(24.dp) 
+                            modifier = Modifier.size(24.dp)
                         )
                     }
                 }
@@ -66,5 +77,5 @@ fun RoleInJobCard(peopleInRoom: Map<String, String>, onItemClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun RoleInJobCard() {
-    RoleInJobCard(mapOf("David Matijanić" to "Vodoinstalater","Viktor Lovrić" to "Električar","Frano Šimić" to "Vodoinstalater","Nema radnika" to "Vodoinstalater"),{})
+    RoleInJobCard(listOf(Skill(1,"Električar"),Skill(2,"Vodoinstalater")),navController = NavController(LocalContext.current),mapOf("David Matijanić" to "Vodoinstalater","Viktor Lovrić" to "Električar","Frano Šimić" to "Vodoinstalater","Nema radnika" to "Vodoinstalater"),{})
 }

@@ -30,8 +30,10 @@ fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobI
         modifier = Modifier.fillMaxSize().padding(16.dp),
     ) {
         //promjenit
-        Text(text = "viewModel.jobRoom.value[0].jobTitle")
-       RoleInJobCard(peopleInRoom = viewModel.peopleInRoom, onItemClick = {})
+        Text(text = viewModel.jobRoom.value[0].jobTitle)
+       RoleInJobCard(viewModel.listOfSkills.value,navController = navController,peopleInRoom = viewModel.peopleInRoom, onItemClick = {
+
+       })
     }
 }
 @Preview(showBackground = true)
