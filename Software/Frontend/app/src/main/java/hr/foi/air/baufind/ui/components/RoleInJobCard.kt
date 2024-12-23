@@ -49,13 +49,13 @@ fun RoleInJobCard(peopleInRoom: Map<String, String>, onItemClick: () -> Unit) {
                 if(person.value == "Nema radnika"){
                     //Treba implementirati dodavanje korisnika
                     Button(modifier = Modifier.padding(6.dp),colors = ButtonDefaults.buttonColors(
-                        containerColor = LightPrimary, // Primary color from the theme
-                        contentColor = Color.White  // Text color on primary
+                        containerColor = LightPrimary,
+                        contentColor = Color.White
                     ), onClick = {}) {
                         Icon(
-                            painter = painterResource(id = R.drawable.add_person_icon), // Replace with your drawable
+                            painter = painterResource(id = R.drawable.add_person_icon),
                             contentDescription = "Icon",
-                            modifier = Modifier.size(24.dp) // Adjust icon size
+                            modifier = Modifier.size(24.dp) 
                         )
                     }
                 }
