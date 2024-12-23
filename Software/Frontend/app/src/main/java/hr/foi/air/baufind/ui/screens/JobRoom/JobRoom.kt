@@ -31,10 +31,20 @@ fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobI
         modifier = Modifier.fillMaxSize().padding(16.dp),
     ) {
         //promjenit
-        Text(text = viewModel.jobRoom.value[0].jobTitle)
-       RoleInJobCard(viewModel.jobRoom.value[0].allowWorkerInvite,viewModel.listOfSkills.value,navController = navController,peopleInRoom = viewModel.peopleInRoom, onItemClick = {
+        if (viewModel.jobRoom.value.isNotEmpty()) {
+            Text(text = viewModel.jobRoom.value[0].jobTitle!!)
+            RoleInJobCard(
+                viewModel.jobRoom.value[0].allowWorkerInvite,
+                viewModel.listOfSkills.value,
+                navController = navController,
+                peopleInRoom = viewModel.peopleInRoom,
+                onItemClick = {}
+            )
+        } else {
 
-       })
+            Text(text = "Loading...")
+        }
+
     }
 }
 @Preview(showBackground = true)

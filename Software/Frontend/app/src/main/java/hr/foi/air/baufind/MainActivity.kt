@@ -136,6 +136,7 @@ class MainActivity : ComponentActivity() {
                                 arguments = listOf(navArgument("jobID") { type = NavType.IntType })
                             ) { backStackEntry ->
                                 val position = backStackEntry.arguments?.getInt("jobID")
+
                                 JobRoomScreen(navController,tokenProvider,position!!)
 
                             }
