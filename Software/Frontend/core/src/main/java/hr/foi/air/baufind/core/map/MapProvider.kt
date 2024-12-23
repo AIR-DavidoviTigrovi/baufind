@@ -2,12 +2,20 @@ package hr.foi.air.baufind.core.map
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import hr.foi.air.baufind.core.map.models.LocationInformation
+import hr.foi.air.baufind.core.map.models.Coordinates
 
 interface MapProvider {
     @Composable
-    fun MapScreen(
+    fun LocationPickerMapScreen(
         modifier: Modifier,
-        locationInformation: LocationInformation
+        coordinates: Coordinates,
+        onCoordinatesChanged: (Coordinates) -> Unit
+    )
+
+    @Composable
+    fun LocationShowMapScreen(
+        modifier: Modifier,
+        coordinates: Coordinates,
+        location: String
     )
 }

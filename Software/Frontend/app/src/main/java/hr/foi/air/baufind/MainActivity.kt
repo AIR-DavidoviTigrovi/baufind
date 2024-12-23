@@ -22,6 +22,7 @@ import com.google.gson.Gson
 import hr.foi.air.baufind.core.map.MapProvider
 import hr.foi.air.baufind.example_map.ExampleMapProvider
 import hr.foi.air.baufind.google_map.GoogleMapProvider
+import hr.foi.air.baufind.helpers.MapHelper
 import hr.foi.air.baufind.navigation.BottomNavigationBar
 import hr.foi.air.baufind.open_street_map.OpenStreetMapProvider
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobAddSkillsScreen
@@ -32,6 +33,7 @@ import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchDetailsScreen
 import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchScreen
 import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchViewModel
 import hr.foi.air.baufind.ui.screens.LoginScreen.LoginScreen
+import hr.foi.air.baufind.ui.screens.Settings.SettingsScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.EditProfileScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.ReviewsScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.UserProfileViewModel
@@ -41,13 +43,6 @@ import hr.foi.air.baufind.ui.theme.BaufindTheme
 import hr.foi.air.baufind.ws.network.AppTokenProvider
 
 class MainActivity : ComponentActivity() {
-    private val mapProviders: List<MapProvider> = listOf(
-        ExampleMapProvider(),
-        GoogleMapProvider(),
-        OpenStreetMapProvider()
-    ) // TODO: ubaciti module pomoću refleksije (a ne ručno)
-    private val mapProvider = mapProviders[0] // TODO: da se može odabrati u postavkama
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
@@ -71,7 +66,8 @@ class MainActivity : ComponentActivity() {
                                 "jobAddSkillsScreen",
                                 "jobDetailsScreen",
                                 "jobSearchScreen",
-                                "jobSearchDetailsScreen"
+                                "jobSearchDetailsScreen",
+                                "settingsScreen"
                             )
                         ) {
                             BottomNavigationBar(navController = navController)
@@ -132,11 +128,12 @@ class MainActivity : ComponentActivity() {
                                 WorkerSearchScreen(navController,tokenProvider,deserializedList)
                             }
                             composable("jobDetailsScreen") { JobDetailsScreen(navController, jobViewModel) }
-                            composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController, jobViewModel, tokenProvider, mapProvider) }
+                            composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController, jobViewModel, tokenProvider) }
                             composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController, jobViewModel, tokenProvider) }
 
                             composable("jobSearchScreen") { JobSearchScreen(navController, tokenProvider, jobSearchViewModel) }
                             composable("jobSearchDetailsScreen") { JobSearchDetailsScreen(navController, tokenProvider, jobSearchViewModel) }
+                            composable("settingsScreen") { SettingsScreen(navController) }
 
                         }
                     }

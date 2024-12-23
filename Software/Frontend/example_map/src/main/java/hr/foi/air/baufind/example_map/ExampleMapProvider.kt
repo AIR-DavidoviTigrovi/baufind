@@ -16,63 +16,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import hr.foi.air.baufind.core.map.MapProvider
-import hr.foi.air.baufind.core.map.models.LocationInformation
+import hr.foi.air.baufind.core.map.models.Coordinates
 
 class ExampleMapProvider : MapProvider {
     @Composable
-    override fun MapScreen(
+    override fun LocationPickerMapScreen(
         modifier: Modifier,
-        locationInformation: LocationInformation
+        coordinates: Coordinates,
+        onCoordinatesChanged: (Coordinates) -> Unit
     ) {
-        var locationText by remember { mutableStateOf("") }
         var latText by remember { mutableStateOf("0.0") }
         var longText by remember { mutableStateOf("0.0") }
 
-        var locationError by remember { mutableStateOf("") }
         var latError by remember { mutableStateOf("") }
         var longError by remember { mutableStateOf("") }
 
-        TextField(
-            value = locationText,
-            onValueChange = {
-                locationText = it
-                locationInformation.location = locationText
-                if (locationText != "") {
-                    locationError = ""
-                    locationInformation.isValid = (latError == "" && longError == "")
-                } else {
-                    locationError = "Morate unijeti lokaciju"
-                    locationInformation.isValid = true
-                }
-            },
-            label = { Text(text = "Lokacija") },
-            isError = (locationError != ""),
-            supportingText = {
-                if (locationError != "") {
-                    Text(locationError, color = Color.Red)
-                }
-            },
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                errorContainerColor = MaterialTheme.colorScheme.errorContainer
-            ),
-            modifier = modifier.fillMaxWidth(),
-            singleLine = true
-        )
-        Spacer(modifier = Modifier.height(16.dp))
         TextField(
             value = latText,
             onValueChange = {
                 latText = it
                 val lat = latText.toDoubleOrNull()
                 if (lat != null) {
-                    locationInformation.lat = lat
+                    coordinates.lat = lat
                     latError = ""
-                    locationInformation.isValid = (longError == "" && locationError == "" && locationText != "")
+                    coordinates.isValid = longError == ""
+                    if (coordinates.isValid) {
+                        onCoordinatesChanged(coordinates)
+                    }
                 } else {
-                    locationInformation.lat = 0.0
-                    locationInformation.isValid = false
+                    coordinates.lat = 0.0
+                    coordinates.isValid = false
                     latError = "Morate unijeti validan lat"
                 }
             },
@@ -98,12 +71,15 @@ class ExampleMapProvider : MapProvider {
                 longText = it
                 val long = longText.toDoubleOrNull()
                 if (long != null) {
-                    locationInformation.long = long
+                    coordinates.long = long
                     longError = ""
-                    locationInformation.isValid = (latError == "" && locationError == "" && locationText != "")
+                    coordinates.isValid = latError == ""
+                    if (coordinates.isValid) {
+                        onCoordinatesChanged(coordinates)
+                    }
                 } else {
-                    locationInformation.long = 0.0
-                    locationInformation.isValid = false
+                    coordinates.long = 0.0
+                    coordinates.isValid = false
                     longError = "Morate unijeti validan lat"
                 }
             },
@@ -121,6 +97,20 @@ class ExampleMapProvider : MapProvider {
             ),
             modifier = modifier.fillMaxWidth(),
             singleLine = true
+        )
+    }
+
+    @Composable
+    override fun LocationShowMapScreen(
+        modifier: Modifier,
+        coordinates: Coordinates,
+        location: String
+    ) {
+        Text(
+            text = "Lat: ${coordinates.lat}",
+        )
+        Text(
+            text = "Lng: ${coordinates.long}",
         )
     }
 }
