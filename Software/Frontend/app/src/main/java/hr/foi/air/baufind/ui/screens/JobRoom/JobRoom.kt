@@ -31,7 +31,7 @@ fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobI
     ) {
         //promjenit
         Text(text = viewModel.jobRoom.value[0].jobTitle)
-       RoleInJobCard(viewModel.listOfSkills.value,navController = navController,peopleInRoom = viewModel.peopleInRoom, onItemClick = {
+       RoleInJobCard(viewModel.jobRoom.value[0].allowWorkerInvite,viewModel.listOfSkills.value,navController = navController,peopleInRoom = viewModel.peopleInRoom, onItemClick = {
 
        })
     }
