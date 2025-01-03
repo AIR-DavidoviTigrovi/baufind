@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,9 +38,13 @@ import hr.foi.air.baufind.core.map.MapProvider
 import hr.foi.air.baufind.core.map.models.Coordinates
 import hr.foi.air.baufind.helpers.MapHelper
 import hr.foi.air.baufind.helpers.PictureHelper
+import hr.foi.air.baufind.service.JobGetService.JobGetService
 import hr.foi.air.baufind.ui.components.DisplayTextField
 import hr.foi.air.baufind.ui.components.PrimaryButton
+import hr.foi.air.baufind.ws.model.FullJobModel
+import hr.foi.air.baufind.ws.network.JobService
 import hr.foi.air.baufind.ws.network.TokenProvider
+import hr.foi.air.baufind.ws.response.JobResponse
 
 @Composable
 fun JobSearchDetailsScreen(
@@ -47,7 +52,30 @@ fun JobSearchDetailsScreen(
     tokenProvider: TokenProvider,
     jobSearchViewModel: JobSearchViewModel
 ){
-    val selectedJob = jobSearchViewModel.selectedJob.value
+    val selectedJobId = jobSearchViewModel.selectedJobId
+    var selectedJob by remember { mutableStateOf<FullJobModel?>(null) }
+
+    var isLoading by remember { mutableStateOf(false) }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(selectedJobId) {
+        if (selectedJobId != 0) {
+            isLoading = true
+            try {
+                val response = JobGetService().fetchJobAsync(selectedJobId, tokenProvider)
+                if (response.success) {
+                    selectedJob = response.job
+                } else {
+                    error = response.message
+                }
+            } catch (e: Exception) {
+                Log.e("JobSearchDetailsScreen", "Error fetching job: ${e.message}")
+                error = e.message
+            } finally {
+                isLoading = false
+            }
+        }
+    }
 
     var coordinates = remember { mutableStateOf(Coordinates(
         selectedJob?.lat ?: 0.0,
@@ -67,15 +95,15 @@ fun JobSearchDetailsScreen(
         if (selectedJob != null) {
             Log.d("JobSearchDetailsScreen", "Selected job unutar ifa: $selectedJob")
             Spacer(modifier = Modifier.height(24.dp))
-            DisplayTextField(title = "Naslov posla", text = selectedJob.title)
+            DisplayTextField(title = "Naslov posla", text = selectedJob!!.title)
             Spacer(modifier = Modifier.height(24.dp))
-            DisplayTextField(title = "Opis posla", text = selectedJob.description)
+            DisplayTextField(title = "Opis posla", text = selectedJob!!.description)
             Spacer(modifier = Modifier.height(24.dp))
-            DisplayTextField(title = "Lokacija posla", text = selectedJob.location)
-            if (selectedJob.lat != null && selectedJob.lng != null) {
+            DisplayTextField(title = "Lokacija posla", text = selectedJob!!.location)
+            if (selectedJob!!.lat != null && selectedJob!!.lng != null) {
                 MapHelper.mapProvider.LocationShowMapScreen(
                     modifier = Modifier,
-                    location = selectedJob.location,
+                    location = selectedJob!!.location,
                     coordinates = coordinates.value
                 )
             }
@@ -100,7 +128,7 @@ fun JobSearchDetailsScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             ){
-                itemsIndexed(selectedJob.pictures) { index, base64Image ->
+                itemsIndexed(selectedJob!!.pictures) { index, base64Image ->
                     val imageData = PictureHelper.decodeBase64ToByteArray(base64Image)
                     val bitmap = imageData?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
 
@@ -132,18 +160,5 @@ fun JobSearchDetailsScreen(
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun JobSearchDetailsScreenPreview() {
-    val navController = rememberNavController()
-    JobSearchDetailsScreen(
-        navController,
-        tokenProvider = object : TokenProvider {
-            override fun getToken(): String? { return null }
-        },
-        jobSearchViewModel = JobSearchViewModel()
-    )
 }
 

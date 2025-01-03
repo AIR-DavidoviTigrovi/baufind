@@ -79,7 +79,7 @@ fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider, 
                 items(filteredJobs.size) { index ->
                     val job = filteredJobs[index]
                     JobListItem(job = job){
-                        jobSearchViewModel.selectedJob.value = job
+                        jobSearchViewModel.selectedJobId = job.id
                         navController.navigate("jobSearchDetailsScreen")
                     }
                 }
