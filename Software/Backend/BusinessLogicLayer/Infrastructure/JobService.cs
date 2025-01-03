@@ -2,6 +2,7 @@ using BusinessLogicLayer.AppLogic;
 using BusinessLogicLayer.AppLogic.Jobs;
 using BusinessLogicLayer.AppLogic.Jobs.AddJob;
 using BusinessLogicLayer.AppLogic.Jobs.AddUserToJob;
+using BusinessLogicLayer.AppLogic.Jobs.GetJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
 using BusinessLogicLayer.AppLogic.Skills;
 using DataAccessLayer.AppLogic;
@@ -130,15 +131,43 @@ namespace BusinessLogicLayer.Infrastructure
                 job.Skills = _jobRepository.GetSkillsForJobWhereSkillPositionsOpen(job.Id);
             }
 
-            foreach (var job in jobs)
-            {
-                job.Pictures = _jobRepository.GetPicturesForJobWhereSkillPositionsOpen(job.Id);
-            }
-
-
             return new GetJobsForCurrentUserResponse()
             {
                 Jobs = jobs
+            };
+        }
+
+        public GetJobResponse GetJob(int jobId)
+        {
+            var jobData = _jobRepository.GetJob(jobId);
+
+            if (jobData == null)
+            {
+                return new GetJobResponse()
+                {
+                    Error = "Posao nije pronađen!"
+                };
+            }
+
+            var job = new FullJobRecord()
+            {
+                Id = jobData.Id,
+                Title = jobData.Title,
+                Description = jobData.Description,
+                Allow_worker_invite = jobData.Allow_worker_invite,
+                Lat = jobData.Lat,
+                Lng = jobData.Lng,
+                Location = jobData.Location,
+                Job_status_id = jobData.Job_status_id,
+                Employer_id = jobData.Employer_id
+            };
+
+            job.Skills = _jobRepository.GetSkillsForJobWhereSkillPositionsOpen(jobData.Id);
+            job.Pictures = _jobRepository.GetPicturesForJobWhereSkillPositionsOpen(jobData.Id);
+
+            return new GetJobResponse()
+            {
+                Job = job
             };
         }
 

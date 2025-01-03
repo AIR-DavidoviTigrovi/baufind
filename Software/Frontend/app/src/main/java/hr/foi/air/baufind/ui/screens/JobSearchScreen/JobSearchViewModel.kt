@@ -14,7 +14,7 @@ class JobSearchViewModel : ViewModel(){
     var success : Boolean = false
     var message : String? = null
     val jobs = mutableStateOf(emptyList<JobSearchModel>())
-    var selectedJob = mutableStateOf<JobSearchModel?>(null)
+    var selectedJobId : Int = 0
 
     var tokenProvider: TokenProvider? = null
     set(value) {
@@ -34,7 +34,7 @@ class JobSearchViewModel : ViewModel(){
     }
 
     fun clearData(){
-        selectedJob = mutableStateOf(null)
+        selectedJobId = 0
     }
 
     fun isLoading() : Boolean{

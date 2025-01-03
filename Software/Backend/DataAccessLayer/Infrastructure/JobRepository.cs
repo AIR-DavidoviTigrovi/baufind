@@ -177,5 +177,36 @@ namespace DataAccessLayer.Infrastructure
             }
         }
 
+        public JobModel GetJob(int jobId)
+        {
+            string query = @"
+                SELECT * FROM job
+                WHERE id = @jobId;";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@jobId", jobId }
+            };
+
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                if (reader.Read())
+                {
+                    return new JobModel()
+                    {
+                        Id = (int)reader["id"],
+                        Employer_id = (int)reader["employer_id"],
+                        Job_status_id = (int)reader["job_status_id"],
+                        Title = (string)reader["title"],
+                        Description = (string)reader["description"],
+                        Allow_worker_invite = (bool)reader["allow_worker_invite"],
+                        Location = (string)reader["location"],
+                        Lat = reader["lat"] as decimal?,
+                        Lng = reader["lng"] as decimal?
+                    };
+                }
+                return null;
+            }
+        }
     }
 }
