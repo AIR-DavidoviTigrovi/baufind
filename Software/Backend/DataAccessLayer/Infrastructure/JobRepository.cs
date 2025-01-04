@@ -122,7 +122,7 @@ namespace DataAccessLayer.Infrastructure
         /// </summary>
         /// <param name="jobIds"></param>
         /// <returns>Slike za posao</returns>
-        public List<byte[]> GetPicturesForJobWhereSkillPositionsOpen(int jobId)
+        public List<byte[]> GetPicturesForJob(int jobId)
         {
             string query = $@"
                 SELECT p.picture FROM job j
@@ -150,7 +150,7 @@ namespace DataAccessLayer.Infrastructure
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns>Vještine za posao</returns>
-        public List<SkillModel> GetSkillsForJobWhereSkillPositionsOpen(int jobId)
+        public List<SkillModel> GetSkillsForJob(int jobId)
         {
             string query = @"
                 SELECT s.id, s.title FROM working w

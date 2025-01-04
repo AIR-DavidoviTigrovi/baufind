@@ -30,13 +30,13 @@ namespace DataAccessLayer.AppLogic
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns>Slike za posao</returns>
-        public List<byte[]> GetPicturesForJobWhereSkillPositionsOpen(int jobId);
+        public List<byte[]> GetPicturesForJob(int jobId);
         /// <summary>
         /// Dohvaća sve vještine za posao
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns>Vještine za posao</returns>
-        public List<SkillModel> GetSkillsForJobWhereSkillPositionsOpen(int jobId);
+        public List<SkillModel> GetSkillsForJob(int jobId);
         /// <summary>
         /// Dohvaća posao po ID-u
         /// </summary>
