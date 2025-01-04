@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.core.map.MapProvider
 import hr.foi.air.baufind.core.map.models.Coordinates
@@ -50,41 +51,26 @@ import hr.foi.air.baufind.ws.response.JobResponse
 fun JobSearchDetailsScreen(
     navController: NavController,
     tokenProvider: TokenProvider,
-    jobSearchViewModel: JobSearchViewModel
+    jobSearchDetailsViewModel: JobSearchDetailsViewModel
 ){
-    val selectedJobId = jobSearchViewModel.selectedJobId
-    var selectedJob by remember { mutableStateOf<FullJobModel?>(null) }
 
-    var isLoading by remember { mutableStateOf(false) }
-    var error by remember { mutableStateOf<String?>(null) }
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
-    LaunchedEffect(selectedJobId) {
-        if (selectedJobId != 0) {
-            isLoading = true
-            try {
-                val response = JobGetService().fetchJobAsync(selectedJobId, tokenProvider)
-                if (response.success) {
-                    selectedJob = response.job
-                } else {
-                    error = response.message
-                }
-            } catch (e: Exception) {
-                Log.e("JobSearchDetailsScreen", "Error fetching job: ${e.message}")
-                error = e.message
-            } finally {
-                isLoading = false
-            }
-        }
+    LaunchedEffect(currentBackStackEntry) {
+        jobSearchDetailsViewModel.clearData()
+        jobSearchDetailsViewModel.tokenProvider = tokenProvider
     }
 
     var coordinates = remember { mutableStateOf(Coordinates(
-        selectedJob?.lat ?: 0.0,
-        selectedJob?.lng ?: 0.0
+        jobSearchDetailsViewModel.job?.lat ?: 0.0,
+        jobSearchDetailsViewModel.job?.lng ?: 0.0
     )) }
 
     var selectedImageIndex by remember { mutableStateOf<Int?>(null) }
-    val employerId = selectedJob?.employer_id
+    val employerId = jobSearchDetailsViewModel.job?.employer_id
     val scrollState = rememberScrollState()
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -92,18 +78,23 @@ fun JobSearchDetailsScreen(
             .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        if (selectedJob != null) {
-            Log.d("JobSearchDetailsScreen", "Selected job unutar ifa: $selectedJob")
+        if(jobSearchDetailsViewModel.isLoading()){
+            Text(text = "Učitavam...")
+        }else if(jobSearchDetailsViewModel.HasError()){
+            Text(text = jobSearchDetailsViewModel.message!!)
+        }
+        else{
+            Log.d("JobSearchDetailsScreen", "Selected job unutar ifa: $jobSearchDetailsViewModel.job")
             Spacer(modifier = Modifier.height(24.dp))
-            DisplayTextField(title = "Naslov posla", text = selectedJob!!.title)
+            DisplayTextField(title = "Naslov posla", text = jobSearchDetailsViewModel.job!!.title)
             Spacer(modifier = Modifier.height(24.dp))
-            DisplayTextField(title = "Opis posla", text = selectedJob!!.description)
+            DisplayTextField(title = "Opis posla", text = jobSearchDetailsViewModel.job!!.description)
             Spacer(modifier = Modifier.height(24.dp))
-            DisplayTextField(title = "Lokacija posla", text = selectedJob!!.location)
-            if (selectedJob!!.lat != null && selectedJob!!.lng != null) {
+            DisplayTextField(title = "Lokacija posla", text = jobSearchDetailsViewModel.job!!.location)
+            if (jobSearchDetailsViewModel.job!!.lat != null && jobSearchDetailsViewModel.job!!.lng != null) {
                 MapHelper.mapProvider.LocationShowMapScreen(
                     modifier = Modifier,
-                    location = selectedJob!!.location,
+                    location = jobSearchDetailsViewModel.job!!.location,
                     coordinates = coordinates.value
                 )
             }
@@ -128,7 +119,7 @@ fun JobSearchDetailsScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             ){
-                itemsIndexed(selectedJob!!.pictures) { index, base64Image ->
+                itemsIndexed(jobSearchDetailsViewModel.job!!.pictures) { index, base64Image ->
                     val imageData = PictureHelper.decodeBase64ToByteArray(base64Image)
                     val bitmap = imageData?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
 

@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.service.JobSearchService.JobSearchResponse
 import hr.foi.air.baufind.service.JobSearchService.JobSearchService
@@ -33,8 +34,11 @@ import hr.foi.air.baufind.ws.network.TokenProvider
 import kotlinx.coroutines.launch
 
 @Composable
-fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider, jobSearchViewModel: JobSearchViewModel){
-    LaunchedEffect(Unit){
+fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider, jobSearchViewModel: JobSearchViewModel, jobSearchDetailsViewModel : JobSearchDetailsViewModel){
+
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+
+    LaunchedEffect(currentBackStackEntry){
         jobSearchViewModel.clearData()
         jobSearchViewModel.tokenProvider = tokenProvider
     }
@@ -79,18 +83,11 @@ fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider, 
                 items(filteredJobs.size) { index ->
                     val job = filteredJobs[index]
                     JobListItem(job = job){
-                        jobSearchViewModel.selectedJobId = job.id
+                        jobSearchDetailsViewModel.selectedJobId = job.id
                         navController.navigate("jobSearchDetailsScreen")
                     }
                 }
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun JobSearchScreenPreview() {
-    val navController = rememberNavController()
-    JobSearchScreen(navController, tokenProvider = object : TokenProvider { override fun getToken(): String? { return null } }, jobSearchViewModel = JobSearchViewModel())
 }
