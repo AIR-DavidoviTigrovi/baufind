@@ -208,5 +208,49 @@ namespace DataAccessLayer.Infrastructure
                 return null;
             }
         }
+
+        /// <summary>
+        /// Dohvaća job i working po korisniku i statusu
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="statusId"></param>
+        /// <returns></returns>
+        public List<JobWorkingModel> GetJobWorkingByUserAndStatus(int userId, int statusId)
+        {
+            string query = @"
+            SELECT j.id as job_id, w.id as working_id, j.title, j.location, ws.id as status_id, ws.status, w.worker_id
+            FROM job j LEFT JOIN working w
+            ON j.id = w.job_id
+            JOIN working_status ws
+            ON ws.id = w.working_status_id
+            WHERE w.worker_id = @userId
+            AND ws.id = @statusId;
+            ";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@userId", userId },
+                { "@statusId", statusId }
+            };
+
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                var jobs = new List<JobWorkingModel>();
+                while (reader.Read())
+                {
+                    jobs.Add(new JobWorkingModel
+                    {
+                        JobId = (int)reader["job_id"],
+                        WorkingId = (int)reader["working_id"],
+                        WorkerId = reader["worker_id"] as int?,
+                        StatusId = (int)reader["status_id"],
+                        Status = (string)reader["status"],
+                        Title = (string)reader["title"],
+                        Location = (string)reader["location"]
+                    });
+                }
+                return jobs;
+            }
+        }
     }
 }

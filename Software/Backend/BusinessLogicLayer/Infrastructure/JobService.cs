@@ -187,5 +187,27 @@ namespace BusinessLogicLayer.Infrastructure
 
             return response;
         }
+
+        public SearchMyJobsForUserResponse SearchMyJobsForUser(int userId)
+        {
+            var response = new SearchMyJobsForUserResponse();
+
+            try
+            {
+                var jobs = new List<JobWorkingModel>();
+                int[] statuses = [2, 3]; // Svi statusi koji upadaju u pretraživanje
+                foreach (var status in statuses)
+                {
+                    var foundJobsForStatus = _jobRepository.GetJobWorkingByUserAndStatus(userId, status);
+                    jobs.AddRange(foundJobsForStatus);
+                }
+                response.Jobs = jobs;
+            } catch (Exception ex)
+            {
+                response.Error = $"Došlo je do greške prilikom dohvaćanja podataka: {ex.Message}";
+            }
+
+            return response;
+        }
     }
 }

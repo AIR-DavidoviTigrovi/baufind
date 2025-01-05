@@ -2,11 +2,6 @@
 using BusinessLogicLayer.AppLogic.Jobs.AddUserToJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.AppLogic.Jobs
 {
@@ -17,6 +12,6 @@ namespace BusinessLogicLayer.AppLogic.Jobs
         public GetJobResponse GetJob(int jobId);
         public CallWarkerToJobResponse CallWorkerToJob(CallWorkerToJobRequest request, int userId);
         public PendingInvitationResponse GetPendingInvitations(int userId);
+        public SearchMyJobsForUserResponse SearchMyJobsForUser(int userId);
     }
 }
-     
