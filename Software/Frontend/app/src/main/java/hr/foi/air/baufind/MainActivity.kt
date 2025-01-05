@@ -35,6 +35,7 @@ import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchDetailsViewModel
 import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchScreen
 import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchViewModel
 import hr.foi.air.baufind.ui.screens.LoginScreen.LoginScreen
+import hr.foi.air.baufind.ui.screens.MyJobsScreen.MyJobsScreen
 import hr.foi.air.baufind.ui.screens.Settings.SettingsScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.EditProfileScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.ReviewsScreen
@@ -70,7 +71,8 @@ class MainActivity : ComponentActivity() {
                                 "jobDetailsScreen",
                                 "jobSearchScreen",
                                 "jobSearchDetailsScreen",
-                                "settingsScreen"
+                                "settingsScreen",
+                                "myJobsScreen"
                             )
                         ) {
                             BottomNavigationBar(navController = navController)
@@ -143,6 +145,7 @@ class MainActivity : ComponentActivity() {
                             composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController, jobViewModel, tokenProvider) }
 
                             composable("jobSearchScreen") { JobSearchScreen(navController, tokenProvider, jobSearchViewModel, jobSearchDetailsViewModel) }
+                            composable("myJobsScreen") { MyJobsScreen(navController, tokenProvider) }
                             composable("jobSearchDetailsScreen") { JobSearchDetailsScreen(navController, tokenProvider, jobSearchDetailsViewModel) }
                             composable("settingsScreen") { SettingsScreen(navController) }
 
