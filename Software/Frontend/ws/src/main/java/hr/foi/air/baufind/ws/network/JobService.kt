@@ -4,6 +4,7 @@ import hr.foi.air.baufind.ws.request.JobCreateBody
 import hr.foi.air.baufind.ws.response.JobCreateResponse
 import hr.foi.air.baufind.ws.response.JobResponse
 import hr.foi.air.baufind.ws.response.JobsForCurrentUserResponse
+import hr.foi.air.baufind.ws.response.SearchMyJobsForUserResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -19,4 +20,6 @@ interface JobService {
     @GET("/jobs/{id}")
     suspend fun getJob(@Path("id") id: Int): JobResponse
 
+    @GET("/jobs/SearchMyJobsForUser")
+    suspend fun getMyJobsForUser(): SearchMyJobsForUserResponse
 }

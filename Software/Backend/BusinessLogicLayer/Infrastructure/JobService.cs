@@ -202,9 +202,11 @@ namespace BusinessLogicLayer.Infrastructure
                     jobs.AddRange(foundJobsForStatus);
                 }
                 response.Jobs = jobs;
+                response.Success = true;
             } catch (Exception ex)
             {
                 response.Error = $"Došlo je do greške prilikom dohvaćanja podataka: {ex.Message}";
+                response.Success = false;
             }
 
             return response;
