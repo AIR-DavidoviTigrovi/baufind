@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 
 class MyJobsViewModel : ViewModel() {
     var success : Boolean = false
+    var isLoading = mutableStateOf(false)
     val jobs = mutableStateOf(emptyList<JobWorkingModel>())
 
     var tokenProvider: TokenProvider? = null
@@ -21,10 +22,13 @@ class MyJobsViewModel : ViewModel() {
 
     private fun loadJobs(tokenProvider: TokenProvider) {
         viewModelScope.launch {
+            isLoading.value = true
             val service = JobService()
             val response = service.getMyJobsForUser(tokenProvider)
             success = response.success
             jobs.value = response.jobs
+            isLoading.value = false
+            Log.i("MyJobsViewModel", jobs.value.toString())
         }
     }
 

@@ -36,6 +36,7 @@ import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchScreen
 import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchViewModel
 import hr.foi.air.baufind.ui.screens.LoginScreen.LoginScreen
 import hr.foi.air.baufind.ui.screens.MyJobsScreen.MyJobsScreen
+import hr.foi.air.baufind.ui.screens.MyJobsScreen.MyJobsViewModel
 import hr.foi.air.baufind.ui.screens.Settings.SettingsScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.EditProfileScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.ReviewsScreen
@@ -56,6 +57,7 @@ class MainActivity : ComponentActivity() {
         val jobViewModel = JobViewModel()
         val jobSearchViewModel = JobSearchViewModel()
         val jobSearchDetailsViewModel = JobSearchDetailsViewModel()
+        val myJobsViewModel = MyJobsViewModel()
         setContent {
             val navController = rememberNavController()
             val currentRoute = navController
@@ -145,7 +147,7 @@ class MainActivity : ComponentActivity() {
                             composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController, jobViewModel, tokenProvider) }
 
                             composable("jobSearchScreen") { JobSearchScreen(navController, tokenProvider, jobSearchViewModel, jobSearchDetailsViewModel) }
-                            composable("myJobsScreen") { MyJobsScreen(navController, tokenProvider) }
+                            composable("myJobsScreen") { MyJobsScreen(navController, tokenProvider, myJobsViewModel) }
                             composable("jobSearchDetailsScreen") { JobSearchDetailsScreen(navController, tokenProvider, jobSearchDetailsViewModel) }
                             composable("settingsScreen") { SettingsScreen(navController) }
 
