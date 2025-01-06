@@ -69,7 +69,8 @@ namespace BusinessLogicLayer.Infrastructure
 
             return new AddJobResponse()
             {
-                Success = $"Posao uspješno dodan sa id-em {jobId}"
+                Success = $"Posao uspješno dodan sa id-em {jobId}",
+                JobId = jobId.Value
             };
         }
 
