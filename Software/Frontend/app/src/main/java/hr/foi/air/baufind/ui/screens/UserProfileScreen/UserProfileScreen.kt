@@ -6,13 +6,15 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -53,28 +55,42 @@ import androidx.navigation.NavController
 import hr.foi.air.baufind.helpers.PictureHelper
 import hr.foi.air.baufind.service.UserProfileService.UserProfileService
 import hr.foi.air.baufind.service.jwtService.JwtService
+import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ui.components.Skill
 import hr.foi.air.baufind.ws.network.TokenProvider
 import kotlinx.coroutines.launch
 
 @Composable
-fun EditProfileButton(onClick: () -> Unit) {
+fun ProfileButtons(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
         contentAlignment = Alignment.Center
     ) {
-        Button(
-            onClick = onClick,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.onSecondary
-            )
-        ) {
-            Text(
-                text = "Edit Profile",
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+        Row {
+            Button(
+                modifier = Modifier
+                    .height(48.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                onClick = {
+                    navController.navigate("editUserProfileScreen")
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
+                )
+            ) {
+                Text(
+                    text = "Edit Profile",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                )
+            }
+            PrimaryButton(
+                text = "Pending jobs",
+                onClick = {
+                    navController.navigate("pendingJobsScreen")
+                }
             )
         }
     }
@@ -224,7 +240,7 @@ fun userProfileScreen(
             ) {
                 UserProfileHeader(profile.name, profile.address ?: "N/A", PictureHelper.decodeBase64ToByteArray(profile.profilePicture))
                 if (isOwnProfile) {
-                    EditProfileButton(onClick = { navController.navigate("editUserProfileScreen") })
+                    ProfileButtons(navController)
                 }
                 UserProfileContactInformation(profile.address ?: "N/A", profile.phone ?: "N/A", profile.email)
                 UserSkillSection(profile.skills.orEmpty().map { skill -> Skill(skill.id, skill.title) })
