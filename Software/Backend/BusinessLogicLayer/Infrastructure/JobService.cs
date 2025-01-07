@@ -188,14 +188,14 @@ namespace BusinessLogicLayer.Infrastructure
             return response;
         }
 
-        public SearchMyJobsForUserResponse SearchMyJobsForUser(int userId)
+        public SearchPendingJobsForUserResponse SearchPendingJobsForUser(int userId)
         {
-            var response = new SearchMyJobsForUserResponse();
+            var response = new SearchPendingJobsForUserResponse();
 
             try
             {
                 var jobs = new List<JobWorkingModel>();
-                int[] statuses = [2, 3]; // Svi statusi koji upadaju u pretraživanje
+                int[] statuses = [2, 3, 4];
                 foreach (var status in statuses)
                 {
                     var foundJobsForStatus = _jobRepository.GetJobWorkingByUserAndStatus(userId, status);

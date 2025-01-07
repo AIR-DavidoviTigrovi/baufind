@@ -123,9 +123,9 @@ public class JobController : ControllerBase
         return jobs;
     }
 
-    [HttpGet("SearchMyJobsForUser")]
+    [HttpGet("SearchPendingJobsForUser")]
     [Authorize]
-    public ActionResult<SearchMyJobsForUserResponse> SearchMyJobsForUser()
+    public ActionResult<SearchPendingJobsForUserResponse> SearchPendingJobsForUser()
     {
         var userIdFromJwt = HttpContext.Items["UserId"] as int?;
 
@@ -137,7 +137,7 @@ public class JobController : ControllerBase
             });
         }
 
-        var jobs = _jobService.SearchMyJobsForUser(userIdFromJwt.Value);
+        var jobs = _jobService.SearchPendingJobsForUser(userIdFromJwt.Value);
 
         return jobs;
     }

@@ -46,25 +46,25 @@ class JobService(){
         }
     }
 
-    suspend fun getMyJobsForUser(tokenProvider: TokenProvider): MyJobsForUserResponse {
+    suspend fun getPendingJobsForUser(tokenProvider: TokenProvider): PendingJobsForUserResponse {
         val service = NetworkService.createJobService(tokenProvider)
 
         try {
-            val response = service.getMyJobsForUser()
+            val response = service.getPendingJobsForUser()
             if (!response.success) {
-                return MyJobsForUserResponse(
+                return PendingJobsForUserResponse(
                     false,
                     response.error
                 )
             }
 
-            return MyJobsForUserResponse(
+            return PendingJobsForUserResponse(
                 true,
                 null,
                 response.jobs
             )
         } catch (e: Exception) {
-            return MyJobsForUserResponse(
+            return PendingJobsForUserResponse(
                 false,
                 e.message
             )

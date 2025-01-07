@@ -12,6 +12,6 @@ namespace BusinessLogicLayer.AppLogic.Jobs
         public GetJobResponse GetJob(int jobId);
         public CallWarkerToJobResponse CallWorkerToJob(CallWorkerToJobRequest request, int userId);
         public PendingInvitationResponse GetPendingInvitations(int userId);
-        public SearchMyJobsForUserResponse SearchMyJobsForUser(int userId);
+        public SearchPendingJobsForUserResponse SearchPendingJobsForUser(int userId);
     }
 }

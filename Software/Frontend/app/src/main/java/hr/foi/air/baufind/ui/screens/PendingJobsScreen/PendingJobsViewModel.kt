@@ -24,7 +24,7 @@ class PendingJobsViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading.value = true
             val service = JobService()
-            val response = service.getMyJobsForUser(tokenProvider)
+            val response = service.getPendingJobsForUser(tokenProvider)
             success = response.success
             jobs.value = response.jobs
             isLoading.value = false
