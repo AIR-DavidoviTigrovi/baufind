@@ -3,8 +3,10 @@ package hr.foi.air.baufind.ui.screens.JobSearchScreen
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,7 +18,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -32,6 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -59,8 +64,7 @@ fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider, 
     var selectedCounty by remember { mutableStateOf<String?>(null) }
     var showCountyBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
-    val coroutineScope = rememberCoroutineScope()
-    var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
+    var searchQuery by remember { mutableStateOf("") }
 
     val allJobs = jobSearchViewModel.jobs.value
 
@@ -76,7 +80,7 @@ fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider, 
 
     val croatianCounties = jobSearchViewModel.croatianCounties
     val filteredCounties = croatianCounties.filter{
-        it.contains(searchQuery.text, ignoreCase = true)
+        it.contains(searchQuery, ignoreCase = true)
     }
 
     Column(
@@ -113,32 +117,35 @@ fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider, 
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ){
-                    BasicTextField(
+                    OutlinedTextField(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp),
-                        decorationBox = { innerTextField ->
-                            if(searchQuery.text.isEmpty()){
-                                Text("Pretraži županiju")
-                            }
-                            innerTextField()
-                        }
+                        placeholder = { Text("Pretraži županiju")},
+                        singleLine = true,
+                        maxLines = 1
                     )
-                    LazyColumn {
-                        items(filteredCounties.size) { index ->
-                            val county = filteredCounties[index]
-                            Text(
-                                text = county,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp)
-                                    .clickable {
-                                        selectedCounty = county
-                                        showCountyBottomSheet = false
-                                    }
-                            )
+                    Box(modifier = Modifier.fillMaxWidth()){
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 32.dp)
+                        ) {
+                            items(filteredCounties.size) { index ->
+                                val county = filteredCounties[index]
+                                Text(
+                                    text = county,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp)
+                                        .clickable {
+                                            selectedCounty = county
+                                            showCountyBottomSheet = false
+                                        }
+                                )
+                            }
                         }
                     }
                 }
