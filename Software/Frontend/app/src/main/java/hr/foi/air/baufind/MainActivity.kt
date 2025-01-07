@@ -40,6 +40,7 @@ import hr.foi.air.baufind.ui.screens.UserProfileScreen.EditProfileScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.ReviewsScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.UserProfileViewModel
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.userProfileScreen
+import hr.foi.air.baufind.ui.screens.WorkerSearchScreen.WorkerProfileScreen
 import hr.foi.air.baufind.ui.screens.WorkerSearchScreen.WorkerSearchScreen
 import hr.foi.air.baufind.ui.theme.BaufindTheme
 import hr.foi.air.baufind.ws.network.AppTokenProvider
@@ -122,14 +123,43 @@ class MainActivity : ComponentActivity() {
                                 ReviewsScreen(navController, userId, tokenProvider)
                             }
 
-
-                            composable("workersSearchScreen/{position}",
-                                arguments = listOf(navArgument("position") { type = NavType.StringType })
+                            var deserializedList = mutableListOf<Int>()
+                            composable("workersSearchScreen/{position}/{jobId}",
+                                arguments = listOf(navArgument("position") { type = NavType.StringType },
+                                    navArgument("jobId") { type = NavType.IntType }
+                                )
                                 ) { backStackEntry ->
                                 val position = backStackEntry.arguments?.getString("position")
-                                val deserializedList = gson.fromJson(position, Array<Int>::class.java).toList()
-                                WorkerSearchScreen(navController,tokenProvider,deserializedList)
+                                val jobId = backStackEntry.arguments?.getInt("jobId")
+
+                                deserializedList = gson.fromJson(position, Array<Int>::class.java).toMutableList()
+                                WorkerSearchScreen(navController,tokenProvider,deserializedList, jobId!!)
                             }
+                            composable(
+                                "workersProfileScreen/{jobId}/{workerId}/{skillId}",
+                                arguments = listOf(
+                                    navArgument("jobId") { type = NavType.IntType },
+                                    navArgument("workerId") { type = NavType.IntType },
+                                    navArgument("skillId") { type = NavType.IntType }
+                                )
+                            ) { backStackEntry ->
+                                val jobId = backStackEntry.arguments?.getInt("jobId") ?: 0
+                                val workerId = backStackEntry.arguments?.getInt("workerId") ?: 0
+                                val skillId = backStackEntry.arguments?.getInt("skillId") ?: 0
+
+
+                                WorkerProfileScreen(
+                                    navController = navController,
+                                    context = this@MainActivity,
+                                    tokenProvider = tokenProvider,
+                                    id = workerId,
+                                    skills = deserializedList,
+                                    jobId = jobId,
+                                    skillId = skillId
+                                )
+                            }
+
+
                             composable("jobRoom/{jobID}",
                                 arguments = listOf(navArgument("jobID") { type = NavType.IntType })
                             ) { backStackEntry ->
