@@ -141,4 +141,23 @@ public class JobController : ControllerBase
 
         return jobs;
     }
+
+    [HttpGet("SearchMyJobsForUser")]
+    [Authorize]
+    public ActionResult<SearchMyJobsForUserResponse> SearchMyJobsForUser()
+    {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+
+        if (userIdFromJwt == null)
+        {
+            return Unauthorized(new GetJobResponse()
+            {
+                Error = "Ne možete pristupiti tom resursu!"
+            });
+        }
+
+        var jobs = _jobService.SearchMyJobsForUser(userIdFromJwt.Value);
+
+        return jobs;
+    }
 }

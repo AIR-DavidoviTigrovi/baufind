@@ -74,15 +74,7 @@ fun PendingJobsScreen(
                         )
                     }
                 },
-                actions = {
-                    IconButton(onClick = { }) { // TODO: odvede na zaslon
-                        Icon(
-                            painter = painterResource(R.drawable.baseline_history_24),
-                            contentDescription = "History",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                },
+                actions = { },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
                     titleContentColor = MaterialTheme.colorScheme.primary,

@@ -28,7 +28,6 @@ class PendingJobsViewModel : ViewModel() {
             success = response.success
             jobs.value = response.jobs
             isLoading.value = false
-            Log.i("PendingJobsViewModel", jobs.value.toString())
         }
     }
 

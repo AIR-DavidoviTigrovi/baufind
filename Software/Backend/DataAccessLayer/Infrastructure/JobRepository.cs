@@ -1,11 +1,6 @@
 ﻿using DataAccessLayer.AppLogic;
 using DataAccessLayer.Models;
 using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer.Infrastructure
 {
@@ -247,6 +242,63 @@ namespace DataAccessLayer.Infrastructure
                         Status = (string)reader["status"],
                         Title = (string)reader["title"],
                         Location = (string)reader["location"]
+                    });
+                }
+                return jobs;
+            }
+        }
+
+        /// <summary>
+        /// Dohvaća poslove kojima je korisnik vlasnik ili je primljen na njih
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public List<MyJobModel> GetMyJobsForUser(int userId)
+        {
+            string query = @"
+            SELECT
+	            j.id,
+	            j.employer_id,
+	            j.job_status_id,
+	            s.status as job_status,
+	            j.title,
+	            j.description,
+	            j.allow_worker_invite,
+	            j.location,
+	            j.lat,
+	            j.lng,
+	            CAST(CASE WHEN j.employer_id = @userId THEN 1 ELSE 0 END AS BIT) as user_is_employer
+                FROM job j
+                LEFT JOIN job_status s
+                ON j.job_status_id = s.id
+                WHERE j.employer_id = @userId
+                OR j.id IN (
+	                SELECT job_id FROM working
+	                WHERE worker_id = @userId
+                );";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@userId", userId }
+            };
+
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                var jobs = new List<MyJobModel>();
+                while (reader.Read())
+                {
+                    jobs.Add(new MyJobModel
+                    {
+                        Id = (int)reader["id"],
+                        JobStatusId = (int)reader["job_status_id"],
+                        JobStatus = (string)reader["job_status"],
+                        Title = (string)reader["title"],
+                        Description = (string)reader["description"],
+                        AllowWorkerInvite = (bool)reader["allow_worker_invite"],
+                        Location = (string)reader["location"],
+                        Lat = reader["lat"] as decimal?,
+                        Lng = reader["lng"] as decimal?,
+                        UserIsEmployer = (bool)reader["user_is_employer"]
                     });
                 }
                 return jobs;
