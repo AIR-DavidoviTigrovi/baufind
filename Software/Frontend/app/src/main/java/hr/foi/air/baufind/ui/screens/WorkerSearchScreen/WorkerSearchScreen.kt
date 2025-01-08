@@ -49,7 +49,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider,skills: List<Int>) {
+fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider,skills: MutableList<Int>, jobId : Int) {
     val viewModel: WorkerSearchViewModel = viewModel()
     viewModel.tokenProvider.value = tokenProvider
     //Logika za dropdown meni
@@ -198,9 +198,9 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
                         initialOffsetY = { it }
                     ),
                 ) {
+
                     WorkerCard(worker){
-                        //Funkcija se poziva na pritiskom na radnika,| treba je promijeniti u kasnijim fazama i prilikom promjene obrišite dio komentara nakon | znaka.
-                        Toast.makeText(context, "Clicked on ${worker.name}", Toast.LENGTH_SHORT).show()
+                        navController.navigate("workersProfileScreen/${jobId}/${worker.id}/${skills.first()}")
                     }
                 }
             }
@@ -213,5 +213,5 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
 @Composable
 fun WorkerSearchScreenPreview() {
     val navController = rememberNavController()
-    WorkerSearchScreen(navController,tokenProvider = object : TokenProvider { override fun getToken(): String? { return null }},listOf(1,2))
+    WorkerSearchScreen(navController,tokenProvider = object : TokenProvider { override fun getToken(): String? { return null }},mutableListOf(1,2),1)
 }
