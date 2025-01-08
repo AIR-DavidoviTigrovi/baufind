@@ -151,7 +151,7 @@ namespace DataAccessLayer.Infrastructure
             string skillIdsString = string.Join(",", skillIds);
 
             string query = $@"
-                SELECT s.id, s.title FROM working w
+                SELECT DISTINCT s.id, s.title FROM working w
                 INNER JOIN skill s ON w.skill_id = s.id
                 WHERE w.job_id = @jobId
                 AND w.worker_id IS NULL
