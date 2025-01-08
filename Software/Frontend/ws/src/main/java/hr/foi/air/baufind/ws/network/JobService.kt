@@ -1,6 +1,8 @@
 package hr.foi.air.baufind.ws.network
 
+import hr.foi.air.baufind.ws.request.CallForWorkingBody
 import hr.foi.air.baufind.ws.request.JobCreateBody
+import hr.foi.air.baufind.ws.response.CallForWorkingResponse
 import hr.foi.air.baufind.ws.response.JobCreateResponse
 import hr.foi.air.baufind.ws.response.JobResponse
 import hr.foi.air.baufind.ws.response.JobsForCurrentUserResponse
@@ -9,6 +11,7 @@ import hr.foi.air.baufind.ws.response.SearchPendingJobsForUserResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface JobService {
@@ -20,6 +23,9 @@ interface JobService {
 
     @GET("/jobs/{id}")
     suspend fun getJob(@Path("id") id: Int): JobResponse
+
+    @PUT("/jobs/CallForWorking")
+    suspend fun callForWorking(@Body request: CallForWorkingBody): CallForWorkingResponse
 
     @GET("/jobs/SearchPendingJobsForUser")
     suspend fun getPendingJobsForUser(): SearchPendingJobsForUserResponse

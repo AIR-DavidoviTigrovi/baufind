@@ -10,4 +10,5 @@ interface IWorkerSkillService {
 
     suspend fun getWorkersBySkill(workersSkillBody: WorkersSkillBody, tokenProvider: TokenProvider): List<Worker>
     suspend fun getWorkerAccount(worker: Worker, tokenProvider: TokenProvider): User
+    suspend fun callWorkerToJob(request: CallForWorkingRequest, tokenProvider: TokenProvider):CallForWorkingResponse
 }

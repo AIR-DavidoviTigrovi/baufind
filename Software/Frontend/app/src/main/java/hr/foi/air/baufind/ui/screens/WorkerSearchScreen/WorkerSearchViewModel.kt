@@ -7,11 +7,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import hr.foi.air.baufind.service.SkillsService.SkillsService
+import hr.foi.air.baufind.service.UserProfileService.UserProfileService
+import hr.foi.air.baufind.service.WorkerService.CallForWorkingRequest
+import hr.foi.air.baufind.service.WorkerService.CallForWorkingResponse
+import hr.foi.air.baufind.service.WorkerService.IWorkerSkillService
 import hr.foi.air.baufind.service.WorkerService.WorkerSkillService
 import hr.foi.air.baufind.ws.model.Worker
-import hr.foi.air.baufind.ws.network.SkillService
+import hr.foi.air.baufind.ws.network.JobService
 import hr.foi.air.baufind.ws.network.TokenProvider
 import hr.foi.air.baufind.ws.request.WorkersSkillBody
+import hr.foi.air.baufind.ws.response.UserProfileResponse
 import kotlinx.coroutines.launch
 
 
@@ -32,7 +37,7 @@ class WorkerSearchViewModel() : ViewModel() {
     val service = WorkerSkillService()
     val workers: MutableState<List<Worker>> = mutableStateOf(emptyList())
     val filteredWorkers: MutableState<List<Worker>> = mutableStateOf(emptyList())
-
+    private val workersService : IWorkerSkillService = WorkerSkillService()
     suspend fun getAllSkills (skills: List<Int>){
 
         val skillService = SkillsService(tokenProvider.value!!)
@@ -95,4 +100,21 @@ class WorkerSearchViewModel() : ViewModel() {
         }
         isExpandedR.value = false
     }
+
+    suspend fun callWorkerToJob(jobId: Int, skillId: Int, workerId: Int): CallForWorkingResponse {
+        try {
+            val success = workersService.callWorkerToJob(
+                CallForWorkingRequest( workerId,  jobId, skillId),
+                tokenProvider = tokenProvider.value!!
+            )
+            return success
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return CallForWorkingResponse(
+                message = "Greška prilikom fetchanja",
+                success = false
+            )
+        }
+    }
+
 }

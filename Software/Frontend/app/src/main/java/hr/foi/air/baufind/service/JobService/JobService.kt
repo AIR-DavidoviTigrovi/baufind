@@ -28,20 +28,23 @@ class JobService(){
             if(response.success != "") {
                 return JobResponse(
                     true,
-                    response.success
+                    response.success,
+                    response.jobId
                 )
             }
             else {
                 return JobResponse(
                     false,
-                    response.error
+                    response.error,
+                    -1
                 )
             }
         }catch(e: Exception){
             e.printStackTrace()
             return JobResponse(
                 false,
-                "Pogreska pri fetchanju"
+                "Pogreska pri fetchanju",
+                -1
             )
         }
     }
