@@ -1,11 +1,13 @@
 package hr.foi.air.baufind.ws.network
 
 import hr.foi.air.baufind.ws.request.JobCreateBody
+import hr.foi.air.baufind.ws.request.WorkerRequestJoinBody
 import hr.foi.air.baufind.ws.response.JobCreateResponse
 import hr.foi.air.baufind.ws.response.JobResponse
 import hr.foi.air.baufind.ws.response.JobsForCurrentUserResponse
 import hr.foi.air.baufind.ws.response.SearchMyJobsForUserResponse
 import hr.foi.air.baufind.ws.response.SearchPendingJobsForUserResponse
+import hr.foi.air.baufind.ws.response.WorkerRequestJoinResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -26,4 +28,7 @@ interface JobService {
 
     @GET("/jobs/SearchMyJobsForUser")
     suspend fun getMyJobsForUser(): SearchMyJobsForUserResponse
+
+    @POST("/jobs/requestJoin")
+    suspend fun requestJoin(@Body workerRequestJoinBody: WorkerRequestJoinBody): WorkerRequestJoinResponse
 }
