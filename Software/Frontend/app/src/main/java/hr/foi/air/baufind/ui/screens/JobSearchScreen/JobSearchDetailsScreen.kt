@@ -146,7 +146,6 @@ fun JobSearchDetailsScreen(
             }
 
             Spacer(modifier = Modifier.height(24.dp))
-            //za svaki skill u poslu prikazati redak sa imenom skilla i gumbom za pridruzivanje
             Text(
                 text = "Otvorene pozicije za Vas",
                 modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -164,22 +163,14 @@ fun JobSearchDetailsScreen(
                 jobSearchDetailsViewModel.job!!.skills.forEach { skill ->
                     SkillListConfirm(text = skill.title) {
                         Toast.makeText(context, "Pozicija ${skill.title} pritisnuta", Toast.LENGTH_SHORT).show()
+                        //Stvara zahtjev u bazi
+                        jobSearchDetailsViewModel.clearData()
+                        navController.navigate("pendingJobsScreen"){
+                            popUpTo("jobSearchDetailsScreen") { inclusive = true }
+                        }
                     }
                 }
             }
         }
     }
 }
-
-
-/*
-PrimaryButton(
-                text = "Pridruži se poslu",
-                icon = Icons.Default.Add,
-                onClick = {
-                    //salje zahtjev za pridruzenje poslu
-                    //jobSearchViewModel.clearData()
-                    //navController.navigate()
-                }
-            )
- */
