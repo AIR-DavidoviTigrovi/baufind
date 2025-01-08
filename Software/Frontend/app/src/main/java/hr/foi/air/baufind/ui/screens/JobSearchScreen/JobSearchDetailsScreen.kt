@@ -174,11 +174,10 @@ fun JobSearchDetailsScreen(
             Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = "Otvorene pozicije za Vas",
-                modifier = Modifier.align(Alignment.CenterHorizontally),
+                modifier = Modifier.align(Alignment.Start),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(24.dp))
             Column(
                 modifier = Modifier
                     .fillMaxSize()
