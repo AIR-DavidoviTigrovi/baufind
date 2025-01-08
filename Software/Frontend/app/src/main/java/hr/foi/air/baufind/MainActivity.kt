@@ -19,12 +19,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.gson.Gson
-import hr.foi.air.baufind.core.map.MapProvider
-import hr.foi.air.baufind.example_map.ExampleMapProvider
-import hr.foi.air.baufind.google_map.GoogleMapProvider
-import hr.foi.air.baufind.helpers.MapHelper
 import hr.foi.air.baufind.navigation.BottomNavigationBar
-import hr.foi.air.baufind.open_street_map.OpenStreetMapProvider
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobAddSkillsScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobDetailsScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobPositionsLocationScreen
@@ -35,6 +30,10 @@ import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchDetailsViewModel
 import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchScreen
 import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchViewModel
 import hr.foi.air.baufind.ui.screens.LoginScreen.LoginScreen
+import hr.foi.air.baufind.ui.screens.MyJobsScreen.MyJobsScreen
+import hr.foi.air.baufind.ui.screens.MyJobsScreen.MyJobsViewModel
+import hr.foi.air.baufind.ui.screens.PendingJobsScreen.PendingJobsScreen
+import hr.foi.air.baufind.ui.screens.PendingJobsScreen.PendingJobsViewModel
 import hr.foi.air.baufind.ui.screens.Settings.SettingsScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.EditProfileScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.ReviewsScreen
@@ -55,6 +54,8 @@ class MainActivity : ComponentActivity() {
         val jobViewModel = JobViewModel()
         val jobSearchViewModel = JobSearchViewModel()
         val jobSearchDetailsViewModel = JobSearchDetailsViewModel()
+        val pendingJobsViewModel = PendingJobsViewModel()
+        val myJobsViewModel = MyJobsViewModel()
         setContent {
             val navController = rememberNavController()
             val currentRoute = navController
@@ -70,7 +71,9 @@ class MainActivity : ComponentActivity() {
                                 "jobDetailsScreen",
                                 "jobSearchScreen",
                                 "jobSearchDetailsScreen",
-                                "settingsScreen"
+                                "settingsScreen",
+                                "pendingJobsScreen",
+                                "myJobsScreen"
                             )
                         ) {
                             BottomNavigationBar(navController = navController)
@@ -143,6 +146,8 @@ class MainActivity : ComponentActivity() {
                             composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController, jobViewModel, tokenProvider) }
 
                             composable("jobSearchScreen") { JobSearchScreen(navController, tokenProvider, jobSearchViewModel, jobSearchDetailsViewModel) }
+                            composable("pendingJobsScreen") { PendingJobsScreen(navController, tokenProvider, pendingJobsViewModel) }
+                            composable("myJobsScreen") { MyJobsScreen(navController, tokenProvider, myJobsViewModel) }
                             composable("jobSearchDetailsScreen") { JobSearchDetailsScreen(navController, tokenProvider, jobSearchDetailsViewModel) }
                             composable("settingsScreen") { SettingsScreen(navController) }
 
