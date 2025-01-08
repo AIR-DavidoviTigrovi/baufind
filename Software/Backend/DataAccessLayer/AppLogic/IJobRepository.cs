@@ -32,11 +32,11 @@ namespace DataAccessLayer.AppLogic
         /// <returns>Slike za posao</returns>
         public List<byte[]> GetPicturesForJob(int jobId);
         /// <summary>
-        /// Dohvaća sve vještine za posao
+        /// Dohvaća sve pozicije posla za koje je korisnik validan i isključuje pozicije za koje se već prijavio na tom poslu
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns>Vještine za posao</returns>
-        public List<SkillModel> GetEmptySkillsWhichUserHasForJob(int jobId, List<int> skillIds);
+        public List<SkillModel> GetEmptySkillsWhichUserHasForJob(int jobId, List<int> skillIds, int userId);
         /// <summary>
         /// Dohvaća posao po ID-u
         /// </summary>
