@@ -2,6 +2,7 @@
 using BusinessLogicLayer.AppLogic.Jobs.AddUserToJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
+using BusinessLogicLayer.AppLogic.Jobs.WorkerJoinJob;
 
 namespace BusinessLogicLayer.AppLogic.Jobs
 {
@@ -14,5 +15,6 @@ namespace BusinessLogicLayer.AppLogic.Jobs
         public PendingInvitationResponse GetPendingInvitations(int userId);
         public SearchPendingJobsForUserResponse SearchPendingJobsForUser(int userId);
         public SearchMyJobsForUserResponse SearchMyJobsForUser(int userId);
+        public WorkerRequestJoinResponse WorkerRequestJoin(WorkerRequestJoinRequest request, int userId);
     }
 }

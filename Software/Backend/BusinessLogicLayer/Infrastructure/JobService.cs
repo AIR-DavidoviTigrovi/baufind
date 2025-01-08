@@ -4,6 +4,7 @@ using BusinessLogicLayer.AppLogic.Jobs.AddJob;
 using BusinessLogicLayer.AppLogic.Jobs.AddUserToJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
+using BusinessLogicLayer.AppLogic.Jobs.WorkerJoinJob;
 using BusinessLogicLayer.AppLogic.Skills;
 using DataAccessLayer.AppLogic;
 using DataAccessLayer.Models;
@@ -231,6 +232,21 @@ namespace BusinessLogicLayer.Infrastructure
                 response.Success = false;
             }
 
+            return response;
+        }
+        public WorkerRequestJoinResponse WorkerRequestJoin(WorkerRequestJoinRequest request, int userId)
+        {
+            var response = new WorkerRequestJoinResponse();
+
+            try
+            {
+                var success = _workingRepository.InsertWorkerRequestToWorking(userId, request.JobId, request.SkillId);
+                response.Success = success;
+            }catch(Exception ex)
+            {
+                response.Message = $"Nije prošlo validaciju: {ex.Message}";
+                response.Success = false;
+            }
             return response;
         }
     }
