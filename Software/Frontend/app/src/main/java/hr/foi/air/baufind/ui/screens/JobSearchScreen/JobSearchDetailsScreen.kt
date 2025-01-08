@@ -27,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,6 +45,7 @@ import hr.foi.air.baufind.core.map.models.Coordinates
 import hr.foi.air.baufind.helpers.MapHelper
 import hr.foi.air.baufind.helpers.PictureHelper
 import hr.foi.air.baufind.service.JobGetService.JobGetService
+import hr.foi.air.baufind.service.WorkerRequestJoinService.WorkerRequestJoinService
 import hr.foi.air.baufind.ui.components.DisplayTextField
 import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ui.components.SkillListConfirm
@@ -51,6 +53,8 @@ import hr.foi.air.baufind.ws.model.FullJobModel
 import hr.foi.air.baufind.ws.network.JobService
 import hr.foi.air.baufind.ws.network.TokenProvider
 import hr.foi.air.baufind.ws.response.JobResponse
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun JobSearchDetailsScreen(
@@ -75,6 +79,27 @@ fun JobSearchDetailsScreen(
     val employerId = jobSearchDetailsViewModel.job?.employer_id
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+
+    val coroutineScope = rememberCoroutineScope()
+
+    fun sendJoinRequest(skillId: Int){
+        coroutineScope.launch{
+            val service = WorkerRequestJoinService()
+            val response = service.sendJoinRequestAsync(
+                skillId = skillId,
+                jobId = jobSearchDetailsViewModel.job!!.id,
+                tokenProvider = tokenProvider
+            )
+            if(response.success){
+                jobSearchDetailsViewModel.clearData()
+                navController.navigate("pendingJobsScreen"){
+                    popUpTo("jobSearchDetailsScreen") { inclusive = true }
+                }
+            }else{
+                Toast.makeText(context, "Dogodila se pogreška.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
 
     Column(
@@ -137,8 +162,9 @@ fun JobSearchDetailsScreen(
                             modifier = Modifier
                                 .size(imageSize)
                                 .padding(8.dp)
-                                .clickable{
-                                    selectedImageIndex = if(selectedImageIndex == index) null else index
+                                .clickable {
+                                    selectedImageIndex =
+                                        if (selectedImageIndex == index) null else index
                                 }
                         )
                     }
@@ -162,12 +188,7 @@ fun JobSearchDetailsScreen(
             ){
                 jobSearchDetailsViewModel.job!!.skills.forEach { skill ->
                     SkillListConfirm(text = skill.title) {
-                        Toast.makeText(context, "Pozicija ${skill.title} pritisnuta", Toast.LENGTH_SHORT).show()
-                        //Stvara zahtjev u bazi
-                        jobSearchDetailsViewModel.clearData()
-                        navController.navigate("pendingJobsScreen"){
-                            popUpTo("jobSearchDetailsScreen") { inclusive = true }
-                        }
+                        sendJoinRequest(skill.id)
                     }
                 }
             }
