@@ -75,19 +75,16 @@ namespace DataAccessLayer.Infrastructure
                     SELECT w.job_id FROM working w
                     WHERE w.skill_id IN ({skillIdsString})
                     AND w.worker_id IS NULL
-                    AND w.job_id NOT IN (
-                        SELECT w2.job_id FROM working w2
-                        WHERE w2.worker_id = @userId
-                        AND w2.skill_id IN ({skillIdsString})
-                        GROUP BY w2.job_id
-                        HAVING COUNT(DISTINCT w2.skill_id) = (
-                            SELECT COUNT(DISTINCT w3.skill_id) FROM working w3
-                            WHERE w3.job_id = w2.job_id
-                            AND w3.skill_id IN ({skillIdsString})
-                        )
+                    AND w.working_status_id = 1
+                    AND NOT EXISTS (
+                        SELECT 1 FROM working w2
+                        WHERE w2.job_id = w.job_id
+                        AND w2.skill_id = w.skill_id
+                        AND w2.worker_id = @userId
                     )
                 )
-                AND j.employer_id != @userId;";
+                AND j.employer_id != @userId;
+            ";
 
             var parameters = new Dictionary<string, object>
             {
