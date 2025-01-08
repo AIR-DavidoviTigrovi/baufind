@@ -275,6 +275,7 @@ namespace DataAccessLayer.Infrastructure
                 OR j.id IN (
 	                SELECT job_id FROM working
 	                WHERE worker_id = @userId
+                    AND working_status_id = 4
                 );";
 
             var parameters = new Dictionary<string, object>
