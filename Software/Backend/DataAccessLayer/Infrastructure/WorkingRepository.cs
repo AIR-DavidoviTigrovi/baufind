@@ -286,6 +286,62 @@ namespace DataAccessLayer.Infrastructure
             return skills;
         }
 
+        public bool InsertWorkerRequestToWorking(int userId, int jobId, int skillId)
+        {
+            if (!IsSkillValidForJob(skillId, jobId))
+            {
+                return false;
+            }
+            if(!WorkerIsValidForSkill(userId, jobId, skillId)){
+                return false;
+            }
+            string query = @"
+                INSERT INTO Working (worker_id, skill_id, job_id, working_status_id)
+                VALUES (@workerId, @skillId, @jobId, 2);";
 
+            var parameters = new Dictionary<string, object>
+                {
+                    { "@workerId", userId },
+                    { "@skillId", skillId },
+                    { "@jobId", jobId }
+                };
+
+            try
+            {
+                return (_db.ExecuteNonQuery(query, parameters) > 0);
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
+
+        private bool WorkerIsValidForSkill(int userId, int jobId, int skillId)
+        {
+            string query = $@"
+                SELECT DISTINCT s.id, s.title FROM working w
+                INNER JOIN skill s ON w.skill_id = s.id
+                WHERE w.job_id = @jobId
+                AND w.worker_id IS NULL
+                AND s.id = @skillId
+                AND s.id NOT IN (
+                    SELECT w2.skill_id FROM working w2
+                    WHERE w2.job_id = @jobId
+                    AND w2.worker_id = @userId
+                );";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@jobId", jobId },
+                { "@skillId", skillId },
+                { "@userId", userId }
+            };
+
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                return reader.Read();
+            }
+        }
     }
 }
