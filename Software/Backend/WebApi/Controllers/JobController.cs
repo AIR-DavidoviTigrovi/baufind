@@ -164,7 +164,7 @@ public class JobController : ControllerBase
         return jobs;
     }
 
-    [HttpPost("WorkerRequestJoin")]
+    [HttpPost("requestJoin")]
     [Authorize]
     public ActionResult<WorkerRequestJoinResponse> WorkerRequestJoin([FromBody] WorkerRequestJoinRequest request)
     {
