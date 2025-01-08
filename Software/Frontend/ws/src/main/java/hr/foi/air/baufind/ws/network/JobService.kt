@@ -2,6 +2,8 @@ package hr.foi.air.baufind.ws.network
 
 import hr.foi.air.baufind.ws.request.CallForWorkingBody
 import hr.foi.air.baufind.ws.request.JobCreateBody
+import hr.foi.air.baufind.ws.request.WorkerRequestJoinBody
+import hr.foi.air.baufind.ws.response.CallForWorkingResponse
 import hr.foi.air.baufind.ws.response.JobCreateResponse
 import hr.foi.air.baufind.ws.response.JobResponse
 import hr.foi.air.baufind.ws.response.JobsForCurrentUserResponse
