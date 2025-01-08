@@ -9,7 +9,7 @@ namespace BusinessLogicLayer.AppLogic.Jobs
     {
         public AddJobResponse AddJob(AddJobRequest request, int userId);
         public GetJobsForCurrentUserResponse GetJobsForCurrentUser(int userId);
-        public GetJobResponse GetJob(int jobId);
+        public GetJobResponse GetJob(int jobId, int userId);
         public CallWarkerToJobResponse CallWorkerToJob(CallWorkerToJobRequest request, int userId);
         public PendingInvitationResponse GetPendingInvitations(int userId);
         public SearchPendingJobsForUserResponse SearchPendingJobsForUser(int userId);

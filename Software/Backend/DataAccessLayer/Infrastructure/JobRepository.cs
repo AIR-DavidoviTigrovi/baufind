@@ -145,13 +145,17 @@ namespace DataAccessLayer.Infrastructure
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns>Vještine za posao</returns>
-        public List<SkillModel> GetSkillsForJob(int jobId)
+        public List<SkillModel> GetEmptySkillsWhichUserHasForJob(int jobId, List<int> skillIds)
         {
-            string query = @"
+
+            string skillIdsString = string.Join(",", skillIds);
+
+            string query = $@"
                 SELECT s.id, s.title FROM working w
                 INNER JOIN skill s ON w.skill_id = s.id
                 WHERE w.job_id = @jobId
-                AND w.worker_id IS NULL;";
+                AND w.worker_id IS NULL
+                AND s.id IN ({skillIdsString});";
 
             var parameters = new Dictionary<string, object>
             {

@@ -36,7 +36,7 @@ namespace DataAccessLayer.AppLogic
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns>Vještine za posao</returns>
-        public List<SkillModel> GetSkillsForJob(int jobId);
+        public List<SkillModel> GetEmptySkillsWhichUserHasForJob(int jobId, List<int> skillIds);
         /// <summary>
         /// Dohvaća posao po ID-u
         /// </summary>

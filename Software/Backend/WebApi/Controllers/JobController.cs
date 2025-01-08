@@ -80,7 +80,9 @@ public class JobController : ControllerBase
             });
         }
 
-        var job = _jobService.GetJob(id);
+        int userId = userIdFromJwt.Value;
+
+        var job = _jobService.GetJob(id, userId);
 
         return job;
 

@@ -128,7 +128,7 @@ namespace BusinessLogicLayer.Infrastructure
 
             foreach (var job in jobs)
             {
-                job.Skills = _jobRepository.GetSkillsForJob(job.Id);
+                job.Skills = _jobRepository.GetEmptySkillsWhichUserHasForJob(job.Id, skillIds);
             }
 
             return new GetJobsForCurrentUserResponse()
@@ -137,7 +137,7 @@ namespace BusinessLogicLayer.Infrastructure
             };
         }
 
-        public GetJobResponse GetJob(int jobId)
+        public GetJobResponse GetJob(int jobId, int userId)
         {
             var jobData = _jobRepository.GetJob(jobId);
 
@@ -162,7 +162,10 @@ namespace BusinessLogicLayer.Infrastructure
                 Employer_id = jobData.Employer_id
             };
 
-            job.Skills = _jobRepository.GetSkillsForJob(jobData.Id);
+            var query = _skillRepository.GetSkillsForUser(userId);
+            var skillIds = query.Select(x => x.Id).ToList();
+
+            job.Skills = _jobRepository.GetEmptySkillsWhichUserHasForJob(jobData.Id, skillIds);
             job.Pictures = _jobRepository.GetPicturesForJob(jobData.Id);
 
             return new GetJobResponse()
