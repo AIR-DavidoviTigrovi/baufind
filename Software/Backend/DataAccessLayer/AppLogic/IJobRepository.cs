@@ -43,5 +43,20 @@ namespace DataAccessLayer.AppLogic
         /// <param name="jobId"></param>
         /// <returns></returns>
         public JobModel GetJob(int jobId);
+
+        /// <summary>
+        /// Dohvaća job i working po korisniku i statusu
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="statusId"></param>
+        /// <returns></returns>
+        public List<JobWorkingModel> GetJobWorkingByUserAndStatus(int userId, int statusId);
+
+        /// <summary>
+        /// Dohvaća poslove kojima je korisnik vlasnik ili je primljen na njih
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public List<MyJobModel> GetMyJobsForUser(int userId);
     }
 }
