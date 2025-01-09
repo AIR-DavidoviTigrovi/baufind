@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "774561905217",
+    "project_id": "baufind-99049",
+    "storage_bucket": "baufind-99049.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:774561905217:android:97de440150494ee3a764c0",
+        "android_client_info": {
+          "package_name": "hr.foi.air.baufind"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-eF1NYWRKcsvGAq3NBVHEHJ_3oPu6NXY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
