@@ -4,6 +4,7 @@ using BusinessLogicLayer.AppLogic.Jobs.AddJob;
 using BusinessLogicLayer.AppLogic.Jobs.AddUserToJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
+using BusinessLogicLayer.AppLogic.Jobs.WorkerJoinJob;
 using BusinessLogicLayer.AppLogic.Skills;
 using DataAccessLayer.AppLogic;
 using DataAccessLayer.Models;
@@ -129,7 +130,7 @@ namespace BusinessLogicLayer.Infrastructure
 
             foreach (var job in jobs)
             {
-                job.Skills = _jobRepository.GetSkillsForJob(job.Id);
+                job.Skills = _jobRepository.GetEmptySkillsWhichUserHasForJob(job.Id, skillIds, userId);
             }
 
             return new GetJobsForCurrentUserResponse()
@@ -138,7 +139,7 @@ namespace BusinessLogicLayer.Infrastructure
             };
         }
 
-        public GetJobResponse GetJob(int jobId)
+        public GetJobResponse GetJob(int jobId, int userId)
         {
             var jobData = _jobRepository.GetJob(jobId);
 
@@ -163,7 +164,10 @@ namespace BusinessLogicLayer.Infrastructure
                 Employer_id = jobData.Employer_id
             };
 
-            job.Skills = _jobRepository.GetSkillsForJob(jobData.Id);
+            var query = _skillRepository.GetSkillsForUser(userId);
+            var skillIds = query.Select(x => x.Id).ToList();
+
+            job.Skills = _jobRepository.GetEmptySkillsWhichUserHasForJob(jobData.Id, skillIds, userId);
             job.Pictures = _jobRepository.GetPicturesForJob(jobData.Id);
 
             return new GetJobResponse()
@@ -229,6 +233,21 @@ namespace BusinessLogicLayer.Infrastructure
                 response.Success = false;
             }
 
+            return response;
+        }
+        public WorkerRequestJoinResponse WorkerRequestJoin(WorkerRequestJoinRequest request, int userId)
+        {
+            var response = new WorkerRequestJoinResponse();
+
+            try
+            {
+                var success = _workingRepository.InsertWorkerRequestToWorking(userId, request.JobId, request.SkillId);
+                response.Success = success;
+            }catch(Exception ex)
+            {
+                response.Message = $"Nije prošlo validaciju: {ex.Message}";
+                response.Success = false;
+            }
             return response;
         }
     }
