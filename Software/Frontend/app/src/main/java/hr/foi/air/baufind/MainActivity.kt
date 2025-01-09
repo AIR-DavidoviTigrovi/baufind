@@ -70,9 +70,15 @@ class MainActivity : ComponentActivity() {
 
         requestNotificationPermissions()
 
-        val notificationService = NotificationService()
+        val startDestination : String
+        intent.getStringExtra("openMainActivity")?.let { Log.i("MainActivity", it) }
+        if (jwtToken == null) startDestination ="login"
+        else {
+            startDestination = intent.getStringExtra("openMainActivity") ?: "login"
+        }
+
         lifecycleScope.launch {
-            val token = notificationService.getToken()
+            val token = NotificationService().getToken()
             Log.i("TOKEN", token)
         }
 
@@ -106,9 +112,6 @@ class MainActivity : ComponentActivity() {
                             .background(MaterialTheme.colorScheme.background)
                             .padding(innerPadding)
                     ) {
-                        val startDestination : String
-                        if (jwtToken == null) startDestination ="login"
-                        else startDestination = "login" // promijeniti kada se doda token refresh
                         NavHost(
                             navController = navController,
                             startDestination = startDestination

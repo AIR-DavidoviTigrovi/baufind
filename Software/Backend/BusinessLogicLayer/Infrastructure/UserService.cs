@@ -186,6 +186,11 @@ public class UserService : IUserService
             Email = user.Email
         };
 
+        if (request.FirebaseToken != null)
+        {
+            _repository.AddUserToken(user.Id, request.FirebaseToken);
+        }
+
         return new LoginResponse()
         {
             JWT = _jwtService.GenerateToken(newUser),
