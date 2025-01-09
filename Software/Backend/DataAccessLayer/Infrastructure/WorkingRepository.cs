@@ -171,7 +171,7 @@ namespace DataAccessLayer.Infrastructure
         public List<JobSearchModel> GetJobs(int workerId)
         {
             string query = @"
-            SELECT 
+                 SELECT 
                 j.id AS job_id,
                 j.employer_id,
                 j.job_status_id,
@@ -181,9 +181,12 @@ namespace DataAccessLayer.Infrastructure
                 j.location,
                 j.lat,
                 j.lng
-            FROM working w
-            INNER JOIN job j ON w.job_id = j.id
-            WHERE w.working_status_id = 3 AND w.worker_id = @WorkerId";
+                FROM working w
+                INNER JOIN job j ON w.job_id = j.id
+                LEFT JOIN worker_review wr ON wr.working_id = w.id
+                WHERE (w.working_status_id = 3 OR w.working_status_id = 4)
+                AND w.worker_id = @WorkerId
+                AND wr.id IS NULL";
 
                     var parameters = new Dictionary<string, object>
             {
