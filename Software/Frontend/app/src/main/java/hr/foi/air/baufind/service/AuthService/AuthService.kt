@@ -1,4 +1,4 @@
-package hr.foi.air.baufind.service.LoginService
+package hr.foi.air.baufind.service.AuthService
 
 import android.util.Log
 import hr.foi.air.baufind.service.PushNotifications.NotificationService
@@ -6,7 +6,7 @@ import hr.foi.air.baufind.ws.network.NetworkService
 import hr.foi.air.baufind.ws.network.TokenProvider
 import hr.foi.air.baufind.ws.request.LoginBody
 
-class LoginService(private val tokenProvider: TokenProvider) {
+class AuthService(private val tokenProvider: TokenProvider) {
     suspend fun loginAsync(loginDao: LoginDao): LoginResponse {
         val service = NetworkService.createAuthService(tokenProvider)
         val notificationService = NotificationService()
@@ -38,6 +38,31 @@ class LoginService(private val tokenProvider: TokenProvider) {
                 successfulLogin = false,
                 message = "Pogreška pri fetchanju",
                 jwt = ""
+            )
+        }
+    }
+
+    suspend fun logoutAsync(): LogoutResponse {
+        val service = NetworkService.createAuthService(tokenProvider)
+
+        return try {
+            val response = service.logoutUser()
+            if (response.success.isNotEmpty()) {
+                LogoutResponse(
+                    successfulLogin = true,
+                    message = response.success
+                )
+            } else {
+                LogoutResponse(
+                    successfulLogin = false,
+                    message = response.error
+                )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            LogoutResponse(
+                successfulLogin = false,
+                message = "Pogreška pri fetchanju"
             )
         }
     }

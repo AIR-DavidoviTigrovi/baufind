@@ -5,6 +5,7 @@ using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
 using BusinessLogicLayer.AppLogic.Users.GetUser;
 using BusinessLogicLayer.AppLogic.Users.GetUserProfile;
 using BusinessLogicLayer.AppLogic.Users.Login;
+using BusinessLogicLayer.AppLogic.Users.Logout;
 using BusinessLogicLayer.AppLogic.Users.RegisterUser;
 using BusinessLogicLayer.AppLogic.Users.UpdateUserProfile;
 using DataAccessLayer.AppLogic;
@@ -196,6 +197,31 @@ public class UserService : IUserService
             JWT = _jwtService.GenerateToken(newUser),
             Success = $"Korisnik {user.Name} uspješno je prijavljen u sustav."
         };
+    }
+
+    /// <summary>
+    /// Metoda za odjavu korisnika.
+    /// Samo briše postojeći Firebase token.
+    /// </summary>
+    /// <param name="userId">korisnikov ID</param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public LogoutResponse Logout(int userId)
+    {
+        var result = _repository.RemoveUserToken(userId);
+        if (result)
+        {
+            return new LogoutResponse()
+            {
+                Success = "Token uspješno uklonjen."
+            };
+        } else
+        {
+            return new LogoutResponse()
+            {
+                Error = "Greška kod uklanjanja tokena."
+            };
+        }
     }
 
     /// <summary>

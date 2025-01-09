@@ -27,8 +27,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import hr.foi.air.baufind.service.LoginService.LoginDao
-import hr.foi.air.baufind.service.LoginService.LoginService
+import hr.foi.air.baufind.service.AuthService.LoginDao
+import hr.foi.air.baufind.service.AuthService.AuthService
 import hr.foi.air.baufind.service.jwtService.JwtService
 import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ui.components.PrimaryTextField
@@ -119,9 +119,9 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
             maxWidth = true,
             onClick = {
                 if (validateInputs()) {
-                    val service = LoginService(tokenProvider)
+                    val authService = AuthService(tokenProvider)
                     coroutineScope.launch {
-                        val response = service.loginAsync(
+                        val response = authService.loginAsync(
                             LoginDao(
                                 email = email,
                                 password = password
