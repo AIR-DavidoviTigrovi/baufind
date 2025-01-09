@@ -357,6 +357,32 @@ public class UserRepository : IUserRepository
         }
     }
 
+    /// <summary>
+    /// Dohvaća token za korisnika (ako postoji u bazi)
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public string? GetUserToken(int userId)
+    {
+        string userInfoQuery = "SELECT firebase_token FROM app_user WHERE id = @id;";
+        var idParameter = new Dictionary<string, object>
+        {
+            { "@id", userId }
+        };
+
+        string? token = null;
+
+        using (var reader = _db.ExecuteReader(userInfoQuery, idParameter))
+        {
+            if (reader.Read())
+            {
+                token = (string?)reader["firebase_token"];
+            }
+        }
+
+        return token;
+    }
+
     private UserModel UserModelFromReader(SqlDataReader reader)
     {
         return new UserModel()

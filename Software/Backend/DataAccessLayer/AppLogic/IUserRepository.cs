@@ -76,4 +76,11 @@ public interface IUserRepository
     /// <param name="userId"></param>
     /// <returns></returns>
     public bool RemoveUserToken(int userId);
+
+    /// <summary>
+    /// Dohvaća token za korisnika (ako postoji u bazi)
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public string? GetUserToken(int userId);
 }
