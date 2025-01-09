@@ -4,6 +4,7 @@ using BusinessLogicLayer.AppLogic.Jobs.AddJob;
 using BusinessLogicLayer.AppLogic.Jobs.AddUserToJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
+using BusinessLogicLayer.AppLogic.Jobs.WorkerJoinJob;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -80,7 +81,9 @@ public class JobController : ControllerBase
             });
         }
 
-        var job = _jobService.GetJob(id);
+        int userId = userIdFromJwt.Value;
+
+        var job = _jobService.GetJob(id, userId);
 
         return job;
 
@@ -159,5 +162,26 @@ public class JobController : ControllerBase
         var jobs = _jobService.SearchMyJobsForUser(userIdFromJwt.Value);
 
         return jobs;
+    }
+
+    [HttpPost("requestJoin")]
+    [Authorize]
+    public ActionResult<WorkerRequestJoinResponse> WorkerRequestJoin([FromBody] WorkerRequestJoinRequest request)
+    {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+
+        if (userIdFromJwt == null)
+        {
+            return Unauthorized(new GetJobResponse()
+            {
+                Error = "Ne možete pristupiti tom resursu!"
+            });
+        }
+
+        var userId = userIdFromJwt;
+
+        var response = _jobService.WorkerRequestJoin(request, userId.Value);
+
+        return response;
     }
 }
