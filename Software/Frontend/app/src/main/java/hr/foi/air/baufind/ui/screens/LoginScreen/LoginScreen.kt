@@ -36,7 +36,7 @@ import hr.foi.air.baufind.ws.network.TokenProvider
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(navController: NavController, context : Context, tokenProvider: TokenProvider){
+fun LoginScreen(navController: NavController, context : Context, tokenProvider: TokenProvider, afterLoginDestination: String = "jobDetailsScreen"){
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var emailError by remember { mutableStateOf("") }
@@ -129,7 +129,7 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
                         )
                         if (response.successfulLogin){
                             JwtService.saveJwt(context, response.jwt)
-                            navController.navigate("jobDetailsScreen") {
+                            navController.navigate(afterLoginDestination) {
                                 popUpTo("login") { inclusive = true }
                             }
 

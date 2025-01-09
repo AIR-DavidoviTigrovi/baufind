@@ -70,16 +70,14 @@ class MainActivity : ComponentActivity() {
 
         requestNotificationPermissions()
 
-        val startDestination : String
-        intent.getStringExtra("openMainActivity")?.let { Log.i("MainActivity", it) }
-        if (jwtToken == null) startDestination ="login"
-        else {
-            startDestination = intent.getStringExtra("openMainActivity") ?: "login"
+        val changeRoute = intent.getStringExtra("changeRoute")
+        var startDestination = "login"
+        var afterLoginDestination = "jobDetailsScreen"
+        if (jwtToken == null) {
+            afterLoginDestination = changeRoute ?: afterLoginDestination
         }
-
-        lifecycleScope.launch {
-            val token = NotificationService().getToken()
-            Log.i("TOKEN", token)
+        else {
+            startDestination = changeRoute ?: "login"
         }
 
         setContent {
@@ -116,7 +114,7 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             startDestination = startDestination
                         ) {
-                            composable("login") { LoginScreen(navController, this@MainActivity, tokenProvider) }
+                            composable("login") { LoginScreen(navController, this@MainActivity, tokenProvider, afterLoginDestination) }
                             composable("registration") { RegistrationScreen(navController, tokenProvider) }
 
                             composable(

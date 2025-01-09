@@ -11,22 +11,26 @@ import com.google.firebase.messaging.RemoteMessage
 import hr.foi.air.baufind.MainActivity
 import hr.foi.air.baufind.R
 
+/**
+ * Pozadinski servis koji prima Push notifikacije s Firebase-a i obrađuje ih
+ * Može otvoriti ekran koji je naveden u notifikaciji
+ */
 class PushNotificationService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-
-        // TODO: pošalji novi token serveru??
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
-        val title = message.data["title"] ?: message.notification?.title ?: "Obavijest"
-        val body = message.data["body"] ?: message.notification?.body ?: "Sadržaj"
+        val title = message.notification?.title ?: message.data["title"] ?: "Obavijest"
+        val body = message.notification?.body ?: message.data["body"] ?: ""
 
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra("openMainActivity", "pendingJobsScreen")
+            message.data.forEach {
+                putExtra(it.key, it.value)
+            }
         }
 
         val pendingIntent = PendingIntent.getActivity(
