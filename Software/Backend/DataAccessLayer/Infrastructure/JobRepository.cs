@@ -70,13 +70,21 @@ namespace DataAccessLayer.Infrastructure
             string skillIdsString = string.Join(",", skillIds);
 
             string query = $@"
-                SELECT * FROM job
-                WHERE id IN (
-                    SELECT job_id FROM working
-                    WHERE skill_id IN ({skillIdsString})
-                    AND worker_id IS NULL
+                SELECT DISTINCT j.* FROM job j
+                WHERE j.id IN (
+                    SELECT w.job_id FROM working w
+                    WHERE w.skill_id IN ({skillIdsString})
+                    AND w.worker_id IS NULL
+                    AND w.working_status_id = 1
+                    AND NOT EXISTS (
+                        SELECT 1 FROM working w2
+                        WHERE w2.job_id = w.job_id
+                        AND w2.skill_id = w.skill_id
+                        AND w2.worker_id = @userId
+                    )
                 )
-                AND employer_id != @userId;";
+                AND j.employer_id != @userId;
+            ";
 
             var parameters = new Dictionary<string, object>
             {
@@ -141,20 +149,31 @@ namespace DataAccessLayer.Infrastructure
             }
         }
         /// <summary>
-        /// Dohvaća sve vještine za posao
+        /// Dohvaća sve pozicije posla za koje je korisnik validan i isključuje pozicije za koje se već prijavio na tom poslu
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns>Vještine za posao</returns>
-        public List<SkillModel> GetSkillsForJob(int jobId)
+        public List<SkillModel> GetEmptySkillsWhichUserHasForJob(int jobId, List<int> skillIds, int userId)
         {
-            string query = @"
-                SELECT s.id, s.title FROM working w
+
+            string skillIdsString = string.Join(",", skillIds);
+
+            string query = $@"
+                SELECT DISTINCT s.id, s.title FROM working w
                 INNER JOIN skill s ON w.skill_id = s.id
-                WHERE w.job_id = @jobId;";
+                WHERE w.job_id = @jobId
+                AND w.worker_id IS NULL
+                AND s.id IN ({skillIdsString})
+                AND s.id NOT IN (
+                    SELECT w2.skill_id FROM working w2
+                    WHERE w2.job_id = @jobId
+                    AND w2.worker_id = @userId
+                );";
 
             var parameters = new Dictionary<string, object>
             {
-                { "@jobId", jobId }
+                { "@jobId", jobId },
+                { "@userId", userId }
             };
 
             using (var reader = _db.ExecuteReader(query, parameters))
