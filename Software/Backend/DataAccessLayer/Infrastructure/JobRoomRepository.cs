@@ -21,8 +21,10 @@ namespace DataAccessLayer.Infrastructure {
     w.id AS working_id,
     w.job_id,
     j.title AS job_title,
-	j.allow_worker_invite,
+    j.allow_worker_invite,
     j.employer_id,
+    j.job_status_id,
+    js.status AS job_status, -- Added the job status
     w.skill_id,
     s.title AS skill_title,
     w.worker_id,
@@ -36,6 +38,8 @@ JOIN
     working_status ws ON w.working_status_id = ws.id
 JOIN 
     job j ON w.job_id = j.id
+JOIN 
+    job_status js ON js.id = j.job_status_id
 JOIN 
     skill s ON w.skill_id = s.id
 WHERE 
@@ -57,6 +61,7 @@ WHERE
                 WorkingId = (int)sqlDataReader["working_id"],
                 JobTitle = (string)sqlDataReader["job_title"],
                 AllowWorkerInvite = (bool)sqlDataReader["allow_worker_invite"],
+                JobStatus = (string)sqlDataReader["job_status"],
                 EmployerId = (int)sqlDataReader["employer_id"],
                 SkillId = (int)sqlDataReader["skill_id"],
                 SkillTitle = (string)sqlDataReader["skill_title"],
