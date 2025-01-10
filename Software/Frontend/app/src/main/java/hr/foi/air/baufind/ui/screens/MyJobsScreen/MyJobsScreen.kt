@@ -126,7 +126,7 @@ fun MyJobsScreen(
 
                         val job = viewModel.myCreatedJobs.value[index]
                         MyJobListItem(job = job){
-                            // TODO: odvede na zaslon MOG posla
+                            navController.navigate("jobRoom/${job.id}")
                         }
                     }
                     items(viewModel.jobsImOn.value.size) { index ->
