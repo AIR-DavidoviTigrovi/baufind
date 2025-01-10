@@ -1,5 +1,6 @@
 package hr.foi.air.baufind.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -70,8 +71,9 @@ fun RoleInJobCard(
                             onClick = {
 
                                 for(skill in listOfSkills){
-                                    if(skill.title == person.key)
-                                    navController.navigate("workersSearchScreen/[${skill.id}]/${Jobid}")
+                                    if(skill.title == person.key) {
+                                        navController.navigate("workersSearchScreen/[${skill.id}]/${Jobid}")
+                                    }
                                 }
 
                             }
