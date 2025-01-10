@@ -17,7 +17,7 @@ namespace BusinessLogicLayer.AppLogic.Reviews
         public required string JobTitle { get; set; }
         public required string Comment { get; set; }
         public required int Rating { get; set; }
-       // public required DateTime ReviewDate { get; set; }
+        public required DateTime ReviewDate { get; set; }
         public required List<ImageRecord> Pictures { get; set; } = new List<ImageRecord>();
     }
 }

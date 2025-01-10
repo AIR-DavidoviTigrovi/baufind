@@ -11,5 +11,9 @@ namespace DataAccessLayer.AppLogic
     {
         public List<UserReviewModel> GetWorkerReviews(int userId);
         public List<UserReviewModel> GetEmployerReviews(int userId);
+        int InsertEmployerReview(EmployerReviewModel employerReview);
+        void InsertEmployerReviewPicture(int employerReviewId, ImageModel imageRecord);
+        public int InsertWorkerReview(WorkerReviewModel workerReview);
+
     }
 }

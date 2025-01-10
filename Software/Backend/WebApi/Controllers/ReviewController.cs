@@ -2,9 +2,11 @@ using BusinessLogicLayer.AppLogic.Jobs;
 using BusinessLogicLayer.AppLogic.Jobs.AddJob;
 using BusinessLogicLayer.AppLogic.Reviews;
 using BusinessLogicLayer.AppLogic.Reviews.GetUserReviews;
+using BusinessLogicLayer.AppLogic.Reviews.ReviewRequest;
 using BusinessLogicLayer.AppLogic.Users.GetUser;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
 
 namespace WebApi.Controllers;
 
@@ -55,5 +57,83 @@ public class ReviewController : ControllerBase
         }
 
     }
-   
+    // POST: /review/employer
+    [HttpPost("employer")]
+    [Authorize]
+    public ActionResult<ReviewResponse> EmployerReview(EmployerReviewRequest reviewRequest)
+    {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+
+        if (userIdFromJwt == null)
+        {
+            return Unauthorized(new GetUserResponse
+            {
+                Error = "Ne mozete pristupiti tom resursu!"
+            });
+        }
+        reviewRequest.ReviewerId = userIdFromJwt.Value;
+
+        try
+        {
+            int reviewId = _reviewService.SaveEmployerReview(reviewRequest);
+
+            if (reviewId > 0)
+            {
+                return Ok(new ReviewResponse
+                {
+                    Success = "Recenzija je uspješno spremljena!",
+                    Error = null
+                });
+            }
+            else
+            {
+                return BadRequest(new ReviewResponse
+                {
+                    Error = "Dogodila se pogreška prilikom spremanja recenzije."
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ReviewResponse
+            {
+                Error = $"Interna pogreška: {ex.Message}"
+            });
+        }
+    }
+
+    // POST: /review/worker/{id}
+    [HttpPost("worker")]
+    [Authorize]
+    public ActionResult<ReviewResponse> WorkerReview(WorkerReviewRequest reviewRequest)
+    {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+
+        if (userIdFromJwt == null)
+        {
+            return Unauthorized(new ReviewResponse
+            {
+                Error = "Nemate pristup ovom resursu."
+            });
+        }
+
+        try
+        {
+            int reviewId = _reviewService.SaveWorkerReview(reviewRequest);
+
+            return Ok(new ReviewResponse
+            {
+                Success = "Recenzija je uspješno spremljena.",
+                Error = null
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ReviewResponse
+            {
+                Error = "Došlo je do pogreške prilikom spremanja recenzije."
+            });
+        }
+    }
+
 }
