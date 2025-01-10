@@ -86,7 +86,7 @@ fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobI
                             }
                         }
                     }
-                    else -> { // Default case for statuses not "Zavrsen" or "Zapocet"
+                    else -> {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
