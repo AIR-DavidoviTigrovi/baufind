@@ -11,17 +11,25 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import hr.foi.air.baufind.service.JobRoomService.RoomOwnerState
 import hr.foi.air.baufind.ui.components.PersonInRoomCard
 import hr.foi.air.baufind.ui.components.RoleInJobCard
 import hr.foi.air.baufind.ws.network.TokenProvider
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.newCoroutineContext
+import kotlin.coroutines.coroutineContext
 
 @Composable
 fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobID: Int){
@@ -35,12 +43,14 @@ fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobI
         viewModel.loadJobPeople(jobID)
         viewModel.determinateOwner(context)
     }
+    var status by remember { mutableStateOf("") }
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(scrollableState),
 
     ) {
         if (viewModel.jobRoom.value.isNotEmpty()) {
             Text(text = viewModel.jobRoom.value[0].jobTitle!!)
+            status = viewModel.jobRoom.value[0].jobStatus
             RoleInJobCard(
                 viewModel.jobRoom.value[0].allowWorkerInvite,
                 viewModel.roomSkills.value,
@@ -49,7 +59,7 @@ fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobI
                 jobID
             )
             if(viewModel.roomOwnerState.value == RoomOwnerState.Employer){
-                if(viewModel.jobRoom.value[0].JobStatus == "Zapocet"){
+                if(status == "Zapocet"){
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -58,13 +68,18 @@ fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobI
                         verticalArrangement = Arrangement.Bottom
                     ) {
                         Button(
-                            onClick = {  },
+                            onClick = {
+                                status = "Zavrsen"
+                                viewModel.viewModelScope.launch {
+                                    viewModel.setRoomStatus(viewModel.jobRoom.value[0].jobId,3)
+                                }
+                            },
                             modifier = Modifier.wrapContentWidth()
                         ) {
-                            Text("Završi posao")
+                            Text(viewModel.buttonStateText.value)
                         }
                     }
-                }else if( viewModel.jobRoom.value[0].JobStatus != "Završen" || viewModel.jobRoom.value[0].JobStatus != "Zapocet"){
+                }else if( status!= "Zavrsen" && status != "Zapocet"){
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -73,12 +88,19 @@ fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobI
                         verticalArrangement = Arrangement.Bottom
                     ) {
                         Button(
-                            onClick = {  },
+                            onClick = {
+                                status = "Zapocet"
+                                    viewModel.viewModelScope.launch {
+                                        viewModel.setRoomStatus(viewModel.jobRoom.value[0].jobId,4)
+                                    }
+                                      },
                             modifier = Modifier.wrapContentWidth()
                         ) {
-                            Text("Započni posao")
+                            Text(viewModel.buttonStateText.value)
                         }
                     }
+                } else{
+                    Text("Posao je završen")
                 }
 
             }

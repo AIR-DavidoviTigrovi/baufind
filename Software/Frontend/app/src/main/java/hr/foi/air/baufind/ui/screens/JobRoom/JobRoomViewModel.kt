@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import hr.foi.air.baufind.service.JobRoomService.JobRoomService
 import hr.foi.air.baufind.service.JobRoomService.RoomOwnerState
+import hr.foi.air.baufind.service.JobRoomService.RoomStatus
 import hr.foi.air.baufind.service.SkillsService.SkillsService
 import hr.foi.air.baufind.service.jwtService.JwtService
 import hr.foi.air.baufind.ws.model.JobRoom
@@ -21,6 +22,10 @@ class JobRoomViewModel: ViewModel() {
     //Key je ime korisnika a value je uloga radnika
     val peopleInRoom: MutableMap<String, MutableList<String>> = mutableMapOf<String,MutableList<String>>()
     val jobRoom: MutableState<List<JobRoom>> = mutableStateOf(emptyList())
+    val mutableStatus : MutableState<String> = mutableStateOf("")
+    val buttonStateText: MutableState<String> = mutableStateOf("")
+    //----------------//
+
     suspend fun determinateOwner(context: Context){
         val jwt = JwtService.getJwt(context = context)
         val userId = JwtService.getIdFromJwt(jwt!!)
@@ -35,6 +40,15 @@ class JobRoomViewModel: ViewModel() {
     suspend fun getJobRoom(jobId: Int) {
         var response = service.GetRoomForJob(jobId,tokenProvider.value!!)
         jobRoom.value = response
+        mutableStatus.value = jobRoom.value[0].jobStatus
+
+            if(jobRoom.value[0].jobStatus == "Zapocet"){
+                buttonStateText.value = "Završi posao"
+            }else if( jobRoom.value[0].jobStatus != "Zavrsen" && jobRoom.value[0].jobStatus != "Zapocet"){
+                buttonStateText.value = "Započni posao"
+            }else if(jobRoom.value[0].jobStatus == "Zavrsen"){
+                buttonStateText.value = "Zavrsen"
+            }
 
     }
     suspend fun loadJobPeople(jobId: Int) {
@@ -52,5 +66,18 @@ class JobRoomViewModel: ViewModel() {
         val service: SkillsService = SkillsService(tokenProvider = tokenProvider.value!!)
         listOfSkills.value = service.fetchAllSkills()!!
 
+    }
+    suspend fun setRoomStatus(jobId: Int,status: Int){
+        var statusRoom = RoomStatus.listOfStatuses.keys.elementAt(status-1)
+        val service = JobRoomService()
+        val response = service.SetRoomStatus(jobId,status,tokenProvider.value!!)
+        for (job in jobRoom.value){
+            job.jobStatus = statusRoom
+        }
+        if(jobRoom.value[0].jobStatus == "Zapocet"){
+            buttonStateText.value = "Završi posao"
+        }else if( jobRoom.value[0].jobStatus != "Zavrsen" || jobRoom.value[0].jobStatus != "Zapocet"){
+            buttonStateText.value = "Započni posao"
+        }
     }
 }
