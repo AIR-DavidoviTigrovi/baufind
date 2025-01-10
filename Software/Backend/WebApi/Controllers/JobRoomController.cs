@@ -24,10 +24,17 @@ namespace WebApi.Controllers {
             }
             return query;
         }
-        // POST: /jobRoom/setState/{jobID}/{status}"
-            [HttpGet("/setStatus/{jobID}/{status}")]
+        // POST: /jobRoom/setState"
+            [HttpPost("/setStatus")]
             [Authorize]
-            public ActionResult<SetRoomStatusResponse> SetJobRoomStatus(int jobID,int status) {
+            public ActionResult<SetRoomStatusResponse> SetJobRoomStatus([FromBody] SetRoomStatusRequest request) {
+            if(request == null) {
+                return BadRequest(new SetRoomStatusResponse() {
+                    Error = "Invalid request"
+                });
+            }
+            var jobID = request.jobID;
+            var status = request.status;
             var query = _jobRoomService.SetRoomStatusResponse(jobID, status);    
             return query;
             }
