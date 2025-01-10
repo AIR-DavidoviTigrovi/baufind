@@ -21,11 +21,12 @@ import hr.foi.air.baufind.ws.network.TokenProvider
 fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobID: Int){
     val viewModel: JobRoomViewModel = viewModel()
     viewModel.tokenProvider.value = tokenProvider
-
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.getAllSkills()
         viewModel.getJobRoom(jobID)
         viewModel.loadJobPeople(jobID)
+        viewModel.determinateOwner(context)
     }
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -50,5 +51,5 @@ fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobI
 @Preview(showBackground = true)
 @Composable
 fun JobRoomScreenPreview() {
-    JobRoomScreen(navController = NavController(LocalContext.current),tokenProvider = object : TokenProvider { override fun getToken(): String? { return null }},33)
+    JobRoomScreen(navController = NavController(LocalContext.current),tokenProvider = object : TokenProvider { override fun getToken(): String? { return null }},9)
 }

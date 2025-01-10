@@ -21,7 +21,8 @@ namespace DataAccessLayer.Infrastructure {
     w.id AS working_id,
     w.job_id,
     j.title AS job_title,
-    j.allow_worker_invite, -- Added column
+	j.allow_worker_invite,
+    j.employer_id,
     w.skill_id,
     s.title AS skill_title,
     w.worker_id,
@@ -56,6 +57,7 @@ WHERE
                 WorkingId = (int)sqlDataReader["working_id"],
                 JobTitle = (string)sqlDataReader["job_title"],
                 AllowWorkerInvite = (bool)sqlDataReader["allow_worker_invite"],
+                EmployerId = (int)sqlDataReader["employer_id"],
                 SkillId = (int)sqlDataReader["skill_id"],
                 SkillTitle = (string)sqlDataReader["skill_title"],
                 WorkerId = sqlDataReader["worker_id"] as int?, 

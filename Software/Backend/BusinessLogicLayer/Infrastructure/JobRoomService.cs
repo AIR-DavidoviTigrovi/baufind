@@ -30,6 +30,7 @@ namespace BusinessLogicLayer.Infrastructure {
                 JobTitle = x.JobTitle,
                 SkillId = x.SkillId,
                 SkillTitle = x.SkillTitle,
+                EmployerId = x.EmployerId,
                 WorkerName = x.WorkerName,
                 WorkingId = x.WorkingId,
                 AllowWorkerInvite = x.AllowWorkerInvite,
