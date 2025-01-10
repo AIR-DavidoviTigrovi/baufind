@@ -4,6 +4,7 @@ data class JobRoom(
     val workingId: Int,
     val jobId: Int,
     val jobTitle: String,
+    val JobStatus: String,
     val allowWorkerInvite: Boolean,
     val employerId: Int,
     val skillId: Int,
