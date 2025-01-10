@@ -1,0 +1,2 @@
+ALTER TABLE app_user
+ADD firebase_token NVARCHAR(MAX) DEFAULT NULL;

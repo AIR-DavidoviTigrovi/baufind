@@ -1,4 +1,4 @@
-package hr.foi.air.baufind.service.LoginService
+package hr.foi.air.baufind.service.AuthService
 
 data class LoginResponse(
     val successfulLogin : Boolean,

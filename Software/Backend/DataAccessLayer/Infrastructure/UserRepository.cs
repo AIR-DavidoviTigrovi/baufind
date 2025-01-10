@@ -281,6 +281,108 @@ public class UserRepository : IUserRepository
         return rowsAffected > 0;
     }
 
+    /// <summary>
+    /// Doda token vezan uz Firebase notifikacije na korisnika i makne isti ako postoji kod nekog drugog korisnika
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    public bool AddUserToken(int userId, string token)
+    {
+        string deleteQuery = @"
+            UPDATE app_user
+            SET firebase_token = NULL
+            WHERE firebase_token = @Token;
+        ";
+        var deleteParams = new Dictionary<string, object>
+        {
+            { "Token", token }
+        };
+
+        try
+        {
+            _db.ExecuteNonQuery(deleteQuery, deleteParams);
+        } catch (Exception ex)
+        {
+            return false;
+        }
+
+        string query = @"
+            UPDATE app_user
+            SET firebase_token = @Token
+            WHERE id = @Id;
+        ";
+
+        var queryParams = new Dictionary<string, object>
+        {
+            { "Token", token },
+            { "Id", userId }
+        };
+
+        try
+        {
+            _db.ExecuteNonQuery(query, queryParams);
+            return true;
+        } catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Uklanja Firebase token korisnika (kod odjave)
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public bool RemoveUserToken(int userId)
+    {
+        string query = @"
+            UPDATE app_user
+            SET firebase_token = NULL
+            WHERE id = @Id;
+        ";
+        var queryParams = new Dictionary<string, object>
+        {
+            { "Id", userId }
+        };
+
+        try
+        {
+            _db.ExecuteNonQuery(query, queryParams);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Dohvaća token za korisnika (ako postoji u bazi)
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public string? GetUserToken(int userId)
+    {
+        string userInfoQuery = "SELECT firebase_token FROM app_user WHERE id = @id;";
+        var idParameter = new Dictionary<string, object>
+        {
+            { "@id", userId }
+        };
+
+        string? token = null;
+
+        using (var reader = _db.ExecuteReader(userInfoQuery, idParameter))
+        {
+            if (reader.Read())
+            {
+                token = (string?)reader["firebase_token"];
+            }
+        }
+
+        return token;
+    }
+
     private UserModel UserModelFromReader(SqlDataReader reader)
     {
         return new UserModel()

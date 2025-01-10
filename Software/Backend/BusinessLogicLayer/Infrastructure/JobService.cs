@@ -5,14 +5,9 @@ using BusinessLogicLayer.AppLogic.Jobs.AddUserToJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
 using BusinessLogicLayer.AppLogic.Jobs.WorkerJoinJob;
-using BusinessLogicLayer.AppLogic.Skills;
+using BusinessLogicLayer.AppLogic.PushNotifications;
 using DataAccessLayer.AppLogic;
 using DataAccessLayer.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.Infrastructure
 {
@@ -23,21 +18,23 @@ namespace BusinessLogicLayer.Infrastructure
         private readonly ISkillRepository _skillRepository;
         private readonly IWorkingRepository _workingRepository;
         private readonly IJwtService _jwtService;
+        private readonly IPushNotificationService _pushNotificationService;
 
-        public JobService(IJobRepository jobRepository, IJwtService jwtService, IPictureRepository pictureRepository, ISkillRepository skillRepository, IWorkingRepository workingRepository)
+        public JobService(IJobRepository jobRepository, IJwtService jwtService, IPictureRepository pictureRepository, ISkillRepository skillRepository, IWorkingRepository workingRepository, IPushNotificationService pushNotificationService)
         {
             _jobRepository = jobRepository;
             _jwtService = jwtService;
             _pictureRepository = pictureRepository;
             _skillRepository = skillRepository;
             _workingRepository = workingRepository;
+            _pushNotificationService = pushNotificationService;
         }
 
         public AddJobResponse AddJob(AddJobRequest request, int userId)
         {
             var validator = new AddJobValidator(_jobRepository);
             var result = validator.Validate(request);
-            if(!result.IsValid)
+            if (!result.IsValid)
             {
                 return new AddJobResponse()
                 {
@@ -80,11 +77,15 @@ namespace BusinessLogicLayer.Infrastructure
             var (added, message) = _workingRepository.AddNewWorkingEntry(request.WorkerId, request.JobId, request.SkillId, userId);
             CallWarkerToJobResponse response = new CallWarkerToJobResponse();
             response.Success = added;
-            if (added && message =="")
+            if (added && message == "")
             {
+                _pushNotificationService.SendPushNotification("Pozvani ste na posao!", "Pozvani ste na posao! Kliknite ovdje da bi ste vidjeli o kojem poslu se radi.", new Dictionary<string, string>
+                {
+                    { "changeRoute", "pendingJobsScreen" } // TODO: prebaciti na waiting room kad se implementira: $"jobRoom/{request.JobId}"
+                }, request.WorkerId);
                 response.Message = "Radnik uspjesno pozvan na posao";
             }
-            else if (!added && message =="")
+            else if (!added && message == "")
             {
                 response.Message = "Greska";
             }
@@ -208,7 +209,8 @@ namespace BusinessLogicLayer.Infrastructure
                 }
                 response.Jobs = jobs;
                 response.Success = true;
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 response.Error = $"Došlo je do greške prilikom dohvaćanja podataka: {ex.Message}";
                 response.Success = false;
@@ -243,7 +245,8 @@ namespace BusinessLogicLayer.Infrastructure
             {
                 var success = _workingRepository.InsertWorkerRequestToWorking(userId, request.JobId, request.SkillId);
                 response.Success = success;
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 response.Message = $"Nije prošlo validaciju: {ex.Message}";
                 response.Success = false;
