@@ -25,6 +25,11 @@ namespace DataAccessLayer.Infrastructure
                 Console.WriteLine("Pristup odbijen: Korisnik nije vlasnik posla.");
                 return (false, "Pristup odbijen: Korisnik nije vlasnik posla.");
             }
+            if (IsWorkerAlreadyAssigned(workerId, jobId))
+            {
+                Console.WriteLine("Radnik je već dodijeljen za ovaj posao.");
+                return (false, "Radnik je već dodijeljen za ovaj posao.");
+            }
             if (!IsSkillValidForJob(skillId, jobId))
             {
                 Console.WriteLine($"Skill_id {skillId} nije potreban za posao {jobId}.");
@@ -99,6 +104,35 @@ namespace DataAccessLayer.Infrastructure
             return false;
         }
 
+
+
+        private bool IsWorkerAlreadyAssigned(int workerId, int jobId)
+        {
+            string query = @"
+        SELECT COUNT(*)
+        FROM Working
+        WHERE worker_id = @workerId AND job_id = @jobId;";
+
+            var parameters = new Dictionary<string, object>
+    {
+        { "@workerId", workerId },
+        { "@jobId", jobId }
+    };
+
+            try
+            {
+                var result = _db.ExecuteScalar(query, parameters);
+                return Convert.ToInt32(result) > 0; 
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Greška prilikom provjere dodjele radnika: {ex.Message}");
+                return true; 
+            }
+        }
+
+
+
         private WorkingModel WorkingModelFromReader(SqlDataReader reader)
         {
             return new WorkingModel()
@@ -112,7 +146,7 @@ namespace DataAccessLayer.Infrastructure
 
         }
 
-        public List<JobSearchModel> GetPendingInvitations(int workerId)
+        public List<JobNotificationModel> GetPendingInvitations(int workerId)
         {
             var jobs = GetJobs(workerId); 
             var pictures = GetPictures(workerId); 
@@ -134,7 +168,7 @@ namespace DataAccessLayer.Infrastructure
             return jobs;
         }
 
-        public List<JobSearchModel> GetJobs(int workerId)
+        public List<JobNotificationModel> GetJobs(int workerId)
         {
             string query = @"
                  SELECT 
@@ -146,7 +180,8 @@ namespace DataAccessLayer.Infrastructure
                 j.allow_worker_invite,
                 j.location,
                 j.lat,
-                j.lng
+                j.lng,
+                w.working_status_id
                 FROM working w
                 INNER JOIN job j ON w.job_id = j.id
                 LEFT JOIN worker_review wr ON wr.working_id = w.id
@@ -159,13 +194,13 @@ namespace DataAccessLayer.Infrastructure
                 { "@WorkerId", workerId }
             };
 
-            var jobs = new List<JobSearchModel>();
+            var jobs = new List<JobNotificationModel>();
 
             using (var reader = _db.ExecuteReader(query, parameters))
             {
                 while (reader.Read())
                 {
-                    jobs.Add(new JobSearchModel
+                    jobs.Add(new JobNotificationModel
                     {
                         Id = reader.GetInt32(reader.GetOrdinal("job_id")),
                         Employer_id = reader.GetInt32(reader.GetOrdinal("employer_id")),
@@ -177,7 +212,8 @@ namespace DataAccessLayer.Infrastructure
                         Lat = reader.IsDBNull(reader.GetOrdinal("lat")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("lat")),
                         Lng = reader.IsDBNull(reader.GetOrdinal("lng")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("lng")),
                         Pictures = new List<byte[]>(),
-                        Skills = new List<SkillModel>()
+                        Skills = new List<SkillModel>(),
+                        Working_status_id = reader.GetInt32(reader.GetOrdinal("working_status_id")),
                     });
                 }
             }
@@ -254,14 +290,14 @@ namespace DataAccessLayer.Infrastructure
 
             return skills;
         }
-
         public bool InsertWorkerRequestToWorking(int userId, int jobId, int skillId)
         {
             if (!IsSkillValidForJob(skillId, jobId))
             {
                 return false;
             }
-            if(!WorkerIsValidForSkill(userId, jobId, skillId)){
+            if (!WorkerIsValidForSkill(userId, jobId, skillId))
+            {
                 return false;
             }
             string query = @"

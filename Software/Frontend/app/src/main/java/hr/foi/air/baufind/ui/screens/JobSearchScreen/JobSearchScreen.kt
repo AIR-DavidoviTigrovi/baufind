@@ -105,7 +105,7 @@ fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider, 
             }
             Spacer(modifier = Modifier.weight(1f))
             IconButton(
-                onClick = { }
+                onClick = {navController.navigate("jobNotificationScreen") }
             ) {
                 Icon(
 

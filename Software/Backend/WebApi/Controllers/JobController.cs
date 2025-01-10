@@ -107,7 +107,7 @@ public class JobController : ControllerBase
 
     }
 
-    [HttpGet("CheckPendingInvitations")]
+    [HttpGet("CheckJobNotifications")]
     [Authorize]
     public ActionResult<PendingInvitationResponse> GetPendindInvitations()
     {

@@ -4,6 +4,7 @@ import hr.foi.air.baufind.ws.request.CallForWorkingBody
 import hr.foi.air.baufind.ws.request.JobCreateBody
 import hr.foi.air.baufind.ws.request.WorkerRequestJoinBody
 import hr.foi.air.baufind.ws.response.CallForWorkingResponse
+import hr.foi.air.baufind.ws.response.CheckJobNotificationResponse
 import hr.foi.air.baufind.ws.response.JobCreateResponse
 import hr.foi.air.baufind.ws.response.JobResponse
 import hr.foi.air.baufind.ws.response.JobsForCurrentUserResponse
@@ -37,4 +38,7 @@ interface JobService {
 
     @POST("/jobs/requestJoin")
     suspend fun requestJoin(@Body workerRequestJoinBody: WorkerRequestJoinBody): WorkerRequestJoinResponse
+
+    @GET("/jobs/CheckJobNotifications")
+    suspend fun checkJobNotifications() : CheckJobNotificationResponse
 }
