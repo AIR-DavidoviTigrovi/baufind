@@ -1,5 +1,6 @@
 package hr.foi.air.baufind.ui.screens.JobRoom
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -59,49 +60,64 @@ fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobI
                 jobID
             )
             if(viewModel.roomOwnerState.value == RoomOwnerState.Employer){
-                if(status == "Zapocet"){
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Bottom
-                    ) {
-                        Button(
-                            onClick = {
-                                status = "Zavrsen"
-                                viewModel.viewModelScope.launch {
-                                    viewModel.setRoomStatus(viewModel.jobRoom.value[0].jobId,3)
-                                }
-                            },
-                            modifier = Modifier.wrapContentWidth()
-                        ) {
-                            Text(viewModel.buttonStateText.value)
-                        }
+                when (status) {
+                    "Zavrsen" -> {
+                        Text("Posao je završen")
                     }
-                }else if( status!= "Zavrsen" && status != "Zapocet"){
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Bottom
-                    ) {
-                        Button(
-                            onClick = {
-                                status = "Zapocet"
+                    "Zapocet" -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Bottom
+                        ) {
+                            Button(
+                                onClick = {
+
                                     viewModel.viewModelScope.launch {
-                                        viewModel.setRoomStatus(viewModel.jobRoom.value[0].jobId,4)
+                                        viewModel.setRoomStatus(viewModel.jobRoom.value[0].jobId, 3)
+                                        status = "Zavrsen"
                                     }
-                                      },
-                            modifier = Modifier.wrapContentWidth()
-                        ) {
-                            Text(viewModel.buttonStateText.value)
+                                },
+                                modifier = Modifier.wrapContentWidth()
+                            ) {
+                                Text(viewModel.buttonStateText.value)
+                            }
                         }
                     }
-                } else{
-                    Text("Posao je završen")
+                    else -> { // Default case for statuses not "Zavrsen" or "Zapocet"
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Bottom
+                        ) {
+                            Button(
+                                onClick = {
+
+                                    viewModel.viewModelScope.launch {
+                                        viewModel.peopleInRoom.forEach { (skill, people) ->
+                                            people.forEach { person ->
+                                                if (person == "Nema radnika"){
+                                                    Toast.makeText(context, "Please add workers to this room", Toast.LENGTH_SHORT).show()
+                                                    return@launch
+                                                }
+                                            }
+                                        }
+                                        viewModel.setRoomStatus(viewModel.jobRoom.value[0].jobId, 4)
+                                        status = "Zapocet"
+                                    }
+                                },
+                                modifier = Modifier.wrapContentWidth()
+                            ) {
+                                Text(viewModel.buttonStateText.value)
+                            }
+                        }
+                    }
                 }
+
 
             }
 

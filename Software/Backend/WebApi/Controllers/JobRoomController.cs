@@ -24,8 +24,8 @@ namespace WebApi.Controllers {
             }
             return query;
         }
-        // POST: /jobRoom/setState"
-            [HttpPost("/setStatus")]
+        // POST: /jobRoom/setStatus"
+        [HttpPost("setStatus")]
             [Authorize]
             public ActionResult<SetRoomStatusResponse> SetJobRoomStatus([FromBody] SetRoomStatusRequest request) {
             if(request == null) {

@@ -19,7 +19,7 @@ class JobRoomViewModel: ViewModel() {
     val roomOwnerState: MutableState<RoomOwnerState?> = mutableStateOf(null)
     val listOfSkills: MutableState<List<Skill>> = mutableStateOf(emptyList())
     val roomSkills: MutableState<List<Skill>> = mutableStateOf(emptyList())
-    //Key je ime korisnika a value je uloga radnika
+    //Key je pozicija a Vrijednost su ljudi na njoj
     val peopleInRoom: MutableMap<String, MutableList<String>> = mutableMapOf<String,MutableList<String>>()
     val jobRoom: MutableState<List<JobRoom>> = mutableStateOf(emptyList())
     val mutableStatus : MutableState<String> = mutableStateOf("")
