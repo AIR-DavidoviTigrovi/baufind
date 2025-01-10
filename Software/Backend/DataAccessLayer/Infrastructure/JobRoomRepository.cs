@@ -55,6 +55,26 @@ WHERE
             }
 
         }
+
+        public SetRoomStatusModel SetRoomStatusModel(int jobID, int status) {
+            if(status < 1 || status > 4) {
+                return new SetRoomStatusModel { Success = null, Error = "Status mora biti između 1 i 4" };
+            }
+            string query = $@"UPDATE dbo.job
+                              SET job_status_id = {status}  
+                              WHERE id = {jobID}";
+
+            // Execute the query
+            try {
+                db.ExecuteNonQuery(query);
+                return new SetRoomStatusModel { Success = "Uspjeh", Error = null};
+            } catch(Exception err) {
+                return new SetRoomStatusModel { Success = null, Error = err.Message };
+            }
+            
+        }
+        
+
         private JobRoomModel JobRoomModelFromReader(SqlDataReader sqlDataReader) {
             return new JobRoomModel {
                 JobId = (int)sqlDataReader["job_id"],

@@ -1,5 +1,6 @@
 ﻿using BusinessLogicLayer.AppLogic.JobRoom;
 using BusinessLogicLayer.AppLogic.JobRoom.GetJobRoom;
+using BusinessLogicLayer.AppLogic.JobRoom.SetRoomStatus;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,12 +8,11 @@ namespace WebApi.Controllers {
     [Route("jobRoom")]
     [ApiController]
     public class JobRoomController : ControllerBase {
-        
+
         private readonly IJobRoomService _jobRoomService;
-        public JobRoomController(IJobRoomService jobRoomService)
-        {
+        public JobRoomController(IJobRoomService jobRoomService) {
             this._jobRoomService = jobRoomService;
-            
+
         }
         // GET: /jobRoom/{jobID}
         [HttpGet("{jobID}")]
@@ -24,5 +24,14 @@ namespace WebApi.Controllers {
             }
             return query;
         }
+        // POST: /jobRoom/setState/{jobID}/{status}"
+            [HttpGet("/setStatus/{jobID}/{status}")]
+            [Authorize]
+            public ActionResult<SetRoomStatusResponse> SetJobRoomStatus(int jobID,int status) {
+            var query = _jobRoomService.SetRoomStatusResponse(jobID, status);    
+            return query;
+            }
+        }
     }
-}
+
+
