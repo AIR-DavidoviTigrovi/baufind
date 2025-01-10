@@ -10,4 +10,9 @@ class ReviewViewModel : ViewModel() {
 
     fun submitEmployerReview(jobName: String, rating: Int, comment: String, context: Context) {
     }
+    fun submitWorkerReview(jobName: String, rating: Int, comment: String, context: Context) {
+
+    }
+
+
 }
