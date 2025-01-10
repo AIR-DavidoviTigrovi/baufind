@@ -36,10 +36,10 @@ fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobI
             Text(text = viewModel.jobRoom.value[0].jobTitle!!)
             RoleInJobCard(
                 viewModel.jobRoom.value[0].allowWorkerInvite,
-                viewModel.listOfSkills.value,
+                viewModel.roomSkills.value,
                 navController = navController,
                 peopleInRoom = viewModel.peopleInRoom,
-                onItemClick = {}
+                jobID
             )
         } else {
 

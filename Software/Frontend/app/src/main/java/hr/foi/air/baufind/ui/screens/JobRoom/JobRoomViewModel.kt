@@ -17,8 +17,9 @@ class JobRoomViewModel: ViewModel() {
     val service = JobRoomService()
     val roomOwnerState: MutableState<RoomOwnerState?> = mutableStateOf(null)
     val listOfSkills: MutableState<List<Skill>> = mutableStateOf(emptyList())
+    val roomSkills: MutableState<List<Skill>> = mutableStateOf(emptyList())
     //Key je ime korisnika a value je uloga radnika
-    val peopleInRoom: MutableMap<String, String> = mutableMapOf<String,String>()
+    val peopleInRoom: MutableMap<String, MutableList<String>> = mutableMapOf<String,MutableList<String>>()
     val jobRoom: MutableState<List<JobRoom>> = mutableStateOf(emptyList())
     suspend fun determinateOwner(context: Context){
         val jwt = JwtService.getJwt(context = context)
@@ -37,9 +38,15 @@ class JobRoomViewModel: ViewModel() {
 
     }
     suspend fun loadJobPeople(jobId: Int) {
-        for(room in jobRoom.value){
-            peopleInRoom[room.workerName] = room.skillTitle
+        val uniqueSkills = mutableSetOf<Skill>()
+        for (room in jobRoom.value) {
+            var work = peopleInRoom.getOrPut(room.skillTitle){
+                mutableListOf()
+            }.add(room.workerName)
+
+            uniqueSkills.add(Skill(room.skillId, room.skillTitle))
         }
+        roomSkills.value = uniqueSkills.toList()
     }
     suspend fun getAllSkills(){
         val service: SkillsService = SkillsService(tokenProvider = tokenProvider.value!!)
