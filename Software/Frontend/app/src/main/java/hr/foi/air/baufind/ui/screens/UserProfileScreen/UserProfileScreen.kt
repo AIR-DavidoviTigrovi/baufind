@@ -53,6 +53,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import hr.foi.air.baufind.helpers.PictureHelper
+import hr.foi.air.baufind.service.AuthService.AuthService
 import hr.foi.air.baufind.service.UserProfileService.UserProfileService
 import hr.foi.air.baufind.service.jwtService.JwtService
 import hr.foi.air.baufind.ui.components.PrimaryButton
@@ -211,9 +212,13 @@ fun userProfileScreen(
                                         text = { Text("Logout") },
                                         onClick = {
                                             showMenu = false
-                                            JwtService.clearJwt(context)
-                                            navController.navigate("login") {
-                                                popUpTo(0) { inclusive = true }
+                                            val authService = AuthService(tokenProvider)
+                                            coroutineScope.launch {
+                                                val response = authService.logoutAsync()
+                                                JwtService.clearJwt(context)
+                                                navController.navigate("login") {
+                                                    popUpTo(0) { inclusive = true }
+                                                }
                                             }
                                         }
                                     )

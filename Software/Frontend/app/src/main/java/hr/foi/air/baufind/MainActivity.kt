@@ -1,8 +1,12 @@
 package hr.foi.air.baufind
 
 import RegistrationScreen
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -12,6 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,6 +27,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.gson.Gson
 import hr.foi.air.baufind.navigation.BottomNavigationBar
+import hr.foi.air.baufind.service.PushNotifications.NotificationService
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobAddSkillsScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobDetailsScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobPositionsLocationScreen
@@ -43,6 +51,8 @@ import hr.foi.air.baufind.ui.screens.WorkerSearchScreen.WorkerProfileScreen
 import hr.foi.air.baufind.ui.screens.WorkerSearchScreen.WorkerSearchScreen
 import hr.foi.air.baufind.ui.theme.BaufindTheme
 import hr.foi.air.baufind.ws.network.AppTokenProvider
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,6 +67,19 @@ class MainActivity : ComponentActivity() {
         val jobSearchDetailsViewModel = JobSearchDetailsViewModel()
         val pendingJobsViewModel = PendingJobsViewModel()
         val myJobsViewModel = MyJobsViewModel()
+
+        requestNotificationPermissions()
+
+        val changeRoute = intent.getStringExtra("changeRoute")
+        var startDestination = "login"
+        var afterLoginDestination = "jobDetailsScreen"
+        if (jwtToken == null) {
+            afterLoginDestination = changeRoute ?: afterLoginDestination
+        }
+        else {
+            startDestination = changeRoute ?: "login"
+        }
+
         setContent {
             val navController = rememberNavController()
             val currentRoute = navController
@@ -87,14 +110,11 @@ class MainActivity : ComponentActivity() {
                             .background(MaterialTheme.colorScheme.background)
                             .padding(innerPadding)
                     ) {
-                        val startDestination : String
-                        if (jwtToken == null) startDestination ="login"
-                        else startDestination = "login" // promijeniti kada se doda token refresh
                         NavHost(
                             navController = navController,
                             startDestination = startDestination
                         ) {
-                            composable("login") { LoginScreen(navController, this@MainActivity, tokenProvider) }
+                            composable("login") { LoginScreen(navController, this@MainActivity, tokenProvider, afterLoginDestination) }
                             composable("registration") { RegistrationScreen(navController, tokenProvider) }
 
                             composable(
@@ -187,6 +207,23 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+    }
+
+    private fun requestNotificationPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val hasPermission = ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+
+            if (!hasPermission) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    0
+                )
+            }
+        }
     }
 }
 
