@@ -2,6 +2,7 @@ using Azure;
 using BusinessLogicLayer.AppLogic.Jobs;
 using BusinessLogicLayer.AppLogic.Jobs.AddJob;
 using BusinessLogicLayer.AppLogic.Jobs.AddUserToJob;
+using BusinessLogicLayer.AppLogic.Jobs.ConfirmWorker;
 using BusinessLogicLayer.AppLogic.Jobs.GetJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
 using BusinessLogicLayer.AppLogic.Jobs.WorkerJoinJob;
@@ -184,4 +185,20 @@ public class JobController : ControllerBase
 
         return response;
     }
+
+    [HttpPut("confirmWorker")]
+    [Authorize]
+    public ActionResult<ConfirmWorkerResponse> ConfirmWorkerRequest(ConfirmWorkerRequest request)
+    {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+
+        if (userIdFromJwt == null)
+        {
+            return Unauthorized(new GetJobResponse()
+            {
+                Error = "Ne možete pristupiti tom resursu!"
+            });
+        }
+    }
+   
 }
