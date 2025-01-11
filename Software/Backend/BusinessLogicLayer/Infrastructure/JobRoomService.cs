@@ -1,5 +1,6 @@
 ﻿using BusinessLogicLayer.AppLogic.JobRoom;
 using BusinessLogicLayer.AppLogic.JobRoom.GetJobRoom;
+using BusinessLogicLayer.AppLogic.JobRoom.SetRoomStatus;
 using BusinessLogicLayer.AppLogic.Jobs;
 using BusinessLogicLayer.AppLogic.Workers.GetWorkers;
 using DataAccessLayer.AppLogic;
@@ -30,6 +31,8 @@ namespace BusinessLogicLayer.Infrastructure {
                 JobTitle = x.JobTitle,
                 SkillId = x.SkillId,
                 SkillTitle = x.SkillTitle,
+                JobStatus = x.JobStatus,
+                EmployerId = x.EmployerId,
                 WorkerName = x.WorkerName,
                 WorkingId = x.WorkingId,
                 AllowWorkerInvite = x.AllowWorkerInvite,
@@ -40,6 +43,20 @@ namespace BusinessLogicLayer.Infrastructure {
                 JobRooms = jobRoom,
                 Error = null
             };
+        }
+
+        public SetRoomStatusResponse SetRoomStatusResponse(int jobId, int status) {
+            var query = _repository.SetRoomStatusModel(jobId, status);
+            if(query == null || query.Error != null) {
+                return new SetRoomStatusResponse() {
+                    Error = query.Error
+                };
+            }
+            return new SetRoomStatusResponse {
+                Success = "Uspješno postavljen status sobe!"
+            };
+
+
         }
     }
 }

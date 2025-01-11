@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogicLayer.AppLogic.JobRoom.GetJobRoom {
-    public record GetJobRoomResponse {
-        public List<JobRoomRecord> JobRooms { get; set; } = new List<JobRoomRecord>();
+namespace DataAccessLayer.Models {
+    public record SetRoomStatusModel {
+        public string? Success { get; set; } = string.Empty;
         public string? Error { get; set; } = string.Empty;
     }
 }
