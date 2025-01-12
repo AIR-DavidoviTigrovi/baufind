@@ -25,11 +25,6 @@ namespace DataAccessLayer.Infrastructure
                 Console.WriteLine("Pristup odbijen: Korisnik nije vlasnik posla.");
                 return (false, "Pristup odbijen: Korisnik nije vlasnik posla.");
             }
-            if (IsWorkerAlreadyAssigned(workerId, jobId))
-            {
-                Console.WriteLine("Radnik je već dodijeljen za ovaj posao.");
-                return (false, "Radnik je već dodijeljen za ovaj posao.");
-            }
             if (!IsSkillValidForJob(skillId, jobId))
             {
                 Console.WriteLine($"Skill_id {skillId} nije potreban za posao {jobId}.");
@@ -102,33 +97,6 @@ namespace DataAccessLayer.Infrastructure
                 }
             }
             return false;
-        }
-
-
-
-        private bool IsWorkerAlreadyAssigned(int workerId, int jobId)
-        {
-            string query = @"
-        SELECT COUNT(*)
-        FROM Working
-        WHERE worker_id = @workerId AND job_id = @jobId;";
-
-            var parameters = new Dictionary<string, object>
-    {
-        { "@workerId", workerId },
-        { "@jobId", jobId }
-    };
-
-            try
-            {
-                var result = _db.ExecuteScalar(query, parameters);
-                return Convert.ToInt32(result) > 0; 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Greška prilikom provjere dodjele radnika: {ex.Message}");
-                return true; 
-            }
         }
 
 
@@ -348,5 +316,69 @@ namespace DataAccessLayer.Infrastructure
                 return reader.Read();
             }
         }
+
+        public (bool, string) ConfirmWorker(int JobId, int WorkerId, int SkillId)
+        {
+            if (!DidWorkerAplyForJob(JobId, WorkerId, SkillId)) return (false,"Radnik nije prijavljen na posao") ;
+            try
+            {
+                string query = @"
+                    UPDATE TOP (1) working
+                    SET working_status_id = 4, worker_id = @WorkerId
+                    WHERE job_id = @JobId AND skill_id = @SkillId AND working_status_id = 1  AND worker_id IS NULL;";
+                var parameters = new Dictionary<string, object>
+                {
+                    { "@JobId", JobId },
+                    {"@WorkerId", WorkerId},
+                    {"@SkillId", SkillId}
+                };
+
+                bool result = _db.ExecuteNonQuery(query, parameters) > 0;
+                return (result, result ? "Radnik uspješno dodan na posao" : "Radnik nije dodan na posao");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return (false, "Dogodila se pogreška : "+ ex.Message);
+            }
+        }
+
+        private bool DidWorkerAplyForJob(int JobId, int WorkerId, int SkillId)
+        {
+            try
+            {
+                string query = @"
+                    SELECT *
+                    FROM working w
+                    WHERE job_id = @JobId
+                      AND skill_id = @SkillId
+                      AND worker_id = @WorkerId
+                      AND working_status_id = 3
+                      AND NOT EXISTS (
+                        SELECT 1
+                        FROM working w2
+                        WHERE w2.job_id = w.job_id
+                          AND w2.skill_id = w.skill_id
+                          AND w2.worker_id = w.worker_id
+                          AND w2.working_status_id = 4
+                      );";
+                var parameters = new Dictionary<string, object>
+                {
+                    { "@JobId", JobId },
+                    {"@WorkerId", WorkerId},
+                    {"@SkillId", SkillId}
+                };
+
+                var result = _db.ExecuteScalar(query, parameters);
+                return Convert.ToInt32(result) > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
+
     }
 }
