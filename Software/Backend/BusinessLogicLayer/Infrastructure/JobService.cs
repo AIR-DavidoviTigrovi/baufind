@@ -1,3 +1,4 @@
+using Azure.Core;
 using BusinessLogicLayer.AppLogic;
 using BusinessLogicLayer.AppLogic.Jobs;
 using BusinessLogicLayer.AppLogic.Jobs.AddJob;
@@ -9,6 +10,7 @@ using BusinessLogicLayer.AppLogic.Jobs.WorkerJoinJob;
 using BusinessLogicLayer.AppLogic.PushNotifications;
 using DataAccessLayer.AppLogic;
 using DataAccessLayer.Models;
+using Google.Apis.Util;
 
 namespace BusinessLogicLayer.Infrastructure
 {
@@ -272,5 +274,44 @@ namespace BusinessLogicLayer.Infrastructure
             }
             return response;
         }
+
+        public MyJobsNotificationResponse GetMyJobsNotifications(int EmployerId)
+        {
+            var response = new MyJobsNotificationResponse();
+
+            try
+            {
+                var success = _workingRepository.GetPendingJobApplications(EmployerId);
+
+                List<MyJobNotificationModel> workingModels = success.Select(x => new MyJobNotificationModel()
+                {
+                    WorkerId = x.WorkerId,
+                    Name = x.Name,  
+                    Address = x.Address,  
+                    SkillId = x.SkillId,
+                    JobId = x.JobId,
+                    JobTitle = x.JobTitle,  
+                    WorkingStatusId = x.WorkingStatusId,
+                    Rating = x.Rating,  
+                    CompletedJobsCount = x.CompletedJobsCount 
+                }).ToList();
+                if (workingModels.Count == 0)
+                {
+                    response.Message = "Nemate nikakvih obavijesti";
+                }
+                else
+                {
+                    response.Message = "Uspešno učitane obavijesti";
+                }
+
+                response.NotificationModels = workingModels; 
+            }
+            catch (Exception ex)
+            {
+                response.Message = $"Nešto je pošlo krivo: {ex.Message}";
+            }
+            return response;
+        }
+
     }
 }

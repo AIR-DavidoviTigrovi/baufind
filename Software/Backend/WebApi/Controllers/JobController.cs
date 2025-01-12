@@ -203,5 +203,24 @@ public class JobController : ControllerBase
 
         return response;
     }
-   
+
+    [HttpGet("getMyJobNotifications")]
+    [Authorize]
+    public ActionResult<MyJobsNotificationResponse> GertMyJobNotifications()
+    {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+
+        if (userIdFromJwt == null)
+        {
+            return Unauthorized(new GetJobResponse()
+            {
+                Error = "Ne možete pristupiti tom resursu!"
+            });
+        }
+        else
+        {
+            return  _jobService.GetMyJobsNotifications((int)userIdFromJwt);
+        }
+    }
+
 }
