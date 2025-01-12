@@ -25,11 +25,6 @@ namespace DataAccessLayer.Infrastructure
                 Console.WriteLine("Pristup odbijen: Korisnik nije vlasnik posla.");
                 return (false, "Pristup odbijen: Korisnik nije vlasnik posla.");
             }
-            if (IsWorkerAlreadyAssigned(workerId, jobId))
-            {
-                Console.WriteLine("Radnik je već dodijeljen za ovaj posao.");
-                return (false, "Radnik je već dodijeljen za ovaj posao.");
-            }
             if (!IsSkillValidForJob(skillId, jobId))
             {
                 Console.WriteLine($"Skill_id {skillId} nije potreban za posao {jobId}.");
@@ -102,33 +97,6 @@ namespace DataAccessLayer.Infrastructure
                 }
             }
             return false;
-        }
-
-
-
-        private bool IsWorkerAlreadyAssigned(int workerId, int jobId)
-        {
-            string query = @"
-        SELECT COUNT(*)
-        FROM Working
-        WHERE worker_id = @workerId AND job_id = @jobId;";
-
-            var parameters = new Dictionary<string, object>
-    {
-        { "@workerId", workerId },
-        { "@jobId", jobId }
-    };
-
-            try
-            {
-                var result = _db.ExecuteScalar(query, parameters);
-                return Convert.ToInt32(result) > 0; 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Greška prilikom provjere dodjele radnika: {ex.Message}");
-                return true; 
-            }
         }
 
 
