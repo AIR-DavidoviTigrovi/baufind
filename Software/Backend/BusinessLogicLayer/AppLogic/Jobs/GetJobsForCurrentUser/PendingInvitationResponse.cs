@@ -9,7 +9,7 @@ namespace BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser
 {
     public record PendingInvitationResponse
     {
-        public List<JobSearchModel> Jobs { get; set; } = new List<JobSearchModel>();
+        public List<JobNotificationModel> Jobs { get; set; } = new List<JobNotificationModel>();
         public string? Error { get; set; } = string.Empty;
     }
 }

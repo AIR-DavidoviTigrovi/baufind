@@ -11,7 +11,7 @@ namespace DataAccessLayer.AppLogic
     {
         public (bool, string) AddNewWorkingEntry(int workerId, int jobId, int skillId, int userId);
 
-        public List<JobSearchModel> GetPendingInvitations(int workerId);
+        public List<JobNotificationModel> GetPendingInvitations(int workerId);
         public bool InsertWorkerRequestToWorking(int userId, int jobId, int skillId);
     }
 }
