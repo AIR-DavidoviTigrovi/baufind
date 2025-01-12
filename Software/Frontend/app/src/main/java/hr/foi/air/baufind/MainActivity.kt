@@ -40,6 +40,8 @@ import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchViewModel
 import hr.foi.air.baufind.ui.screens.LoginScreen.LoginScreen
 import hr.foi.air.baufind.ui.screens.MyJobsScreen.MyJobsScreen
 import hr.foi.air.baufind.ui.screens.MyJobsScreen.MyJobsViewModel
+import hr.foi.air.baufind.ui.screens.NotificationsScreen.JobNotificationScreen
+import hr.foi.air.baufind.ui.screens.NotificationsScreen.JobNotificationViewModel
 import hr.foi.air.baufind.ui.screens.PendingJobsScreen.PendingJobsScreen
 import hr.foi.air.baufind.ui.screens.PendingJobsScreen.PendingJobsViewModel
 import hr.foi.air.baufind.ui.screens.Settings.SettingsScreen
@@ -67,6 +69,7 @@ class MainActivity : ComponentActivity() {
         val jobSearchDetailsViewModel = JobSearchDetailsViewModel()
         val pendingJobsViewModel = PendingJobsViewModel()
         val myJobsViewModel = MyJobsViewModel()
+        val jobNotificationViewModel = JobNotificationViewModel()
 
         requestNotificationPermissions()
 
@@ -79,7 +82,7 @@ class MainActivity : ComponentActivity() {
         else {
             startDestination = changeRoute ?: "login"
         }
-
+        
         setContent {
             val navController = rememberNavController()
             val currentRoute = navController
@@ -200,6 +203,8 @@ class MainActivity : ComponentActivity() {
                             composable("myJobsScreen") { MyJobsScreen(navController, tokenProvider, myJobsViewModel) }
                             composable("jobSearchDetailsScreen") { JobSearchDetailsScreen(navController, tokenProvider, jobSearchDetailsViewModel) }
                             composable("settingsScreen") { SettingsScreen(navController) }
+                            composable("jobNotificationScreen") { JobNotificationScreen(navController, tokenProvider, jobNotificationViewModel ) }
+
 
                         }
                     }
