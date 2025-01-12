@@ -2,6 +2,7 @@ using BusinessLogicLayer.AppLogic;
 using BusinessLogicLayer.AppLogic.Jobs;
 using BusinessLogicLayer.AppLogic.Jobs.AddJob;
 using BusinessLogicLayer.AppLogic.Jobs.AddUserToJob;
+using BusinessLogicLayer.AppLogic.Jobs.ConfirmWorker;
 using BusinessLogicLayer.AppLogic.Jobs.GetJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
 using BusinessLogicLayer.AppLogic.Jobs.WorkerJoinJob;
@@ -249,6 +250,24 @@ namespace BusinessLogicLayer.Infrastructure
             catch (Exception ex)
             {
                 response.Message = $"Nije prošlo validaciju: {ex.Message}";
+                response.Success = false;
+            }
+            return response;
+        }
+
+        public ConfirmWorkerResponse ConfirmWorkerRequest(ConfirmWorkerRequest request)
+        {
+            var response = new ConfirmWorkerResponse();
+
+            try
+            {
+                var success = _workingRepository.ConfirmWorker(request.JobId, request.WorkerId, request.SkillId);
+                response.Message = success.Item2;
+                response.Success= success.Item1;
+            }
+            catch (Exception ex)
+            {
+                response.Message = $"Nešto je pošlo krivo: {ex.Message}";
                 response.Success = false;
             }
             return response;

@@ -199,6 +199,9 @@ public class JobController : ControllerBase
                 Error = "Ne možete pristupiti tom resursu!"
             });
         }
+        var response = _jobService.ConfirmWorkerRequest(request);
+
+        return response;
     }
    
 }
