@@ -1,5 +1,6 @@
 package hr.foi.air.baufind.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,46 +31,59 @@ import hr.foi.air.baufind.ws.model.Skill
 import hr.foi.air.baufind.ws.network.TokenProvider
 
 @Composable
-fun RoleInJobCard(allowedInvitations: Boolean,listOfSkills: List<Skill>,navController: NavController,peopleInRoom: Map<String, String>, onItemClick: () -> Unit) {
-    val helperMap = mutableMapOf<String, String>()
-    for (map in peopleInRoom) {
-        helperMap[map.value] = map.key
-    }
+fun RoleInJobCard(
+    allowedInvitations: Boolean,
+    listOfSkills: List<Skill>,
+    navController: NavController,
+    peopleInRoom: Map<String, List<String>>,
+    Jobid: Int
+) {
     Column {
 
-        for (person in helperMap) {
-            Column {
-                Text(person.key, modifier = Modifier.padding(6.dp), fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                for (worker in peopleInRoom) {
-                    if(worker.value == person.key){
-                        if(worker.key != "Nema radnika")
-                            PersonInRoomCard(workerName = worker.key, onItemClick = onItemClick)
 
+
+        for (person in peopleInRoom) {
+            Column(modifier = Modifier.padding(top = 16.dp)) {
+                Text(
+                    text = person.key,
+                    modifier = Modifier.padding(6.dp),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+
+                val workers = person.value
+                if (workers.isNotEmpty() ) {
+                    workers.forEach { worker ->
+                        if(worker != "Nema radnika")
+                      PersonInRoomCard(workerName = worker, onItemClick = {  })
                     }
-
                 }
-                if(person.value == "Nema radnika") {
-                    if (allowedInvitations == true) {
-                        Button(modifier = Modifier.padding(6.dp),
+
+
+                if (workers.contains("Nema radnika")) {
+                    if (allowedInvitations) {
+                        Button(
+                            modifier = Modifier.padding(6.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = LightPrimary,
                                 contentColor = Color.White
                             ),
                             onClick = {
-                                var helperList: MutableList<Int> = mutableListOf()
-                                for (skill in listOfSkills) {
-                                    if (skill.title == person.key) {
-                                        helperList.add(skill.id)
+
+                                for(skill in listOfSkills){
+                                    if(skill.title == person.key) {
+                                        navController.navigate("workersSearchScreen/[${skill.id}]/${Jobid}")
                                     }
                                 }
-                                helperList = helperList.distinct().toMutableList()
-                                navController.navigate("workersSearchScreen/${helperList}")
-                            }) {
+
+                            }
+                        ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.add_person_icon),
-                                contentDescription = "Icon",
+                                contentDescription = "Add Worker Icon",
                                 modifier = Modifier.size(24.dp)
                             )
+
                         }
                     }
                 }
@@ -77,9 +91,18 @@ fun RoleInJobCard(allowedInvitations: Boolean,listOfSkills: List<Skill>,navContr
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
-fun RoleInJobCard() {
-    RoleInJobCard(false,listOf(Skill(1,"Električar"),Skill(2,"Vodoinstalater")),navController = NavController(LocalContext.current),mapOf("David Matijanić" to "Vodoinstalater","Viktor Lovrić" to "Električar","Frano Šimić" to "Vodoinstalater","Nema radnika" to "Vodoinstalater"
-        ,"Nema radnika" to "Vodoinstalater"),{})
+fun RoleInJobCardPreview() {
+    RoleInJobCard(
+        allowedInvitations = true,
+        listOfSkills = listOf(Skill(1, "Električar"), Skill(2, "Vodoinstalater")),
+        navController = NavController(LocalContext.current),
+        peopleInRoom = mapOf(
+            "Električar" to listOf("John Doe", "Jane Smith"),
+            "Vodoinstalater" to listOf("Nema radnika","Uga buga")
+        ),
+        19
+    )
 }

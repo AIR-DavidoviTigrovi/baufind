@@ -1,9 +1,15 @@
 package hr.foi.air.baufind.service.JobService
 
 import android.util.Log
+import hr.foi.air.baufind.ui.screens.MyJobsScreen.MyJobsNotificationsViewModel
 import hr.foi.air.baufind.ws.network.NetworkService
 import hr.foi.air.baufind.ws.network.TokenProvider
+import hr.foi.air.baufind.ws.request.ConfirmWorkerRequest
 import hr.foi.air.baufind.ws.request.JobCreateBody
+import hr.foi.air.baufind.ws.response.CheckJobNotificationResponse
+import hr.foi.air.baufind.ws.response.ConfirmWorkerResponse
+import hr.foi.air.baufind.ws.response.JobNotificationResponse
+import hr.foi.air.baufind.ws.response.MyJobNotificationResponse
 import java.util.Base64
 
 class JobService(){
@@ -96,6 +102,66 @@ class JobService(){
                 false,
                 e.message
             )
+        }
+    }
+
+    suspend fun checkJobNotifications(tokenProvider: TokenProvider): List<JobNotificationResponse>? {
+        val service = NetworkService.createJobService(tokenProvider)
+
+        try {
+            val response = service.checkJobNotifications()
+            Log.d("JobNotification", "Response: $response")
+            if (response.error.isNullOrEmpty() && response.jobs != null) {
+                response.jobs?.forEach { job ->
+                    Log.d("Posao", "Job: ${job.title.toString()}")
+                }
+
+                return response.jobs
+            } else {
+                Log.e("JobNotification", "Error: ${response.error}, Jobs: ${response.jobs}")
+                return emptyList()
+            }
+
+        } catch (e: Exception) {
+            Log.e("JobNotification", "Error during API call", e)
+            return null
+        }
+    }
+
+    suspend fun getMyJobsNotifications(tokenProvider: TokenProvider): MyJobNotificationResponse {
+        val service = NetworkService.createJobService(tokenProvider)
+
+        try {
+            val response = service.getMyJobNotifications()
+            return if (response.notificationModels.isNotEmpty()) {
+                MyJobNotificationResponse(
+                    response.notificationModels,
+                    ""
+                )
+            } else{
+                MyJobNotificationResponse(
+                    emptyList(),
+                    response.message
+                )
+            }
+
+        } catch (e: Exception) {
+            return MyJobNotificationResponse(
+                emptyList(),
+                "Pogreška prilikom fetchanja podataka"
+            )
+        }
+    }
+
+    suspend fun confirmWorker(tokenProvider: TokenProvider, request: ConfirmWorkerRequest): ConfirmWorkerResponse {
+        val service = NetworkService.createJobService(tokenProvider)
+
+
+        Log.d("Ovaj detch", request.toString())
+        return try {
+            service.confirmWorker(request)
+        } catch (e: Exception) {
+            ConfirmWorkerResponse(success = false, message = "Došlo je do pogreške prilikom fetchanja: ${e.message}")
         }
     }
 }

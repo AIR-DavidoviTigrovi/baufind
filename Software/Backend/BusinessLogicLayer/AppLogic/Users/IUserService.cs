@@ -3,6 +3,7 @@ using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
 using BusinessLogicLayer.AppLogic.Users.GetUser;
 using BusinessLogicLayer.AppLogic.Users.GetUserProfile;
 using BusinessLogicLayer.AppLogic.Users.Login;
+using BusinessLogicLayer.AppLogic.Users.Logout;
 using BusinessLogicLayer.AppLogic.Users.RegisterUser;
 using BusinessLogicLayer.AppLogic.Users.UpdateUserProfile;
 
@@ -49,5 +50,6 @@ public interface IUserService
     /// 
     public UpdateUserResponse UpdateUser(UpdateUserRequest request);
     public LoginResponse Login(LoginRequest request);
+    public LogoutResponse Logout(int userId);
     public DeleteUserResponse DeleteUser(int id);
 }

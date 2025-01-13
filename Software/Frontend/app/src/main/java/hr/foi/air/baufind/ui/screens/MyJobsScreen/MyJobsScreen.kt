@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -85,6 +86,15 @@ fun MyJobsScreen(
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
+                    IconButton(onClick = {
+                        navController.navigate("myJobsNotificationScreen")
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Notifications,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
@@ -126,7 +136,7 @@ fun MyJobsScreen(
 
                         val job = viewModel.myCreatedJobs.value[index]
                         MyJobListItem(job = job){
-                            // TODO: odvede na zaslon MOG posla
+                            navController.navigate("jobRoom/${job.id}")
                         }
                     }
                     items(viewModel.jobsImOn.value.size) { index ->

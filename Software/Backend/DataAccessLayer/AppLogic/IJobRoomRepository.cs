@@ -10,5 +10,7 @@ namespace DataAccessLayer.AppLogic {
 
         public List<JobRoomModel>? GetJobRoom(int jobID);
 
+        public SetRoomStatusModel SetRoomStatusModel(int jobID, int status);
+
     }
 }

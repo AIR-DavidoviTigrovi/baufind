@@ -2,6 +2,7 @@ using BusinessLogicLayer.AppLogic;
 using BusinessLogicLayer.AppLogic.Geocoding;
 using BusinessLogicLayer.AppLogic.JobRoom;
 using BusinessLogicLayer.AppLogic.Jobs;
+using BusinessLogicLayer.AppLogic.PushNotifications;
 using BusinessLogicLayer.AppLogic.Reviews;
 using BusinessLogicLayer.AppLogic.Skills;
 using BusinessLogicLayer.AppLogic.Users;
@@ -34,6 +35,9 @@ public static class ServiceCollectionExtensions
         services.Configure<GeocodingOptions>(
             configuration.GetSection("Geocoding")
         );
+        services.Configure<PushNotificationOptions>(
+            configuration.GetSection("Firebase")
+        );
 
         services.AddScoped<DB>(); // Zbog DI u repozitorije
 
@@ -55,6 +59,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IReviewService, ReviewService>();
         services.AddScoped<IGeocodingService, GeocodingService>();
         services.AddScoped<IJobRoomService, JobRoomService>();
+        services.AddSingleton<IPushNotificationService, PushNotificationService>();
 
         return services;
     }

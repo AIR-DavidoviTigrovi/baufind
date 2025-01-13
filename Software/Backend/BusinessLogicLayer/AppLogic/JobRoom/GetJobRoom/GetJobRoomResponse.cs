@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.AppLogic.JobRoom.GetJobRoom {
-    public class GetJobRoomResponse {
+    public record GetJobRoomResponse {
         public List<JobRoomRecord> JobRooms { get; set; } = new List<JobRoomRecord>();
         public string? Error { get; set; } = string.Empty;
     }

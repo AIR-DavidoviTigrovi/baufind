@@ -9,6 +9,10 @@ namespace BusinessLogicLayer.AppLogic.JobRoom {
         public int WorkingId { get; set; }
         public int JobId { get; set; }
         public string JobTitle { get; set; }
+
+        public string JobStatus { get; set; }
+
+        public int EmployerId { get; set; }
         public bool AllowWorkerInvite { get; set; }
         public int SkillId { get; set; }
         public string SkillTitle { get; set; }

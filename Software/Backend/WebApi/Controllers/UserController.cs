@@ -5,6 +5,7 @@ using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
 using BusinessLogicLayer.AppLogic.Users.GetUser;
 using BusinessLogicLayer.AppLogic.Users.GetUserProfile;
 using BusinessLogicLayer.AppLogic.Users.Login;
+using BusinessLogicLayer.AppLogic.Users.Logout;
 using BusinessLogicLayer.AppLogic.Users.RegisterUser;
 using BusinessLogicLayer.AppLogic.Users.UpdateUserProfile;
 using Microsoft.AspNetCore.Authorization;
@@ -163,6 +164,32 @@ public class UserController : ControllerBase
 
         return user;
     }
+
+    // GET: /users/logout
+    [HttpGet("logout")]
+    [Authorize]
+    public ActionResult<LogoutResponse> Logout()
+    {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+
+        if (!userIdFromJwt.HasValue)
+        {
+            return Unauthorized(new UserProfileResponse()
+            {
+                Error = "Niste prijavljeni!"
+            });
+        }
+
+        int userId = userIdFromJwt.Value;
+
+        var response = _userService.Logout(userId);
+        if (!string.IsNullOrEmpty(response.Error))
+        {
+            return BadRequest(response);
+        }
+        return response;
+    }
+
     [HttpGet("delete")]
     [Authorize]
     public ActionResult<DeleteUserResponse> DeleteUser()
