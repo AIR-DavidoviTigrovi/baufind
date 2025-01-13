@@ -4,6 +4,7 @@ using BusinessLogicLayer.AppLogic.Reviews;
 using BusinessLogicLayer.AppLogic.Reviews.GetUserReviews;
 using BusinessLogicLayer.AppLogic.Reviews.ReviewRequest;
 using BusinessLogicLayer.AppLogic.Users.GetUser;
+using DataAccessLayer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
@@ -135,5 +136,21 @@ public class ReviewController : ControllerBase
             });
         }
     }
+    // GET: /review/notifications
+    [HttpGet("notifications")]
+    [Authorize]
+    public ActionResult<List<ReviewNotificationModel>> GetReviewNotifications()
+    {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+
+        if (userIdFromJwt == null)
+        {
+            return Unauthorized();
+        }
+
+        var result = _reviewService.GetReviewNotifications(userIdFromJwt.Value);
+        return Ok(result);
+    }
+
 
 }

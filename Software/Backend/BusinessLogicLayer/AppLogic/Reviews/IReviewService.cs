@@ -14,6 +14,7 @@ namespace BusinessLogicLayer.AppLogic.Reviews
         public GetUserReviewsResponse GetUserReviews(int userId);
         int SaveEmployerReview(EmployerReviewRequest employerReview);
         public int SaveWorkerReview(WorkerReviewRequest workerReviewRequest);
+        public List<ReviewNotificationModel> GetReviewNotifications(int userId);
 
     }
 }

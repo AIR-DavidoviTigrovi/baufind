@@ -22,6 +22,7 @@ namespace BusinessLogicLayer.Infrastructure
             _reviewRepository = reviewRepository;
             _jwtService = jwtService;
         }
+
         public GetUserReviewsResponse GetUserReviews(int userId)
         {
             try
@@ -136,6 +137,12 @@ namespace BusinessLogicLayer.Infrastructure
                 }
             }
             return reviewId;
+        }
+        public List<ReviewNotificationModel> GetReviewNotifications(int userId)
+        {
+            var result = _reviewRepository.GetAllReviewsToComplete(userId);
+
+            return result;
         }
     }
 }

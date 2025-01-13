@@ -203,6 +203,68 @@ namespace DataAccessLayer.Infrastructure
             object scalarResult = _db.ExecuteScalar(query, parameters);
             return Convert.ToInt32(scalarResult);
         }
+        public List<ReviewNotificationModel> GetAllReviewsToComplete(int userId)
+        {
+            string sql = @"
+        (  -- radnik
+           SELECT 
+               j.id            AS JobId,
+               j.title         AS JobTitle,
+               j.employer_id   AS PersonId,
+               u.name          AS PersonName,
+               'employer'      AS Position
+           FROM job j
+           JOIN working w ON j.id = w.job_id
+           JOIN app_user u ON j.employer_id = u.id
+           WHERE w.worker_id = @UserId
+             AND j.job_status_id = 3
+             AND NOT EXISTS (
+                 SELECT 1
+                 FROM Employer_Review er
+                 WHERE er.job_id = j.id
+                   AND er.reviewer_id = @UserId
+             )
+        )
+        UNION
+        (  -- poslodavac
+           SELECT
+               j.id           AS JobId,
+               j.title        AS JobTitle,
+               w.worker_id    AS PersonId,
+               u.name         AS PersonName,
+               s.title        AS Position
+           FROM job j
+           JOIN working w ON j.id = w.job_id
+           JOIN app_user u ON w.worker_id = u.id
+           JOIN skill s ON w.skill_id = s.id
+           WHERE j.employer_id = @UserId
+             AND j.job_status_id = 3
+             AND NOT EXISTS (
+                 SELECT 1
+                 FROM Worker_Review wr
+                 WHERE wr.working_id = w.id
+                   AND wr.reviewer_id = @UserId
+             )
+        )
+    ";
+
+            var parameters = new Dictionary<string, object>{
+        {"@UserId", userId}
+    };
+
+            return _db.ExecuteQuery(
+                sql,
+                parameters,
+                reader => new ReviewNotificationModel
+                {
+                    JobId = reader.GetInt32(reader.GetOrdinal("JobId")),
+                    JobTitle = reader.GetString(reader.GetOrdinal("JobTitle")),
+                    PersonId = reader.GetInt32(reader.GetOrdinal("PersonId")),
+                    PersonName = reader.GetString(reader.GetOrdinal("PersonName")),
+                    Position = reader.GetString(reader.GetOrdinal("Position"))
+                }
+            );
+        }
         private UserReviewModel UserReviewModelFromReader(SqlDataReader reader)
         {
             var userReview = new UserReviewModel
