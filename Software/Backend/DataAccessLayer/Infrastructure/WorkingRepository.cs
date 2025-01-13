@@ -318,24 +318,25 @@ namespace DataAccessLayer.Infrastructure
             }
         }
 
-        public (bool, string) ConfirmWorker(int JobId, int WorkerId, int SkillId)
+        public (bool, string) ConfirmWorker(int JobId, int WorkerId, int SkillId, int WorkingStatusId)
         {
             if (!DidWorkerAplyForJob(JobId, WorkerId, SkillId)) return (false,"Radnik nije prijavljen na posao") ;
             try
             {
                 string query = @"
                     UPDATE TOP (1) working
-                    SET working_status_id = 4, worker_id = @WorkerId
+                    SET working_status_id = @WorkingStatusId, worker_id = @WorkerId
                     WHERE job_id = @JobId AND skill_id = @SkillId AND working_status_id = 1  AND worker_id IS NULL;";
                 var parameters = new Dictionary<string, object>
                 {
                     { "@JobId", JobId },
                     {"@WorkerId", WorkerId},
-                    {"@SkillId", SkillId}
+                    {"@SkillId", SkillId},
+                    {"@WorkingStatusId", WorkingStatusId}
                 };
 
                 bool result = _db.ExecuteNonQuery(query, parameters) > 0;
-                return (result, result ? "Radnik uspješno dodan na posao" : "Radnik nije dodan na posao");
+                return (result, result ? "Radnik uspješno ažuriran" : "Radnik nije ažuriran");
             }
             catch (Exception ex)
             {
@@ -396,6 +397,7 @@ namespace DataAccessLayer.Infrastructure
                 w.job_id,
                 j.title,
                 w.working_status_id,
+                s.title AS skill_title,
                 wr.rating,
                 (
                     SELECT COUNT(*)
@@ -406,6 +408,7 @@ namespace DataAccessLayer.Infrastructure
                     FROM working w
                     JOIN job j ON w.job_id = j.id
                     JOIN app_user wk ON w.worker_id = wk.id
+                    JOIN skill s ON w.skill_id = s.id
                     LEFT JOIN worker_review wr ON wr.working_id = w.id
                     WHERE j.employer_id = @EmployerId  
                       AND w.working_status_id = 2;";
@@ -429,6 +432,7 @@ namespace DataAccessLayer.Infrastructure
                             JobTitle = reader.GetString(reader.GetOrdinal("title")),
                             WorkingStatusId = reader.GetInt32(reader.GetOrdinal("working_status_id")),
                             Rating = reader.IsDBNull(reader.GetOrdinal("rating")) ? 0 : reader.GetDecimal(reader.GetOrdinal("rating")),  
+                            Skill = reader.GetString(reader.GetOrdinal("skill_title")),
                             CompletedJobsCount = reader.GetInt32(reader.GetOrdinal("completed_jobs_count"))
                         });
                     }

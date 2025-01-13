@@ -1,11 +1,13 @@
 package hr.foi.air.baufind.service.JobService
 
 import android.util.Log
+import hr.foi.air.baufind.ui.screens.MyJobsScreen.MyJobsNotificationsViewModel
 import hr.foi.air.baufind.ws.network.NetworkService
 import hr.foi.air.baufind.ws.network.TokenProvider
 import hr.foi.air.baufind.ws.request.JobCreateBody
 import hr.foi.air.baufind.ws.response.CheckJobNotificationResponse
 import hr.foi.air.baufind.ws.response.JobNotificationResponse
+import hr.foi.air.baufind.ws.response.MyJobNotificationResponse
 import java.util.Base64
 
 class JobService(){
@@ -124,4 +126,28 @@ class JobService(){
         }
     }
 
+    suspend fun getMyJobsNotifications(tokenProvider: TokenProvider): MyJobNotificationResponse {
+        val service = NetworkService.createJobService(tokenProvider)
+
+        try {
+            val response = service.getMyJobNotifications()
+            return if (response.notificationModels.isNotEmpty()) {
+                MyJobNotificationResponse(
+                    response.notificationModels,
+                    ""
+                )
+            } else{
+                MyJobNotificationResponse(
+                    emptyList(),
+                    response.message
+                )
+            }
+
+        } catch (e: Exception) {
+            return MyJobNotificationResponse(
+                emptyList(),
+                "Pogreška prilikom fetchanja podataka"
+            )
+        }
+    }
 }

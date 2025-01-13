@@ -263,7 +263,7 @@ namespace BusinessLogicLayer.Infrastructure
 
             try
             {
-                var success = _workingRepository.ConfirmWorker(request.JobId, request.WorkerId, request.SkillId);
+                var success = _workingRepository.ConfirmWorker(request.JobId, request.WorkerId, request.SkillId, request.WorkingStatusId);
                 response.Message = success.Item2;
                 response.Success= success.Item1;
             }
@@ -293,6 +293,7 @@ namespace BusinessLogicLayer.Infrastructure
                     JobTitle = x.JobTitle,  
                     WorkingStatusId = x.WorkingStatusId,
                     Rating = x.Rating,  
+                    Skill = x.Skill,
                     CompletedJobsCount = x.CompletedJobsCount 
                 }).ToList();
                 if (workingModels.Count == 0)

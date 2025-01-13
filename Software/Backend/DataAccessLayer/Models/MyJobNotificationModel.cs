@@ -15,7 +15,8 @@ namespace DataAccessLayer.Models
         public int JobId { get; set; }           
         public string JobTitle { get; set; }    
         public int WorkingStatusId { get; set; } 
-        public decimal Rating { get; set; }    
+        public decimal Rating { get; set; }
+        public string Skill { get; set; }
         public int CompletedJobsCount { get; set; }
     }
 }

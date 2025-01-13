@@ -38,6 +38,8 @@ import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchDetailsViewModel
 import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchScreen
 import hr.foi.air.baufind.ui.screens.JobSearchScreen.JobSearchViewModel
 import hr.foi.air.baufind.ui.screens.LoginScreen.LoginScreen
+import hr.foi.air.baufind.ui.screens.MyJobsScreen.MyJobNotificationDetailScreen
+import hr.foi.air.baufind.ui.screens.MyJobsScreen.MyJobsNotificationsViewModel
 import hr.foi.air.baufind.ui.screens.MyJobsScreen.MyJobsScreen
 import hr.foi.air.baufind.ui.screens.MyJobsScreen.MyJobsScreenNotifications
 import hr.foi.air.baufind.ui.screens.MyJobsScreen.MyJobsViewModel
@@ -71,6 +73,7 @@ class MainActivity : ComponentActivity() {
         val pendingJobsViewModel = PendingJobsViewModel()
         val myJobsViewModel = MyJobsViewModel()
         val jobNotificationViewModel = JobNotificationViewModel()
+        val myJobNotificationViewModel = MyJobsNotificationsViewModel()
 
         requestNotificationPermissions()
 
@@ -205,9 +208,16 @@ class MainActivity : ComponentActivity() {
                             composable("jobSearchDetailsScreen") { JobSearchDetailsScreen(navController, tokenProvider, jobSearchDetailsViewModel) }
                             composable("settingsScreen") { SettingsScreen(navController) }
                             composable("jobNotificationScreen") { JobNotificationScreen(navController, tokenProvider, jobNotificationViewModel ) }
-                            composable("myJobsNotificationScreen") { MyJobsScreenNotifications(navController, tokenProvider, myJobsViewModel) }
+                            composable("myJobsNotificationScreen") { MyJobsScreenNotifications(navController, tokenProvider, myJobNotificationViewModel) }
 
+                            composable("myJobNotificationDetailScreen/{jobID}",
+                                arguments = listOf(navArgument("jobID") { type = NavType.IntType })
+                            ) { backStackEntry ->
+                                val position = backStackEntry.arguments?.getInt("jobID")
 
+                                MyJobNotificationDetailScreen(navController,tokenProvider,myJobNotificationViewModel, position!!)
+
+                            }
 
                         }
                     }
