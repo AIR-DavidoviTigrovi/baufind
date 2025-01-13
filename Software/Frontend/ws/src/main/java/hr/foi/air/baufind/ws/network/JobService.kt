@@ -1,10 +1,12 @@
 package hr.foi.air.baufind.ws.network
 
 import hr.foi.air.baufind.ws.request.CallForWorkingBody
+import hr.foi.air.baufind.ws.request.ConfirmWorkerRequest
 import hr.foi.air.baufind.ws.request.JobCreateBody
 import hr.foi.air.baufind.ws.request.WorkerRequestJoinBody
 import hr.foi.air.baufind.ws.response.CallForWorkingResponse
 import hr.foi.air.baufind.ws.response.CheckJobNotificationResponse
+import hr.foi.air.baufind.ws.response.ConfirmWorkerResponse
 import hr.foi.air.baufind.ws.response.JobCreateResponse
 import hr.foi.air.baufind.ws.response.JobResponse
 import hr.foi.air.baufind.ws.response.JobsForCurrentUserResponse
@@ -45,4 +47,7 @@ interface JobService {
 
     @GET("/jobs/getMyJobNotifications")
     suspend fun getMyJobNotifications(): MyJobNotificationResponse
+
+    @PUT("/jobs/confirmWorker")
+    suspend fun confirmWorker( @Body request: ConfirmWorkerRequest): ConfirmWorkerResponse
 }

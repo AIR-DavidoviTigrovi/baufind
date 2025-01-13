@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -25,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,14 +48,33 @@ fun MyJobNotificationDetailScreen(
 ){
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val isLoading by viewModel.isLoading
+    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarColor = if (viewModel.success) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+    SnackbarHost(
+        hostState = SnackbarHostState(),
+        modifier = Modifier.padding(16.dp),
+        snackbar = { data ->
+            Snackbar(
+                snackbarData = data,
+                containerColor = snackbarColor,
+                contentColor = Color.White
+            )
+        }
+    )
+
+
     LaunchedEffect(currentBackStackEntry) {
         viewModel.clearData()
         viewModel.tokenProvider = tokenProvider
     }
+
+    LaunchedEffect(viewModel.snackbarMessage.value) {
+        val message = viewModel.snackbarMessage.value
+        if (message.isNotEmpty()) {
+            snackbarHostState.showSnackbar(message)
+        }
+    }
     Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = remember { SnackbarHostState() })
-        },
         topBar = {
             CenterAlignedTopAppBar(
                 modifier = Modifier.fillMaxWidth(),
@@ -125,12 +146,27 @@ fun MyJobNotificationDetailScreen(
                                     navController.navigate("reviewsScreen/${notification.workerId}")
                                 },
                                 onConfirmClick = {
+                                    viewModel.confirmWorker(
+                                        tokenProvider,
+                                        notification.workerId,
+                                        notification.jobId,
+                                        notification.skillId,
+                                        4
+                                    )
+                                    viewModel.clearData()
                                     navController.popBackStack()
                                 },
                                 onDenyClick = {
+                                    viewModel.confirmWorker(
+                                        tokenProvider,
+                                        notification.workerId,
+                                        notification.jobId,
+                                        notification.skillId,
+                                        5
+                                    )
+                                    viewModel.clearData()
                                     navController.popBackStack()
                                 }
-
                             )
                         }
                     }

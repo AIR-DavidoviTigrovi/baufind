@@ -405,13 +405,21 @@ namespace DataAccessLayer.Infrastructure
                     WHERE w_sub.worker_id = w.worker_id
                       AND w_sub.working_status_id = 4
                 ) AS completed_jobs_count
-                    FROM working w
-                    JOIN job j ON w.job_id = j.id
-                    JOIN app_user wk ON w.worker_id = wk.id
-                    JOIN skill s ON w.skill_id = s.id
-                    LEFT JOIN worker_review wr ON wr.working_id = w.id
-                    WHERE j.employer_id = @EmployerId  
-                      AND w.working_status_id = 2;";
+            FROM working w
+            JOIN job j ON w.job_id = j.id
+            JOIN app_user wk ON w.worker_id = wk.id
+            JOIN skill s ON w.skill_id = s.id
+            LEFT JOIN worker_review wr ON wr.working_id = w.id
+            WHERE j.employer_id = @EmployerId
+              AND w.working_status_id = 2
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM working w_other
+                  WHERE w_other.worker_id = w.worker_id
+                    AND w_other.job_id = w.job_id
+                    AND w_other.working_status_id <> 2
+              );
+            ";
 
                 var parameters = new Dictionary<string, object>
         {

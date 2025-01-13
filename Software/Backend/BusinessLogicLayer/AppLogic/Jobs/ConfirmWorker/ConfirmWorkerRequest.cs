@@ -11,7 +11,6 @@ namespace BusinessLogicLayer.AppLogic.Jobs.ConfirmWorker
         public int WorkerId { get; set; }
         public int JobId { get; set; }
         public int SkillId { get; set; }
-
         public int WorkingStatusId { get; set; }
     }
 }
