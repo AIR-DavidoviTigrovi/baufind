@@ -34,6 +34,8 @@ import hr.foi.air.baufind.ui.screens.MyJobsScreen.MyJobsScreen
 import hr.foi.air.baufind.ui.screens.MyJobsScreen.MyJobsViewModel
 import hr.foi.air.baufind.ui.screens.PendingJobsScreen.PendingJobsScreen
 import hr.foi.air.baufind.ui.screens.PendingJobsScreen.PendingJobsViewModel
+import hr.foi.air.baufind.ui.screens.ReviewsScreen.ReviewEmployerScreen
+import hr.foi.air.baufind.ui.screens.ReviewsScreen.ReviewWorkerScreen
 import hr.foi.air.baufind.ui.screens.Settings.SettingsScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.EditProfileScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.ReviewsScreen
@@ -180,6 +182,8 @@ class MainActivity : ComponentActivity() {
                             composable("myJobsScreen") { MyJobsScreen(navController, tokenProvider, myJobsViewModel) }
                             composable("jobSearchDetailsScreen") { JobSearchDetailsScreen(navController, tokenProvider, jobSearchDetailsViewModel) }
                             composable("settingsScreen") { SettingsScreen(navController) }
+                            composable("workerReviewScreen/{worker}") {ReviewWorkerScreen(navController) }
+                            composable("employerReviewScreen/{employer}") { ReviewEmployerScreen() }
 
                         }
                     }

@@ -102,7 +102,7 @@ public class ReviewController : ControllerBase
         }
     }
 
-    // POST: /review/worker/{id}
+    // POST: /review/worker/
     [HttpPost("worker")]
     [Authorize]
     public ActionResult<ReviewResponse> WorkerReview(WorkerReviewRequest reviewRequest)
