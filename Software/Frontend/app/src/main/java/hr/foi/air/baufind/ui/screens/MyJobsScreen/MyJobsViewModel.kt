@@ -14,6 +14,7 @@ class MyJobsViewModel : ViewModel() {
     val jobs = mutableStateOf(emptyList<MyJobModel>())
     val myCreatedJobs = mutableStateOf(emptyList<MyJobModel>())
     val jobsImOn = mutableStateOf(emptyList<MyJobModel>())
+    val myJobNotifications = mutableStateOf(emptyList<MyJobModel>())
 
     var tokenProvider: TokenProvider? = null
     set(value) {

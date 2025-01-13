@@ -15,6 +15,8 @@ namespace DataAccessLayer.AppLogic
         public List<JobNotificationModel> GetPendingInvitations(int workerId);
         public bool InsertWorkerRequestToWorking(int userId, int jobId, int skillId);
 
-        public (bool, string) ConfirmWorker(int JobId, int WorkerId, int SkillId);
+        public (bool, string) ConfirmWorker(int JobId, int WorkerId, int SkillId, int WorkingStatusId);
+
+        public List<MyJobNotificationModel> GetPendingJobApplications(int jobId);
     }
 }

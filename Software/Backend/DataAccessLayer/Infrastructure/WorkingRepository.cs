@@ -3,6 +3,7 @@ using DataAccessLayer.Models;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -317,24 +318,25 @@ namespace DataAccessLayer.Infrastructure
             }
         }
 
-        public (bool, string) ConfirmWorker(int JobId, int WorkerId, int SkillId)
+        public (bool, string) ConfirmWorker(int JobId, int WorkerId, int SkillId, int WorkingStatusId)
         {
             if (!DidWorkerAplyForJob(JobId, WorkerId, SkillId)) return (false,"Radnik nije prijavljen na posao") ;
             try
             {
                 string query = @"
                     UPDATE TOP (1) working
-                    SET working_status_id = 4, worker_id = @WorkerId
+                    SET working_status_id = @WorkingStatusId, worker_id = @WorkerId
                     WHERE job_id = @JobId AND skill_id = @SkillId AND working_status_id = 1  AND worker_id IS NULL;";
                 var parameters = new Dictionary<string, object>
                 {
                     { "@JobId", JobId },
                     {"@WorkerId", WorkerId},
-                    {"@SkillId", SkillId}
+                    {"@SkillId", SkillId},
+                    {"@WorkingStatusId", WorkingStatusId}
                 };
 
                 bool result = _db.ExecuteNonQuery(query, parameters) > 0;
-                return (result, result ? "Radnik uspješno dodan na posao" : "Radnik nije dodan na posao");
+                return (result, result ? "Radnik uspješno ažuriran" : "Radnik nije ažuriran");
             }
             catch (Exception ex)
             {
@@ -353,7 +355,7 @@ namespace DataAccessLayer.Infrastructure
                     WHERE job_id = @JobId
                       AND skill_id = @SkillId
                       AND worker_id = @WorkerId
-                      AND working_status_id = 3
+                      AND working_status_id = 2
                       AND NOT EXISTS (
                         SELECT 1
                         FROM working w2
@@ -377,6 +379,79 @@ namespace DataAccessLayer.Infrastructure
                 Console.WriteLine(ex.Message);
                 return false;
             }
+        }
+
+        public List<MyJobNotificationModel> GetPendingJobApplications(int EmployerId)
+        {
+            var results = new List<MyJobNotificationModel>();
+
+            try
+            {
+                string query = @"
+                SELECT 
+                w.id AS working_id,
+                w.worker_id,
+                wk.name,
+                wk.address,
+                w.skill_id,
+                w.job_id,
+                j.title,
+                w.working_status_id,
+                s.title AS skill_title,
+                wr.rating,
+                (
+                    SELECT COUNT(*)
+                    FROM working w_sub
+                    WHERE w_sub.worker_id = w.worker_id
+                      AND w_sub.working_status_id = 4
+                ) AS completed_jobs_count
+            FROM working w
+            JOIN job j ON w.job_id = j.id
+            JOIN app_user wk ON w.worker_id = wk.id
+            JOIN skill s ON w.skill_id = s.id
+            LEFT JOIN worker_review wr ON wr.working_id = w.id
+            WHERE j.employer_id = @EmployerId
+              AND w.working_status_id = 2
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM working w_other
+                  WHERE w_other.worker_id = w.worker_id
+                    AND w_other.job_id = w.job_id
+                    AND w_other.working_status_id <> 2
+              );
+            ";
+
+                var parameters = new Dictionary<string, object>
+        {
+            { "@EmployerId", EmployerId }
+        };
+
+                using (var reader = _db.ExecuteReader(query, parameters)) 
+                {
+                    while (reader.Read())
+                    {
+                        results.Add(new MyJobNotificationModel
+                        {
+                            WorkerId = reader.GetInt32(reader.GetOrdinal("worker_id")),
+                            Name = reader.GetString(reader.GetOrdinal("name")),
+                            Address = reader.GetString(reader.GetOrdinal("address")),
+                            SkillId = reader.GetInt32(reader.GetOrdinal("skill_id")),
+                            JobId = reader.GetInt32(reader.GetOrdinal("job_id")),
+                            JobTitle = reader.GetString(reader.GetOrdinal("title")),
+                            WorkingStatusId = reader.GetInt32(reader.GetOrdinal("working_status_id")),
+                            Rating = reader.IsDBNull(reader.GetOrdinal("rating")) ? 0 : reader.GetDecimal(reader.GetOrdinal("rating")),  
+                            Skill = reader.GetString(reader.GetOrdinal("skill_title")),
+                            CompletedJobsCount = reader.GetInt32(reader.GetOrdinal("completed_jobs_count"))
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+
+            return results;
         }
 
 

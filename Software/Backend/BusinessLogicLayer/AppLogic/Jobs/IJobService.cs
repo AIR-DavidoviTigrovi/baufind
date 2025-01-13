@@ -18,5 +18,6 @@ namespace BusinessLogicLayer.AppLogic.Jobs
         public SearchMyJobsForUserResponse SearchMyJobsForUser(int userId);
         public WorkerRequestJoinResponse WorkerRequestJoin(WorkerRequestJoinRequest request, int userId);
         public ConfirmWorkerResponse ConfirmWorkerRequest(ConfirmWorkerRequest request);
+        public MyJobsNotificationResponse GetMyJobsNotifications(int EmployerId);
     }
 }
