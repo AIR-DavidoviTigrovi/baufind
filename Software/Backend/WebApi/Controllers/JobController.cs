@@ -5,6 +5,7 @@ using BusinessLogicLayer.AppLogic.Jobs.AddUserToJob;
 using BusinessLogicLayer.AppLogic.Jobs.ConfirmWorker;
 using BusinessLogicLayer.AppLogic.Jobs.GetAllJobsHistory;
 using BusinessLogicLayer.AppLogic.Jobs.GetJob;
+using BusinessLogicLayer.AppLogic.Jobs.GetJobHistory;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
 using BusinessLogicLayer.AppLogic.Jobs.WorkerJoinJob;
 using Microsoft.AspNetCore.Authorization;
@@ -242,9 +243,21 @@ public class JobController : ControllerBase
         }
     }
 
-    /*
-     * [HttpGet("history/{id}")]
-     * [Authorize]
-     * public ActionResult<GetJobHistoryReponse> GetJobHistory()
-     */
+    [HttpGet("history/{id}")]
+    [Authorize]
+    public ActionResult<GetJobHistoryResponse> GetJobHistory(int id)
+    {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+        if (userIdFromJwt == null)
+        {
+            return Unauthorized(new GetJobHistoryResponse()
+            {
+                Error = "Ne možete pristupiti tom resursu!"
+            });
+        }
+        else
+        {
+            return _jobService.GetJobHistory(id, userIdFromJwt.Value);
+        }
+    }
 }

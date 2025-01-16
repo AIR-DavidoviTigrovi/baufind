@@ -6,6 +6,7 @@ using BusinessLogicLayer.AppLogic.Jobs.AddUserToJob;
 using BusinessLogicLayer.AppLogic.Jobs.ConfirmWorker;
 using BusinessLogicLayer.AppLogic.Jobs.GetAllJobsHistory;
 using BusinessLogicLayer.AppLogic.Jobs.GetJob;
+using BusinessLogicLayer.AppLogic.Jobs.GetJobHistory;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
 using BusinessLogicLayer.AppLogic.Jobs.WorkerJoinJob;
 using BusinessLogicLayer.AppLogic.PushNotifications;
@@ -344,5 +345,23 @@ namespace BusinessLogicLayer.Infrastructure
             }
         }
 
+        public GetJobHistoryResponse GetJobHistory(int jobId, int userId)
+            //TODO: validacija je li korisnik bio na tom poslu kao vlasnik ili radnik
+        {
+            var jobData = _jobRepository.GetAllJobsHistory(int jobId);
+
+            if (jobData == null)
+            {
+                return new GetJobHistoryResponse()
+                {
+                    Error = "Posao nije pronađen!"
+                };
+            }
+
+            //convertat podatke
+            //returnat podatke
+
+            return null;
+        }
     }
 }
