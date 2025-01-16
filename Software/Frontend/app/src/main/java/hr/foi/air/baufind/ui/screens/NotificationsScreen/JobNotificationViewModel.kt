@@ -6,17 +6,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import hr.foi.air.baufind.service.JobService.JobService
+import hr.foi.air.baufind.service.ReviewService.ReviewService
 import hr.foi.air.baufind.ws.network.TokenProvider
 import hr.foi.air.baufind.ws.response.JobNotificationResponse
+import hr.foi.air.baufind.ws.response.ReviewNotificationResponse
 import kotlinx.coroutines.launch
 
 class JobNotificationViewModel : ViewModel() {
     var isLoading = mutableStateOf(false)
     var jobs = mutableStateListOf<JobNotificationResponse>()
+    var reviewNotifications = mutableStateListOf<ReviewNotificationResponse>()
     var tokenProvider: TokenProvider? = null
         set(value) {
             field = value
-            value?.let { fetchJobNotifications(it) }
+            value?.let {
+                fetchJobNotifications(it)
+                fetchReviewNotifications(it)
+            }
         }
 
     private fun fetchJobNotifications(tokenProvider: TokenProvider) {
@@ -35,6 +41,16 @@ class JobNotificationViewModel : ViewModel() {
             }
 
             isLoading.value = false
+        }
+    }
+    private fun fetchReviewNotifications(tokenProvider: TokenProvider) {
+        viewModelScope.launch {
+            val reviewService = ReviewService(tokenProvider)
+            val list = reviewService.getReviewNotifications()
+            if (list != null) {
+                reviewNotifications.clear()
+                reviewNotifications.addAll(list)
+            }
         }
     }
 }

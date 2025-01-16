@@ -35,6 +35,7 @@ fun JobNotificationScreen(
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val isLoading by viewModel.isLoading
     val jobs = viewModel.jobs
+    val reviewList = viewModel.reviewNotifications
 
     LaunchedEffect(currentBackStackEntry) {
         viewModel.tokenProvider = tokenProvider
@@ -58,6 +59,9 @@ fun JobNotificationScreen(
             }
             itemsIndexed(reviewJobs.filterNotNull()) { index, job ->
                 JobNotificationCard(job,navController)
+            }
+            itemsIndexed(reviewList) { index, review ->
+                ReviewNotificationCard(review, navController)
             }
         }
     }
