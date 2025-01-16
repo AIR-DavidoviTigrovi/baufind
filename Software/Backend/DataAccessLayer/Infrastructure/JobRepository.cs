@@ -470,5 +470,32 @@ namespace DataAccessLayer.Infrastructure
             }
             return events;
         }
+        /// <summary>
+        /// Provjerava je li korisnik radio na poslu ili bio vlasnik posla kako bi se znalo smije li gledati taj posao u povijesti
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <param name="userId"></param>
+        /// <returns>Boolean</returns>
+        public bool CheckIfUserWorkedOrOwnedJob(int jobId, int userId)
+        {
+            string query = @"
+                SELECT 1
+                FROM job j
+                WHERE j.id = @jobId
+                AND (j.employer_id = @userId OR j.id IN (
+                    SELECT w.job_id FROM working w
+                    WHERE w.worker_id = @userId AND w.working_status_id = 4
+                ));
+            ";
+            var parameters = new Dictionary<string, object>
+            {
+                { "@jobId", jobId },
+                { "@userId", userId }
+            };
+            using(var reader = _db.ExecuteReader(query, parameters))
+            {
+                return reader.Read();
+            }
+        }
     }
 }

@@ -346,8 +346,15 @@ namespace BusinessLogicLayer.Infrastructure
         }
 
         public GetJobHistoryResponse GetJobHistory(int jobId, int userId)
-            //TODO: validacija je li korisnik bio na tom poslu kao vlasnik ili radnik
         {
+            bool isValid = _jobRepository.CheckIfUserWorkedOrOwnedJob(jobId, userId);
+            if (!isValid)
+            {
+                return new GetJobHistoryResponse()
+                {
+                    Error = "Niste sudjelovali na ovom poslu!"
+                };
+            }
             var jobData = _jobRepository.GetJobHistory(jobId);
 
             if (jobData == null)
