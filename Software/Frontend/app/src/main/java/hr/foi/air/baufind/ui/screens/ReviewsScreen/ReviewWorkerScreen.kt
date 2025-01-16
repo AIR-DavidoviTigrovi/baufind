@@ -32,7 +32,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ReviewWorkerScreen(
-    jobName: String,
+    personId: Int,
+    workingId: Int,
     onReviewSubmitted: () -> Unit,
     reviewViewModel: ReviewViewModel,
     context: Context
@@ -77,15 +78,6 @@ fun ReviewWorkerScreen(
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = jobName,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-
         Spacer(modifier = Modifier.height(16.dp))
 
         RatingStars(
@@ -169,7 +161,7 @@ fun ReviewWorkerScreen(
                 if (rating == 0 || comment.length < 35) {
                     showError = true
                 } else {
-                    reviewViewModel.submitWorkerReview(jobName, rating, comment, context)
+                    reviewViewModel.submitWorkerReview(workingId = workingId, rating, comment, context)
                     rating = 0
                     comment = ""
                     reviewViewModel.selectedImages.clear()

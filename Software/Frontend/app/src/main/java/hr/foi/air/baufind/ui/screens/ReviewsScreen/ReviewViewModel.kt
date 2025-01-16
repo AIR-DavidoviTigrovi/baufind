@@ -2,6 +2,8 @@ package hr.foi.air.baufind.ui.screens.ReviewsScreen
 
 import android.content.Context
 import android.net.Uri
+import android.util.Base64
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,27 +12,41 @@ import hr.foi.air.baufind.ws.model.Image
 import hr.foi.air.baufind.ws.request.EmployerReviewRequest
 import hr.foi.air.baufind.ws.request.WorkerReviewRequest
 import kotlinx.coroutines.launch
+import java.io.InputStream
+
 
 class ReviewViewModel(private val reviewService: ReviewService) : ViewModel() {
-    val selectedImages = mutableListOf<Uri>()
+    val selectedImages = mutableStateListOf<Uri>()
+
+    private fun getBytesFromUri(context: Context, uri: Uri): ByteArray? {
+        return try {
+            context.contentResolver.openInputStream(uri)?.use { inputStream: InputStream ->
+                inputStream.readBytes()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
 
     fun submitEmployerReview(
-        jobName: String,
+        jobId: Int,
         rating: Int,
         comment: String,
         context: Context
     ) {
         viewModelScope.launch {
-            val reviewerId = getCurrentUserId(context) // Replace with your implementation
-            val jobId = getJobIdByName(jobName) // Replace with your implementation
 
-            val imageList = selectedImages.map { uri ->
-                // Convert URIs to your Image model
-                Image(uri.toString())
+            val imageList = selectedImages.mapNotNull { uri ->
+                getBytesFromUri(context, uri)?.let { bytes ->
+                    val base64String = Base64.encodeToString(bytes, Base64.NO_WRAP)
+                    Image(
+                        picture = base64String
+                    )
+                }
             }
 
             val request = EmployerReviewRequest(
-                reviewerId = reviewerId,
                 jobId = jobId,
                 comment = comment,
                 rating = rating,
@@ -38,17 +54,10 @@ class ReviewViewModel(private val reviewService: ReviewService) : ViewModel() {
             )
 
             val response = reviewService.submitEmployerReview(request)
-
-            // Handle the response (e.g., show a toast or update UI)
-            if (response?.success == true) {
-                // Success logic here
-            } else {
-                // Failure logic here
-            }
+            Log.d("submitEmployerReview", "Response: $response")
         }
     }
 
-    // Similarly, implement submitWorkerReview for workers
     fun submitWorkerReview(
         workingId: Int,
         rating: Int,
@@ -56,8 +65,14 @@ class ReviewViewModel(private val reviewService: ReviewService) : ViewModel() {
         context: Context
     ) {
         viewModelScope.launch {
-            val imageList = selectedImages.map { uri ->
-                Image(uri.toString())
+
+            val imageList = selectedImages.mapNotNull { uri ->
+                getBytesFromUri(context, uri)?.let { bytes ->
+                    val base64String = Base64.encodeToString(bytes, Base64.NO_WRAP)
+                    Image(
+                        picture = base64String
+                    )
+                }
             }
 
             val request = WorkerReviewRequest(
@@ -68,23 +83,7 @@ class ReviewViewModel(private val reviewService: ReviewService) : ViewModel() {
             )
 
             val response = reviewService.submitWorkerReview(request)
-
-            // Handle the response
-            if (response?.success == true) {
-                // Success logic
-            } else {
-                // Failure logic
-            }
+            Log.d("submitWorkerReview", "Response: $response")
         }
-    }
-
-    private fun getCurrentUserId(context: Context): Int {
-        // Fetch the current user ID from shared preferences or session
-        return 123 // Placeholder
-    }
-
-    private fun getJobIdByName(jobName: String): Int {
-        // Fetch the job ID by its name (e.g., from a database or API)
-        return 456 // Placeholder
     }
 }

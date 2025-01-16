@@ -39,16 +39,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
-import hr.foi.air.baufind.ui.theme.BaufindTheme
 
 @Composable
 fun ReviewEmployerScreen(
-    jobName: String,
-    onReviewSubmitted: () -> Unit,
+    jobId: Int,
     reviewViewModel: ReviewViewModel,
+    onReviewSubmitted: () -> Unit,
     context: Context
 ) {
     var rating by remember { mutableIntStateOf(0) }
@@ -89,14 +87,6 @@ fun ReviewEmployerScreen(
         Text(
             text = "Recenziraj poslodavca",
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = jobName,
-            style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onBackground
         )
 
@@ -183,7 +173,7 @@ fun ReviewEmployerScreen(
                 if (rating == 0 || comment.length < 35) {
                     showError = true
                 } else {
-                    reviewViewModel.submitEmployerReview(jobName, rating, comment, context)
+                    reviewViewModel.submitEmployerReview(jobId, rating, comment, context)
                     rating = 0
                     comment = ""
                     reviewViewModel.selectedImages.clear()
@@ -245,20 +235,5 @@ fun RatingStars(
                     .clickable { onRatingSelected(starIndex) }
             )
         }
-    }
-}
-
-
-@Preview(showBackground = true, name = "EmployerReviewScreen Preview - Light")
-@Composable
-fun EmployerReviewScreenPreview_Light() {
-    val fakeViewModel = ReviewViewModel()
-    BaufindTheme {
-        ReviewEmployerScreen(
-            jobName = "Popravljanje televizora",
-            reviewViewModel = fakeViewModel,
-            context = androidx.compose.ui.platform.LocalContext.current,
-            onReviewSubmitted = {}
-        )
     }
 }
