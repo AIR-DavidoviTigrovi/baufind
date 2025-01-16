@@ -126,7 +126,7 @@ fun MyJobNotificationDetailScreen(
 
                         item {
                             Text(
-                                text = "Skill : $skill",
+                                text = "Uloga : $skill",
                                 modifier = Modifier.padding(8.dp),
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
