@@ -155,9 +155,6 @@ class JobService(){
 
     suspend fun confirmWorker(tokenProvider: TokenProvider, request: ConfirmWorkerRequest): ConfirmWorkerResponse {
         val service = NetworkService.createJobService(tokenProvider)
-
-
-        Log.d("Ovaj detch", request.toString())
         return try {
             service.confirmWorker(request)
         } catch (e: Exception) {

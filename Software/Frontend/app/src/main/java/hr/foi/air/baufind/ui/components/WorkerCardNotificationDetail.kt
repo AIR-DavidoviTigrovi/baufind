@@ -78,8 +78,6 @@ fun WorkerCardNotificationDetail(
                     )
                 }
             }
-
-            // Gumbi sa weight-om za zauzimanje pola prostora
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier

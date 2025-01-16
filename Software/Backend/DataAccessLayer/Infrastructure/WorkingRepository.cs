@@ -321,12 +321,25 @@ namespace DataAccessLayer.Infrastructure
         public (bool, string) ConfirmWorker(int JobId, int WorkerId, int SkillId, int WorkingStatusId)
         {
             if (!DidWorkerAplyForJob(JobId, WorkerId, SkillId)) return (false,"Radnik nije prijavljen na posao") ;
+            Console.WriteLine(JobId + "," + WorkerId + "," + SkillId + "," + WorkingStatusId);
+            
             try
             {
-                string query = @"
+                string query;
+                if(WorkingStatusId == 4)
+                {
+                    query = @"
                     UPDATE TOP (1) working
                     SET working_status_id = @WorkingStatusId, worker_id = @WorkerId
                     WHERE job_id = @JobId AND skill_id = @SkillId AND working_status_id = 1  AND worker_id IS NULL;";
+                }
+                else
+                {
+                    query = @"
+                    UPDATE TOP (1) working
+                    SET working_status_id = @WorkingStatusId
+                    WHERE job_id = @JobId AND skill_id = @SkillId AND worker_id = @WorkerId AND working_status_id = 2";
+                }
                 var parameters = new Dictionary<string, object>
                 {
                     { "@JobId", JobId },
@@ -388,37 +401,39 @@ namespace DataAccessLayer.Infrastructure
             try
             {
                 string query = @"
-                SELECT 
-                w.id AS working_id,
-                w.worker_id,
-                wk.name,
-                wk.address,
-                w.skill_id,
-                w.job_id,
-                j.title,
-                w.working_status_id,
-                s.title AS skill_title,
-                wr.rating,
-                (
-                    SELECT COUNT(*)
-                    FROM working w_sub
-                    WHERE w_sub.worker_id = w.worker_id
-                      AND w_sub.working_status_id = 4
-                ) AS completed_jobs_count
-            FROM working w
-            JOIN job j ON w.job_id = j.id
-            JOIN app_user wk ON w.worker_id = wk.id
-            JOIN skill s ON w.skill_id = s.id
-            LEFT JOIN worker_review wr ON wr.working_id = w.id
-            WHERE j.employer_id = @EmployerId
-              AND w.working_status_id = 2
-              AND NOT EXISTS (
-                  SELECT 1
-                  FROM working w_other
-                  WHERE w_other.worker_id = w.worker_id
-                    AND w_other.job_id = w.job_id
-                    AND w_other.working_status_id <> 2
-              );
+                  SELECT 
+                  w.id AS working_id,
+                  w.worker_id,
+                  wk.name,
+                  wk.address,
+                  w.skill_id,
+                  w.job_id,
+                  j.title,
+                  w.working_status_id,
+                  s.title AS skill_title,
+                  wr.rating,
+                  (
+                      SELECT COUNT(*)
+                      FROM working w_sub
+                      WHERE w_sub.worker_id = w.worker_id
+                        AND w_sub.working_status_id = 4
+                  ) AS completed_jobs_count
+                  FROM working w
+                  JOIN job j ON w.job_id = j.id
+                  JOIN app_user wk ON w.worker_id = wk.id
+                  JOIN skill s ON w.skill_id = s.id
+                  LEFT JOIN worker_review wr ON wr.working_id = w.id
+                  WHERE j.employer_id = @EmployerId
+                      AND w.working_status_id = 2
+                    AND NOT EXISTS (
+                        SELECT 1
+                        FROM working w_other
+                        WHERE w_other.worker_id = w.worker_id
+                          AND w_other.job_id = w.job_id
+                          AND w_other.working_status_id <> 2
+                          AND w_other.working_status_id <> 5
+                )
+;
             ";
 
                 var parameters = new Dictionary<string, object>
