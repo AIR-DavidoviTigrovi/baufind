@@ -324,5 +324,79 @@ namespace DataAccessLayer.Infrastructure
                 return jobs;
             }
         }
+        /// <summary>
+        /// Funkcija dobiva userId korisnika i vraća popis poslova koji su završili a na kojima je korisnik bio radnik ili vlasnik
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>Poslovi imaju: id, naslov, jednu sliku, datum završetka, bool je li vlasnik, </returns>
+        public List<AllJobsHistoryModel> GetAllJobsHistory(int userId)
+        {
+            string query = @"
+                SELECT j.id, j.title, jh.datetime, 
+                        CASE WHEN j.employer_id = @userId THEN 1 ELSE 0 END AS is_owner
+                FROM job j
+                JOIN job_history jh ON j.id = jh.job_id
+                WHERE (j.employer_id = @userId OR j.id IN (
+                    SELECT w.job_id FROM working w
+                    WHERE w.worker_id = @userId
+                ))
+                AND j.job_status_id = 3
+                AND jh.job_status_id = 3;
+            ";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@userId", userId }
+            };
+
+            var jobs = new List<AllJobsHistoryModel>();
+
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                while (reader.Read())
+                {
+                    var jobId = (int)reader["id"];
+                    jobs.Add(new AllJobsHistoryModel
+                    {
+                        JobId = jobId,
+                        Title = (string)reader["title"],
+                        CompletionDate = ((DateTime)reader["datetime"]).ToString("dd-MM-yyyy"),
+                        IsOwner = (int)reader["is_owner"] == 1
+                    });
+                }
+            }
+
+            foreach (var job in jobs)
+            {
+                job.Picture = GetFirstPictureForJob(job.JobId);
+            }
+
+            return jobs;
+        }
+
+        private byte[]? GetFirstPictureForJob(int jobId)
+        {
+            string query = @"
+                SELECT TOP 1 p.picture
+                FROM job_picture jp
+                JOIN picture p ON jp.picture_id = p.id
+                WHERE jp.job_id = @jobId
+                ORDER BY p.id;
+            ";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@jobId", jobId }
+            };
+
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                if (reader.Read())
+                {
+                    return (byte[])reader["picture"];
+                }
+                return null;
+            }
+        }
     }
 }

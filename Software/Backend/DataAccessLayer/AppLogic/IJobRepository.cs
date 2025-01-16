@@ -58,5 +58,12 @@ namespace DataAccessLayer.AppLogic
         /// <param name="userId"></param>
         /// <returns></returns>
         public List<MyJobModel> GetMyJobsForUser(int userId);
+
+        /// <summary>
+        /// Funkcija dobiva userId korisnika i vraća popis poslova koji su završili a na kojima je korisnik bio radnik ili vlasnik
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>Poslovi imaju: id, naslov, jednu sliku, datum završetka, bool je li vlasnik, </returns>
+        public List<AllJobsHistoryModel> GetAllJobsHistory(int userId);
     }
 }

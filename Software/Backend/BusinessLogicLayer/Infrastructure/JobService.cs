@@ -4,6 +4,7 @@ using BusinessLogicLayer.AppLogic.Jobs;
 using BusinessLogicLayer.AppLogic.Jobs.AddJob;
 using BusinessLogicLayer.AppLogic.Jobs.AddUserToJob;
 using BusinessLogicLayer.AppLogic.Jobs.ConfirmWorker;
+using BusinessLogicLayer.AppLogic.Jobs.GetAllJobsHistory;
 using BusinessLogicLayer.AppLogic.Jobs.GetJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
 using BusinessLogicLayer.AppLogic.Jobs.WorkerJoinJob;
@@ -312,6 +313,35 @@ namespace BusinessLogicLayer.Infrastructure
                 response.Message = $"Nešto je pošlo krivo: {ex.Message}";
             }
             return response;
+        }
+
+        public GetAllJobsHistoryResponse GetAllJobsHistory(int userId)
+        {
+            var jobList = _jobRepository.GetAllJobsHistory(userId);
+
+            if (jobList == null)
+            {
+                return new GetAllJobsHistoryResponse()
+                {
+                    Error = "Niste sudjelovali na nijednom poslu!"
+                };
+            }
+            else
+            {
+                var jobHistoryRecords = jobList.Select(job => new AllJobsHistoryRecord
+                {
+                    JobId = job.JobId,
+                    Title = job.Title,
+                    Picture = job.Picture,
+                    CompletionDate = job.CompletionDate,
+                    IsOwner = job.IsOwner
+                }).ToList();
+
+                return new GetAllJobsHistoryResponse()
+                {
+                    Jobs = jobHistoryRecords
+                };
+            }
         }
 
     }

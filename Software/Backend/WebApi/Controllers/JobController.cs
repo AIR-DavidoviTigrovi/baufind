@@ -3,6 +3,7 @@ using BusinessLogicLayer.AppLogic.Jobs;
 using BusinessLogicLayer.AppLogic.Jobs.AddJob;
 using BusinessLogicLayer.AppLogic.Jobs.AddUserToJob;
 using BusinessLogicLayer.AppLogic.Jobs.ConfirmWorker;
+using BusinessLogicLayer.AppLogic.Jobs.GetAllJobsHistory;
 using BusinessLogicLayer.AppLogic.Jobs.GetJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
 using BusinessLogicLayer.AppLogic.Jobs.WorkerJoinJob;
@@ -63,7 +64,7 @@ public class JobController : ControllerBase
         }
 
         var jobs = _jobService.GetJobsForCurrentUser(userIdFromJwt.Value);
-        
+
         return jobs;
     }
 
@@ -89,7 +90,7 @@ public class JobController : ControllerBase
         return job;
 
     }
-    
+
     [HttpPut("CallForWorking")]
     [Authorize]
     public ActionResult<CallWarkerToJobResponse> CallWorkerToJob([FromBody] CallWorkerToJobRequest request)
@@ -219,8 +220,31 @@ public class JobController : ControllerBase
         }
         else
         {
-            return  _jobService.GetMyJobsNotifications((int)userIdFromJwt);
+            return _jobService.GetMyJobsNotifications((int)userIdFromJwt);
         }
     }
 
+    [HttpGet("getHistory")]
+    [Authorize]
+    public ActionResult<GetAllJobsHistoryResponse> GetAllJobsHistory()
+    {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+        if (userIdFromJwt == null)
+        {
+            return Unauthorized(new GetAllJobsHistoryResponse()
+            {
+                Error = "Ne možete pristupiti tom resursu!"
+            });
+        }
+        else
+        {
+            return _jobService.GetAllJobsHistory(userIdFromJwt.Value);
+        }
+    }
+
+    /*
+     * [HttpGet("history/{id}")]
+     * [Authorize]
+     * public ActionResult<GetJobHistoryReponse> GetJobHistory()
+     */
 }
