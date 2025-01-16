@@ -37,13 +37,8 @@ fun MyJobNotificationListItem(
     ){
         Column {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "Id posla: ", modifier = Modifier.weight(0.3f))
-                Text(text = job.jobId.toString(), modifier = Modifier.weight(0.7f))
-
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "Naziv posla: ", modifier = Modifier.weight(0.3f))
-                Text(text = job.jobTitle, modifier = Modifier.weight(0.7f))
+                Text(text = "Naziv posla: ", modifier = Modifier.weight(0.4f))
+                Text(text = job.jobTitle, modifier = Modifier.weight(0.6f))
             }
         }
     }
