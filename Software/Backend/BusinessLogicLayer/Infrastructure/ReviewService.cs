@@ -100,14 +100,17 @@ namespace BusinessLogicLayer.Infrastructure
             }
             foreach (var image in employerReview.Images)
             {
+                byte[] pictureBytes = Convert.FromBase64String(image.Picture);
+
                 var imageModel = new ImageModel
                 {
-                    Picture = image.Picture,
-                    Id = image.Id,
+                    Picture = pictureBytes,
+                    Id = image.Id
                 };
 
                 _reviewRepository.InsertEmployerReviewPicture(newReviewId, imageModel);
             }
+
 
             return newReviewId;
         }
@@ -127,13 +130,15 @@ namespace BusinessLogicLayer.Infrastructure
             {
                 foreach (var image in workerReviewRequest.Images)
                 {
+                    byte[] pictureBytes = Convert.FromBase64String(image.Picture);
+
                     var imageModel = new ImageModel
                     {
-                        Picture = image.Picture,
-                        Id = image.Id,
+                        Picture = pictureBytes,
+                        Id = image.Id
                     };
 
-                    _reviewRepository.InsertEmployerReviewPicture(reviewId, imageModel);
+                    _reviewRepository.InsertWorkerReviewPictures(reviewId, imageModel);
                 }
             }
             return reviewId;
