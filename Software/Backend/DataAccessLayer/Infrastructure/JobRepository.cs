@@ -333,12 +333,12 @@ namespace DataAccessLayer.Infrastructure
         {
             string query = @"
                 SELECT j.id, j.title, jh.datetime, 
-                        CASE WHEN j.employer_id = @userId THEN 1 ELSE 0 END AS is_owner
+                       CASE WHEN j.employer_id = @userId THEN 1 ELSE 0 END AS is_owner
                 FROM job j
                 JOIN job_history jh ON j.id = jh.job_id
                 WHERE (j.employer_id = @userId OR j.id IN (
                     SELECT w.job_id FROM working w
-                    WHERE w.worker_id = @userId
+                    WHERE w.worker_id = @userId AND w.working_status_id = 4
                 ))
                 AND j.job_status_id = 3
                 AND jh.job_status_id = 3;
