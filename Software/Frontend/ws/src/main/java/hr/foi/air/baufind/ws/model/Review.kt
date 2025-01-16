@@ -1,5 +1,7 @@
 package hr.foi.air.baufind.ws.model
 
+import java.util.Date
+
 
 data class Review (
     val reviewId: Int,
@@ -10,6 +12,6 @@ data class Review (
     val jobTitle: String,
     val comment: String,
     val rating: Int,
-    //val reviewDate: Date,
+    val reviewDate: String,
     val pictures: List<Image> = emptyList()
 )
