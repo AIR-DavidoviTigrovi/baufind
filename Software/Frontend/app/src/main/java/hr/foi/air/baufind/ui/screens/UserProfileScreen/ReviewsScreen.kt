@@ -256,7 +256,6 @@ fun ReviewItem(review: Review) {
             .fillMaxWidth(),
         verticalAlignment = Alignment.Top
     ) {
-        // Profile Image
         Box(
             modifier = Modifier
                 .size(50.dp)
@@ -287,18 +286,15 @@ fun ReviewItem(review: Review) {
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // Review Content
         Column(modifier = Modifier.weight(1f)) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Reviewer Name
                 Text(
                     text = review.reviewerName,
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                 )
-                // Date Placeholder
                 Text(
                     text = formatMonthYear(review.reviewDate),
                     style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -307,12 +303,10 @@ fun ReviewItem(review: Review) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Star Rating
             StarRating(rating = review.rating.toDouble())
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Comment
             Text(
                 text = review.comment,
                 style = MaterialTheme.typography.bodyMedium
@@ -409,7 +403,7 @@ fun ReviewItem(review: Review) {
 }
 fun formatMonthYear(dateString: String): String {
     val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault())
-    val outputFormat = SimpleDateFormat("MMMM yyyy", Locale.getDefault()) // Format for Month and Year
+    val outputFormat = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
 
     return try {
         val date: Date = inputFormat.parse(dateString)!!
