@@ -132,7 +132,7 @@ public class ReviewController : ControllerBase
         {
             return StatusCode(500, new ReviewResponse
             {
-                Error = "Došlo je do pogreške prilikom spremanja recenzije."
+                Error = ex.ToString()
             });
         }
     }

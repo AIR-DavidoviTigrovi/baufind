@@ -16,6 +16,7 @@ namespace DataAccessLayer.AppLogic
         public int InsertWorkerReview(WorkerReviewModel workerReview);
         public List<ReviewNotificationModel> GetAllReviewsToComplete(int userId);
 
+        public void InsertWorkerReviewPictures(int workerReviewId, ImageModel imageRecord);
 
     }
 }

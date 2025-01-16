@@ -12,6 +12,8 @@ namespace DataAccessLayer.Models
         public string JobTitle { get; set; } = string.Empty;
         public int PersonId { get; set; }     
         public string PersonName { get; set; } = string.Empty;
-        public string Position { get; set; }  
+        public string Position { get; set; }
+        public int? WorkingId { get; set; } 
+
     }
 }
