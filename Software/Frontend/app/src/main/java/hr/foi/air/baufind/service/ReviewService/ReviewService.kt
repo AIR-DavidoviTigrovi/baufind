@@ -1,10 +1,12 @@
 package hr.foi.air.baufind.service.ReviewService
 
+import android.util.Log
 import hr.foi.air.baufind.ws.network.NetworkService
 import hr.foi.air.baufind.ws.network.TokenProvider
 import hr.foi.air.baufind.ws.request.EmployerReviewRequest
 import hr.foi.air.baufind.ws.request.WorkerReviewRequest
 import hr.foi.air.baufind.ws.response.GetUserReviewsResponse
+import hr.foi.air.baufind.ws.response.ReviewNotificationResponse
 import hr.foi.air.baufind.ws.response.SubmitReviewResponse
 
 class ReviewService(private val tokenProvider: TokenProvider) {
@@ -19,6 +21,7 @@ class ReviewService(private val tokenProvider: TokenProvider) {
     }
     suspend fun submitEmployerReview(request: EmployerReviewRequest): SubmitReviewResponse? {
         return try {
+            Log.d("submitEmployerReview", "Request: $request")
             service.submitEmployerReview(request)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -27,11 +30,19 @@ class ReviewService(private val tokenProvider: TokenProvider) {
     }
     suspend fun submitWorkerReview(request: WorkerReviewRequest): SubmitReviewResponse? {
         return try {
+            Log.d("submitWorkerReview", "REquest: $request")
             service.submitWorkerReview(request)
         } catch (e: Exception) {
             e.printStackTrace()
             null
         }
     }
-
+    suspend fun getReviewNotifications(): List<ReviewNotificationResponse>? {
+        return try {
+            service.getReviewNotifications()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
 }

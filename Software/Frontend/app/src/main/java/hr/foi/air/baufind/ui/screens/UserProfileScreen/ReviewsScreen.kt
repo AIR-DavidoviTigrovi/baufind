@@ -54,6 +54,9 @@ import hr.foi.air.baufind.helpers.PictureHelper
 import hr.foi.air.baufind.service.ReviewService.ReviewService
 import hr.foi.air.baufind.ws.model.Review
 import hr.foi.air.baufind.ws.network.TokenProvider
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -297,7 +300,7 @@ fun ReviewItem(review: Review) {
                 )
                 // Date Placeholder
                 Text(
-                    text = "Date Placeholder",
+                    text = formatMonthYear(review.reviewDate),
                     style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
                 )
             }
@@ -404,5 +407,17 @@ fun ReviewItem(review: Review) {
         }
     }
 }
+fun formatMonthYear(dateString: String): String {
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault())
+    val outputFormat = SimpleDateFormat("MMMM yyyy", Locale.getDefault()) // Format for Month and Year
+
+    return try {
+        val date: Date = inputFormat.parse(dateString)!!
+        outputFormat.format(date)
+    } catch (e: Exception) {
+        "Invalid date"
+    }
+}
+
 
 
