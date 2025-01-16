@@ -36,7 +36,7 @@ fun ReviewNotificationCard(
             if (notification.position == "employer") {
                 Text(text = "Recenzirate poslodavca: ${notification.personName}")
             } else {
-                Text(text = "Recenzirate radnika: ${notification.personName} (skill: ${notification.position})")
+                Text(text = "Recenzirate radnika: ${notification.personName} ")
             }
 
             Spacer(modifier = Modifier.height(8.dp))
