@@ -11,6 +11,6 @@ namespace BusinessLogicLayer.AppLogic.Reviews.ReviewRequest
         public int WorkingId { get; set; }
         public required string Comment { get; set; }
         public required int Rating { get; set; }
-        public List<ImageRecord>? Images { get; set; }
+        public List<ImageStringRecord>? Images { get; set; }
     }
 }
