@@ -65,5 +65,7 @@ namespace DataAccessLayer.AppLogic
         /// <param name="userId"></param>
         /// <returns>Poslovi imaju: id, naslov, jednu sliku, datum završetka, bool je li vlasnik, </returns>
         public List<AllJobsHistoryModel> GetAllJobsHistory(int userId);
+
+        public JobHistoryModel GetJobHistory(int jobId);
     }
 }

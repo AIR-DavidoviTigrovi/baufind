@@ -83,6 +83,42 @@ GROUP BY
 
             };
         }
+        /// <summary>
+        /// Za posao dohvaća imena radnika i imena pozicija koje su imali na tom poslu
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns>Za posao dohvaća imena radnika i imena pozicija koje su imali na tom poslu</returns>
+        public List<WorkerOnJobModel> GetWorkerNameAndSkillTitleForJob(int jobId)
+        {
+            string query = @"
+                SELECT u.name AS WorkerName, s.title AS RoleTitle
+                FROM working w
+                JOIN app_user u ON w.worker_id = u.id
+                JOIN skill s ON w.skill_id = s.id
+                WHERE w.job_id = @jobId
+                AND w.working_status_id = 4;
+            ";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@jobId", jobId }
+            };
+
+            var workers = new List<WorkerOnJobModel>();
+
+            using (var reader = dB.ExecuteReader(query, parameters))
+            {
+                while (reader.Read())
+                {
+                    workers.Add(new WorkerOnJobModel
+                    {
+                        WorkerName = (string)reader["WorkerName"],
+                        RoleTitle = (string)reader["RoleTitle"]
+                    });
+                }
+            }
+            return workers;
+        }
 
     }
 }

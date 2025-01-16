@@ -8,7 +8,7 @@ namespace BusinessLogicLayer.AppLogic.Jobs.GetJobHistory
 {
     public record GetJobHistoryResponse
     {
-        public List<JobHistoryRecord> jobHistory { get; set; }
+        public JobHistoryRecord JobHistory { get; set; }
         public string? Error { get; set; }
     }
 }

@@ -348,7 +348,7 @@ namespace BusinessLogicLayer.Infrastructure
         public GetJobHistoryResponse GetJobHistory(int jobId, int userId)
             //TODO: validacija je li korisnik bio na tom poslu kao vlasnik ili radnik
         {
-            var jobData = _jobRepository.GetAllJobsHistory(int jobId);
+            var jobData = _jobRepository.GetJobHistory(jobId);
 
             if (jobData == null)
             {
@@ -358,10 +358,21 @@ namespace BusinessLogicLayer.Infrastructure
                 };
             }
 
-            //convertat podatke
-            //returnat podatke
+            var jobHistory = new JobHistoryRecord()
+            {
+                Id = jobData.JobId,
+                Title = jobData.JobTitle,
+                Description = jobData.JobDescription,
+                Location = jobData.JobLocation,
+                OwnerName = jobData.JobOwnerName,
+                Workers = jobData.Workers,
+                Events = jobData.Events
+            };
 
-            return null;
+            return new GetJobHistoryResponse()
+            {
+                JobHistory = jobHistory
+            };
         }
     }
 }

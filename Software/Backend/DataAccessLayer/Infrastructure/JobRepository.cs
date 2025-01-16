@@ -398,5 +398,77 @@ namespace DataAccessLayer.Infrastructure
                 return null;
             }
         }
+        /// <summary>
+        /// Dohvaća podatke koji se prikazuju na history-u za jedan posao
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns>Vraća id, naziv, opis i lokaciju posla. Ime vlasnika posla, popis radnika i imena njihovih pozicija. Kronoloski slijed dogadaja posla.</returns>
+        public JobHistoryModel GetJobHistory(int jobId)
+        {
+            string query = @"
+                SELECT j.id as JobId, j.title as JobTitle, j.description as JobDescription, j.location as JobLocation, u.name as JobOwnerName
+                FROM job j
+                JOIN app_user u ON j.employer_id = u.id
+                WHERE j.id = @jobId;
+            ";
+            var parameters = new Dictionary<string, object>
+            {
+                { "@jobId", jobId }
+            };
+
+            JobHistoryModel job = new JobHistoryModel();
+
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                if (reader.Read())
+                {
+                    job.JobId = (int)reader["JobId"];
+                    job.JobTitle = (string)reader["JobTitle"];
+                    job.JobDescription = (string)reader["JobDescription"];
+                    job.JobLocation = (string)reader["JobLocation"];
+                    job.JobOwnerName = (string)reader["JobOwnerName"];
+                }
+            }
+            WorkerRepository _workerRepository = new WorkerRepository(_db);
+            job.Workers = _workerRepository.GetWorkerNameAndSkillTitleForJob(jobId);
+            job.Events = GetEventsForJob(jobId);
+
+            return job;
+
+
+        }
+        /// <summary>
+        /// Dohvaca kronoloski slijed dogadaja za posao
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns>Dohvaca kronoloski slijed dogadaja za posao</returns>
+        private List<EventModel> GetEventsForJob(int jobId)
+        {
+            string query = @"
+                SELECT js.status, jh.datetime
+                FROM job_history jh
+                JOIN job_status js ON jh.job_status_id = js.id
+                WHERE jh.job_id = @jobId
+                ORDER BY jh.datetime;
+            ";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@jobId", jobId }
+            };
+            var events = new List<EventModel>();
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                while (reader.Read())
+                {
+                    events.Add(new EventModel
+                    {
+                        EventName = (string)reader["status"],
+                        Date = ((DateTime)reader["datetime"]).ToString("dd-MM-yyyy")
+                    });
+                }
+            }
+            return events;
+        }
     }
 }

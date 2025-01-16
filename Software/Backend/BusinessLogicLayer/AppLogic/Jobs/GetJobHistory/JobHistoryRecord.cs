@@ -9,12 +9,12 @@ namespace BusinessLogicLayer.AppLogic.Jobs.GetJobHistory
 {
     public record JobHistoryRecord
     {
-        public int JobId { get; set; }
-        public string JobTitle { get; set; }
-        public string JobDescription { get; set; }
-        public string JobLocation { get; set; }
-        public string JobOwnerName { get; set; }
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string Location { get; set; }
+        public string OwnerName { get; set; }
         public List<WorkerOnJobModel> Workers { get; set; }
-        public List<EventsModel> Events { get; set; }
+        public List<EventModel> Events { get; set; }
     }
 }
