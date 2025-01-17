@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -15,10 +14,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,7 +28,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.gson.Gson
 import hr.foi.air.baufind.navigation.BottomNavigationBar
-import hr.foi.air.baufind.service.PushNotifications.NotificationService
+import hr.foi.air.baufind.service.ReviewService.ReviewService
+import hr.foi.air.baufind.service.ReviewService.ReviewViewModelFactory
+import hr.foi.air.baufind.ui.components.ReviewNotificationViewModel
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobAddSkillsScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobDetailsScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobPositionsLocationScreen
@@ -47,6 +50,9 @@ import hr.foi.air.baufind.ui.screens.NotificationsScreen.JobNotificationScreen
 import hr.foi.air.baufind.ui.screens.NotificationsScreen.JobNotificationViewModel
 import hr.foi.air.baufind.ui.screens.PendingJobsScreen.PendingJobsScreen
 import hr.foi.air.baufind.ui.screens.PendingJobsScreen.PendingJobsViewModel
+import hr.foi.air.baufind.ui.screens.ReviewsScreen.ReviewEmployerScreen
+import hr.foi.air.baufind.ui.screens.ReviewsScreen.ReviewViewModel
+import hr.foi.air.baufind.ui.screens.ReviewsScreen.ReviewWorkerScreen
 import hr.foi.air.baufind.ui.screens.Settings.SettingsScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.EditProfileScreen
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.ReviewsScreen
@@ -56,8 +62,6 @@ import hr.foi.air.baufind.ui.screens.WorkerSearchScreen.WorkerProfileScreen
 import hr.foi.air.baufind.ui.screens.WorkerSearchScreen.WorkerSearchScreen
 import hr.foi.air.baufind.ui.theme.BaufindTheme
 import hr.foi.air.baufind.ws.network.AppTokenProvider
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,6 +78,7 @@ class MainActivity : ComponentActivity() {
         val myJobsViewModel = MyJobsViewModel()
         val jobNotificationViewModel = JobNotificationViewModel()
         val myJobNotificationViewModel = MyJobsNotificationsViewModel()
+        val reviewNotificationsViewModel = ReviewNotificationViewModel()
 
         requestNotificationPermissions()
 
@@ -198,7 +203,7 @@ class MainActivity : ComponentActivity() {
                                 JobRoomScreen(navController,tokenProvider,position!!)
 
                             }
-                            composable("jobDetailsScreen") { JobDetailsScreen(navController, jobViewModel) }
+                            composable("jobDetailsScreen") { JobDetailsScreen(navController, jobViewModel, reviewNotificationsViewModel, tokenProvider) }
                             composable("jobPositionsLocationScreen") { JobPositionsLocationScreen(navController, jobViewModel, tokenProvider) }
                             composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController, jobViewModel, tokenProvider) }
 
@@ -218,6 +223,59 @@ class MainActivity : ComponentActivity() {
                                 MyJobNotificationDetailScreen(navController,tokenProvider,myJobNotificationViewModel, position!!)
 
                             }
+                            composable(
+                                route = "employerReviewScreen/{jobId}",
+                                arguments = listOf(navArgument("jobId") {
+                                    type = NavType.IntType
+                                })
+                            ) { backStackEntry ->
+                                val jobId = backStackEntry.arguments?.getInt("jobId") ?: -1
+                                val context = LocalContext.current
+                                val reviewService = ReviewService(tokenProvider)
+                                val viewModelFactory = ReviewViewModelFactory(reviewService)
+                                val reviewViewModel: ReviewViewModel = viewModel(factory = viewModelFactory)
+
+                                ReviewEmployerScreen(
+                                    jobId = jobId,
+                                    reviewViewModel = reviewViewModel,
+                                    onReviewSubmitted = {
+                                        navController.popBackStack()
+                                    },
+                                    context = context
+                                )
+                            }
+
+                            composable(
+                                route = "workerReviewScreen/{personId}/{workingId}",
+                                arguments = listOf(
+                                    navArgument("personId") {
+                                        type = NavType.IntType
+                                        defaultValue = -1
+                                    },
+                                    navArgument("workingId") {
+                                        type = NavType.IntType
+                                        defaultValue = -1
+                                    }
+                                )
+                            ) { backStackEntry ->
+                                val personId = backStackEntry.arguments?.getInt("personId") ?: -1
+                                val workingId = backStackEntry.arguments?.getInt("workingId") ?: -1
+                                val context = LocalContext.current
+                                val reviewService = ReviewService(tokenProvider)
+                                val viewModelFactory = ReviewViewModelFactory(reviewService)
+                                val reviewViewModel: ReviewViewModel = viewModel(factory = viewModelFactory)
+
+                                ReviewWorkerScreen(
+                                    personId = personId,
+                                    workingId = workingId,
+                                    reviewViewModel = reviewViewModel,
+                                    onReviewSubmitted = {
+                                        navController.popBackStack()
+                                    },
+                                    context = context
+                                )
+                            }
+
 
                         }
                     }
