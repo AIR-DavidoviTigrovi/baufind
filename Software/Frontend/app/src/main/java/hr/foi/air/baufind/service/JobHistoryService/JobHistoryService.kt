@@ -35,12 +35,12 @@ class JobHistoryService {
         }
     }
 
-    suspend fun fetchJobHistoryAsync(tokenProvider: TokenProvider): JobHistoryResponse {
+    suspend fun fetchJobHistoryAsync(tokenProvider: TokenProvider, jobId: Int): JobHistoryResponse {
         val service = NetworkService.createJobService(tokenProvider)
         try{
-            val response = service.getJobHistory()
+            val response = service.getJobHistory(jobId)
             Log.d("Povijest odabranog posla je", response.toString())
-            if(response.error == ""){
+            if(response.error == null){
                 return JobHistoryResponse(
                     true,
                     "",

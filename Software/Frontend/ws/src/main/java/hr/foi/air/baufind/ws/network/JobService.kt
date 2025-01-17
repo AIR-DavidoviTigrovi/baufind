@@ -57,5 +57,5 @@ interface JobService {
     suspend fun getFullJobHistory(): GetFullJobHistoryResponse
 
     @GET("/jobs/history/{id}")
-    suspend fun getJobHistory(): GetJobHistoryResponse
+    suspend fun getJobHistory(@Path("id") id: Int): GetJobHistoryResponse
 }

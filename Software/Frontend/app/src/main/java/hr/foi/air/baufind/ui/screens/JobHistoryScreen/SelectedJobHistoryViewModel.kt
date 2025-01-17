@@ -1,5 +1,6 @@
 package hr.foi.air.baufind.ui.screens.JobHistoryScreen
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,7 +25,8 @@ class SelectedJobHistoryViewModel : ViewModel() {
     private fun loadJobHistory(tokenProvider: TokenProvider) {
         viewModelScope.launch {
             val service = JobHistoryService()
-            val response: JobHistoryResponse = service.fetchJobHistoryAsync(tokenProvider)
+            val response: JobHistoryResponse = service.fetchJobHistoryAsync(tokenProvider, selectedJobId.value!!)
+            Log.d("Povijest odabranog posla je", response.toString())
             success = response.success
             message = response.message
             job.value = response.jobHistory
@@ -35,7 +37,6 @@ class SelectedJobHistoryViewModel : ViewModel() {
         success = false
         message = null
         job.value = null
-        selectedJobId = mutableStateOf<Int?>(null)
     }
 
     fun isLoading() : Boolean{

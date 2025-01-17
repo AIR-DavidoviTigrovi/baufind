@@ -1,5 +1,6 @@
 package hr.foi.air.baufind.ui.screens.JobHistoryScreen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -85,7 +86,7 @@ fun WholeHistoryScreen(
                         date = job.completionDate,
                         onItemClick = {
                             selectedJobHistoryViewModel.selectedJobId.value = job.jobId
-                            //prebacit na ekran
+                            navController.navigate("selectedJobHistoryScreen")
                         }
                     )
                 }
@@ -111,7 +112,7 @@ fun WholeHistoryScreen(
                         date = job.completionDate,
                         onItemClick = {
                             selectedJobHistoryViewModel.selectedJobId.value = job.jobId
-                            //prebacit na ekran
+                            navController.navigate("selectedJobHistoryScreen")
                         }
                     )
                 }

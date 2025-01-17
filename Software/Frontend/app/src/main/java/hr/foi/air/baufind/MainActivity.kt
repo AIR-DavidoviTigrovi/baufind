@@ -35,6 +35,7 @@ import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobAddSkillsScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobDetailsScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobPositionsLocationScreen
 import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobViewModel
+import hr.foi.air.baufind.ui.screens.JobHistoryScreen.SelectedJobHistoryScreen
 import hr.foi.air.baufind.ui.screens.JobHistoryScreen.SelectedJobHistoryViewModel
 import hr.foi.air.baufind.ui.screens.JobHistoryScreen.WholeHistoryScreen
 import hr.foi.air.baufind.ui.screens.JobHistoryScreen.WholeHistoryViewModel
@@ -285,6 +286,7 @@ class MainActivity : ComponentActivity() {
                             }
 
                             composable("wholeHistoryScreen") { WholeHistoryScreen(navController, tokenProvider, wholeHistoryViewModel, selectedJobHistoryViewModel) }
+                            composable("selectedJobHistoryScreen") { SelectedJobHistoryScreen(navController, tokenProvider, selectedJobHistoryViewModel) }
                         }
                     }
                 }
