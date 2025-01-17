@@ -100,7 +100,6 @@ public class UserRepository : IUserRepository
     /// <returns>Ako je uspješno vratiti će UserProfileModel, ako ne onda vraća null.</returns>
     public UserProfileModel GetUserProfile(int id)
     {
-        // Sljedecih nekoliko linija koda vraća podatke potrebne za prikaz profila
         var userProfile = new UserProfileModel
         {
             Id = 0,
@@ -131,7 +130,6 @@ public class UserRepository : IUserRepository
                 userProfile.ProfilePicture = reader["profile_picture"] == DBNull.Value ? null : (byte[])reader["profile_picture"];
             }
         }
-        // Kod za skillsQuery vraća sve skillove povezane s traženim korisnikom.
         string skillsQuery = @"
             SELECT s.id, s.title
             FROM user_skill us
@@ -151,14 +149,30 @@ public class UserRepository : IUserRepository
             userProfile.Skills = skills;
         }
 
-        //reviews
         string reviewsQuery = @"
-        SELECT rating, COUNT(*) as count
-        FROM worker_review wr
-        JOIN working w ON w.id = wr.working_id
-        WHERE w.worker_id = @id
-        AND w.working_status_id = (SELECT id FROM working_status WHERE status = 'Completed')
-        GROUP BY rating;";
+                    SELECT 
+                    'worker' AS review_type,
+                    COUNT(wr.rating) AS total_reviews,
+                    AVG(CAST(wr.rating AS FLOAT)) AS average_rating,
+                    wr.rating AS rating,         
+                    COUNT(*) AS [count]         
+                FROM worker_review wr
+                JOIN working w ON wr.working_id = w.id
+                WHERE w.worker_id = @id
+                GROUP BY wr.rating
+
+                UNION ALL
+
+                SELECT 
+                    'employer' AS review_type,
+                    COUNT(er.rating) AS total_reviews,
+                    AVG(CAST(er.rating AS FLOAT)) AS average_rating,
+                    er.rating AS rating,       
+                    COUNT(*) AS [count]         
+                FROM employer_review er
+                JOIN job j ON er.job_id = j.id
+                WHERE j.employer_id = @id
+                GROUP BY er.rating;";
         using (var reader = _db.ExecuteReader(reviewsQuery, idParameter))
         {
             var totalReviews = 0;

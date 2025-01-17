@@ -1,7 +1,9 @@
 ﻿using BusinessLogicLayer.AppLogic;
 using BusinessLogicLayer.AppLogic.Reviews;
 using BusinessLogicLayer.AppLogic.Reviews.GetUserReviews;
+using BusinessLogicLayer.AppLogic.Reviews.ReviewRequest;
 using DataAccessLayer.AppLogic;
+using DataAccessLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +22,7 @@ namespace BusinessLogicLayer.Infrastructure
             _reviewRepository = reviewRepository;
             _jwtService = jwtService;
         }
+
         public GetUserReviewsResponse GetUserReviews(int userId)
         {
             try
@@ -35,7 +38,7 @@ namespace BusinessLogicLayer.Infrastructure
                         JobTitle = r.JobTitle,
                         Comment = r.Comment,
                         Rating = r.Rating,
-                       // ReviewDate = r.ReviewDate,
+                        ReviewDate = r.ReviewDate,
                         Pictures = r.Pictures
                             .Select(p => new ImageRecord
                             {
@@ -55,7 +58,7 @@ namespace BusinessLogicLayer.Infrastructure
                         JobTitle = r.JobTitle,
                         Comment = r.Comment,
                         Rating = r.Rating,
-                        //ReviewDate = r.ReviewDate,
+                        ReviewDate = r.ReviewDate,
                         Pictures = r.Pictures
                             .Select(p => new ImageRecord
                             {
@@ -78,6 +81,73 @@ namespace BusinessLogicLayer.Infrastructure
                     Error = $"An error occurred while fetching reviews: {ex.Message}"
                 };
             }
+        }
+        public int SaveEmployerReview(EmployerReviewRequest employerReview)
+        {
+
+            var userReviewModel = new EmployerReviewModel
+            {
+                ReviewerId = employerReview.ReviewerId,
+                JobId = employerReview.JobId,
+                Comment = employerReview.Comment,
+                Rating = employerReview.Rating,
+                ReviewDate = DateTime.UtcNow,
+            };
+            int newReviewId = _reviewRepository.InsertEmployerReview(userReviewModel);
+            if (employerReview.Images == null || employerReview.Images.Count == 0)
+            {
+                return newReviewId;
+            }
+            foreach (var image in employerReview.Images)
+            {
+                byte[] pictureBytes = Convert.FromBase64String(image.Picture);
+
+                var imageModel = new ImageModel
+                {
+                    Picture = pictureBytes,
+                    Id = image.Id
+                };
+
+                _reviewRepository.InsertEmployerReviewPicture(newReviewId, imageModel);
+            }
+
+
+            return newReviewId;
+        }
+
+        public int SaveWorkerReview(WorkerReviewRequest workerReviewRequest)
+        {
+            var workerReviewModel = new WorkerReviewModel
+            {
+                WorkingId = workerReviewRequest.WorkingId,
+                Comment = workerReviewRequest.Comment,
+                Rating = workerReviewRequest.Rating,
+                ReviewDate = DateTime.UtcNow
+            };
+
+            int reviewId = _reviewRepository.InsertWorkerReview(workerReviewModel);
+            if (workerReviewRequest.Images != null && workerReviewRequest.Images.Count != 0)
+            {
+                foreach (var image in workerReviewRequest.Images)
+                {
+                    byte[] pictureBytes = Convert.FromBase64String(image.Picture);
+
+                    var imageModel = new ImageModel
+                    {
+                        Picture = pictureBytes,
+                        Id = image.Id
+                    };
+
+                    _reviewRepository.InsertWorkerReviewPictures(reviewId, imageModel);
+                }
+            }
+            return reviewId;
+        }
+        public List<ReviewNotificationModel> GetReviewNotifications(int userId)
+        {
+            var result = _reviewRepository.GetAllReviewsToComplete(userId);
+
+            return result;
         }
     }
 }

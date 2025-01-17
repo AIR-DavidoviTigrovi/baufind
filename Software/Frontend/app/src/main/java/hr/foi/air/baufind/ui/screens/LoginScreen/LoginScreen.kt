@@ -129,6 +129,7 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
                         )
                         if (response.successfulLogin){
                             JwtService.saveJwt(context, response.jwt)
+
                             navController.navigate(afterLoginDestination) {
                                 popUpTo("login") { inclusive = true }
                             }
