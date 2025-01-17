@@ -118,7 +118,9 @@ class MainActivity : ComponentActivity() {
                                 "jobSearchDetailsScreen",
                                 "settingsScreen",
                                 "pendingJobsScreen",
-                                "myJobsScreen"
+                                "myJobsScreen",
+                                "wholeHistoryScreen",
+                                "selectedJobHistoryScreen"
                             )
                         ) {
                             BottomNavigationBar(navController = navController)
