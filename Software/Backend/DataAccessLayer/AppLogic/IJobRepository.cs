@@ -58,5 +58,27 @@ namespace DataAccessLayer.AppLogic
         /// <param name="userId"></param>
         /// <returns></returns>
         public List<MyJobModel> GetMyJobsForUser(int userId);
+
+        /// <summary>
+        /// Funkcija dobiva userId korisnika i vraća popis poslova koji su završili a na kojima je korisnik bio radnik ili vlasnik
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>Poslovi imaju: id, naslov, jednu sliku, datum završetka, bool je li vlasnik, </returns>
+        /// 
+        public List<AllJobsHistoryModel> GetAllJobsHistory(int userId);
+        /// <summary>
+        /// Dohvaća podatke koji se prikazuju na history-u za jedan posao
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns>Vraća id, naziv, opis i lokaciju posla. Ime vlasnika posla, popis radnika i imena njihovih pozicija. Kronoloski slijed dogadaja posla.</returns>
+        public JobHistoryModel GetJobHistory(int jobId);
+
+        /// <summary>
+        /// Provjerava je li korisnik radio na poslu ili bio vlasnik posla kako bi se znalo smije li gledati taj posao u povijesti
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <param name="userId"></param>
+        /// <returns>Boolean</returns>
+        bool CheckIfUserWorkedOrOwnedJob(int jobId, int userId);
     }
 }

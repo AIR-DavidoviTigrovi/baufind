@@ -4,7 +4,9 @@ using BusinessLogicLayer.AppLogic.Jobs;
 using BusinessLogicLayer.AppLogic.Jobs.AddJob;
 using BusinessLogicLayer.AppLogic.Jobs.AddUserToJob;
 using BusinessLogicLayer.AppLogic.Jobs.ConfirmWorker;
+using BusinessLogicLayer.AppLogic.Jobs.GetAllJobsHistory;
 using BusinessLogicLayer.AppLogic.Jobs.GetJob;
+using BusinessLogicLayer.AppLogic.Jobs.GetJobHistory;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
 using BusinessLogicLayer.AppLogic.Jobs.WorkerJoinJob;
 using BusinessLogicLayer.AppLogic.PushNotifications;
@@ -314,5 +316,70 @@ namespace BusinessLogicLayer.Infrastructure
             return response;
         }
 
+        public GetAllJobsHistoryResponse GetAllJobsHistory(int userId)
+        {
+            var jobList = _jobRepository.GetAllJobsHistory(userId);
+
+            if (jobList == null)
+            {
+                return new GetAllJobsHistoryResponse()
+                {
+                    Error = "Niste sudjelovali na nijednom poslu!"
+                };
+            }
+            else
+            {
+                var jobHistoryRecords = jobList.Select(job => new AllJobsHistoryRecord
+                {
+                    JobId = job.JobId,
+                    Title = job.Title,
+                    Picture = job.Picture,
+                    CompletionDate = job.CompletionDate,
+                    IsOwner = job.IsOwner
+                }).ToList();
+
+                return new GetAllJobsHistoryResponse()
+                {
+                    Jobs = jobHistoryRecords
+                };
+            }
+        }
+
+        public GetJobHistoryResponse GetJobHistory(int jobId, int userId)
+        {
+            bool isValid = _jobRepository.CheckIfUserWorkedOrOwnedJob(jobId, userId);
+            if (!isValid)
+            {
+                return new GetJobHistoryResponse()
+                {
+                    Error = "Niste sudjelovali na ovom poslu!"
+                };
+            }
+            var jobData = _jobRepository.GetJobHistory(jobId);
+
+            if (jobData == null)
+            {
+                return new GetJobHistoryResponse()
+                {
+                    Error = "Posao nije pronađen!"
+                };
+            }
+
+            var jobHistory = new JobHistoryRecord()
+            {
+                Id = jobData.JobId,
+                Title = jobData.JobTitle,
+                Description = jobData.JobDescription,
+                Location = jobData.JobLocation,
+                OwnerName = jobData.JobOwnerName,
+                Workers = jobData.Workers,
+                Events = jobData.Events
+            };
+
+            return new GetJobHistoryResponse()
+            {
+                JobHistory = jobHistory
+            };
+        }
     }
 }

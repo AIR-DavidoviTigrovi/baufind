@@ -324,5 +324,178 @@ namespace DataAccessLayer.Infrastructure
                 return jobs;
             }
         }
+        /// <summary>
+        /// Funkcija dobiva userId korisnika i vraća popis poslova koji su završili a na kojima je korisnik bio radnik ili vlasnik
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>Poslovi imaju: id, naslov, jednu sliku, datum završetka, bool je li vlasnik, </returns>
+        public List<AllJobsHistoryModel> GetAllJobsHistory(int userId)
+        {
+            string query = @"
+                SELECT j.id, j.title, jh.datetime, 
+                       CASE WHEN j.employer_id = @userId THEN 1 ELSE 0 END AS is_owner
+                FROM job j
+                JOIN job_history jh ON j.id = jh.job_id
+                WHERE (j.employer_id = @userId OR j.id IN (
+                    SELECT w.job_id FROM working w
+                    WHERE w.worker_id = @userId AND w.working_status_id = 4
+                ))
+                AND j.job_status_id = 3
+                AND jh.job_status_id = 3;
+            ";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@userId", userId }
+            };
+
+            var jobs = new List<AllJobsHistoryModel>();
+
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                while (reader.Read())
+                {
+                    var jobId = (int)reader["id"];
+                    jobs.Add(new AllJobsHistoryModel
+                    {
+                        JobId = jobId,
+                        Title = (string)reader["title"],
+                        CompletionDate = ((DateTime)reader["datetime"]).ToString("dd-MM-yyyy"),
+                        IsOwner = (int)reader["is_owner"] == 1
+                    });
+                }
+            }
+
+            foreach (var job in jobs)
+            {
+                job.Picture = GetFirstPictureForJob(job.JobId);
+            }
+
+            return jobs;
+        }
+
+        private byte[]? GetFirstPictureForJob(int jobId)
+        {
+            string query = @"
+                SELECT TOP 1 p.picture
+                FROM job_picture jp
+                JOIN picture p ON jp.picture_id = p.id
+                WHERE jp.job_id = @jobId
+                ORDER BY p.id;
+            ";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@jobId", jobId }
+            };
+
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                if (reader.Read())
+                {
+                    return (byte[])reader["picture"];
+                }
+                return null;
+            }
+        }
+        /// <summary>
+        /// Dohvaća podatke koji se prikazuju na history-u za jedan posao
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns>Vraća id, naziv, opis i lokaciju posla. Ime vlasnika posla, popis radnika i imena njihovih pozicija. Kronoloski slijed dogadaja posla.</returns>
+        public JobHistoryModel GetJobHistory(int jobId)
+        {
+            string query = @"
+                SELECT j.id as JobId, j.title as JobTitle, j.description as JobDescription, j.location as JobLocation, u.name as JobOwnerName
+                FROM job j
+                JOIN app_user u ON j.employer_id = u.id
+                WHERE j.id = @jobId;
+            ";
+            var parameters = new Dictionary<string, object>
+            {
+                { "@jobId", jobId }
+            };
+
+            JobHistoryModel job = new JobHistoryModel();
+
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                if (reader.Read())
+                {
+                    job.JobId = (int)reader["JobId"];
+                    job.JobTitle = (string)reader["JobTitle"];
+                    job.JobDescription = (string)reader["JobDescription"];
+                    job.JobLocation = (string)reader["JobLocation"];
+                    job.JobOwnerName = (string)reader["JobOwnerName"];
+                }
+            }
+            WorkerRepository _workerRepository = new WorkerRepository(_db);
+            job.Workers = _workerRepository.GetWorkerNameAndSkillTitleForJob(jobId);
+            job.Events = GetEventsForJob(jobId);
+
+            return job;
+
+
+        }
+        /// <summary>
+        /// Dohvaca kronoloski slijed dogadaja za posao
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns>Dohvaca kronoloski slijed dogadaja za posao</returns>
+        private List<EventModel> GetEventsForJob(int jobId)
+        {
+            string query = @"
+                SELECT js.status, jh.datetime
+                FROM job_history jh
+                JOIN job_status js ON jh.job_status_id = js.id
+                WHERE jh.job_id = @jobId
+                ORDER BY jh.datetime;
+            ";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@jobId", jobId }
+            };
+            var events = new List<EventModel>();
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                while (reader.Read())
+                {
+                    events.Add(new EventModel
+                    {
+                        EventName = (string)reader["status"],
+                        Date = ((DateTime)reader["datetime"]).ToString("dd-MM-yyyy")
+                    });
+                }
+            }
+            return events;
+        }
+        /// <summary>
+        /// Provjerava je li korisnik radio na poslu ili bio vlasnik posla kako bi se znalo smije li gledati taj posao u povijesti
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <param name="userId"></param>
+        /// <returns>Boolean</returns>
+        public bool CheckIfUserWorkedOrOwnedJob(int jobId, int userId)
+        {
+            string query = @"
+                SELECT 1
+                FROM job j
+                WHERE j.id = @jobId
+                AND (j.employer_id = @userId OR j.id IN (
+                    SELECT w.job_id FROM working w
+                    WHERE w.worker_id = @userId AND w.working_status_id = 4
+                ));
+            ";
+            var parameters = new Dictionary<string, object>
+            {
+                { "@jobId", jobId },
+                { "@userId", userId }
+            };
+            using(var reader = _db.ExecuteReader(query, parameters))
+            {
+                return reader.Read();
+            }
+        }
     }
 }
