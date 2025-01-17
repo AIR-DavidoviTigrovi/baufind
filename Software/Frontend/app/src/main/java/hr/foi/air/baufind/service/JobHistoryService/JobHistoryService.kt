@@ -10,7 +10,8 @@ class JobHistoryService {
         try{
             val response = service.getFullJobHistory()
             Log.d("Puna povijest poslova je", response.toString())
-            if(response.error == ""){
+            Log.d("Service svih poslova error:", response.error.toString())
+            if(response.error == null){
                 return FullJobHistoryResponse(
                     true,
                     "",

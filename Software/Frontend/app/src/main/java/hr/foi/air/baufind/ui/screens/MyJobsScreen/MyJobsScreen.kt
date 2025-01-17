@@ -79,7 +79,9 @@ fun MyJobsScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { }) { // TODO: odvede na zaslon
+                    IconButton(onClick = {
+                        navController.navigate("wholeHistoryScreen")
+                    }) {
                         Icon(
                             painter = painterResource(R.drawable.baseline_history_24),
                             contentDescription = "History",
