@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -125,6 +126,11 @@ fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobI
 
             Text(text = "Loading...")
         }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.peopleInRoom.clear()
+        }
+    }
 
     }
 }

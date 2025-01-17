@@ -84,10 +84,10 @@ GROUP BY
                 Name = (string)reader["name"],
                 Address = (string)reader["address"],
                 NumOfJobs = (int)reader["numOfJobs"],
-                Skills = (string)reader["skills"],
+                Skills = reader.IsDBNull(reader.GetOrdinal("skills")) ? string.Empty : (string)reader["skills"],
                 AvgRating = reader.IsDBNull(reader.GetOrdinal("avgRating")) ? 0m : (decimal)reader["avgRating"]
-
             };
+
         }
 
     }
