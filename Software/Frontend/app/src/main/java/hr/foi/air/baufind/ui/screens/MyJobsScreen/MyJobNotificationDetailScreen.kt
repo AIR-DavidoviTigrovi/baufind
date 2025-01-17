@@ -32,8 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import hr.foi.air.baufind.ui.components.MyJobNotificationListItem
-import hr.foi.air.baufind.ui.components.WorkerCard
 import hr.foi.air.baufind.ui.components.WorkerCardNotificationDetail
 import hr.foi.air.baufind.ws.model.Worker
 import hr.foi.air.baufind.ws.network.TokenProvider
@@ -126,7 +124,7 @@ fun MyJobNotificationDetailScreen(
 
                         item {
                             Text(
-                                text = "Skill : $skill",
+                                text = "Uloga : $skill",
                                 modifier = Modifier.padding(8.dp),
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold

@@ -38,23 +38,32 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.ui.components.WorkerCard
+import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobViewModel
 import hr.foi.air.baufind.ws.model.Worker
 import hr.foi.air.baufind.ws.network.TokenProvider
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider,skills: MutableList<Int>, jobId : Int) {
-    val viewModel: WorkerSearchViewModel = viewModel()
+fun WorkerSearchScreen(
+    navController: NavController,
+    tokenProvider: TokenProvider,
+    skills: MutableList<Int>,
+    jobId : Int,
+    viewModel: WorkerSearchViewModel,
+    jobViewModel : JobViewModel
+    ) {
     viewModel.tokenProvider.value = tokenProvider
     //Logika za dropdown meni
     /// Preporučeno je za manji broj opcija koristiti chip6
-    var skill by viewModel.skill
+    var skill by viewModel.skillStrings
     var isLoading by remember { mutableStateOf(true) }
     val isExpandedL by viewModel.isExpandedL
     val isExpandedR by viewModel.isExpandedR
@@ -67,12 +76,27 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
     val optionsL = viewModel.optionsL
     val workers by viewModel.filteredWorkers
     val coroutine = rememberCoroutineScope()
-    LaunchedEffect(Unit) {
+
+    LaunchedEffect(viewModel.skillsId.value) {
         isLoading = true
-        viewModel.getAllSkills(skills)
+        Log.e("LaunchedEffect - skillsId", viewModel.skillsId.value.toString())
+
+        if(viewModel.isEmptyList && viewModel.skillsId.value.isEmpty()){
+            viewModel.clearData()
+            jobViewModel.clearData()
+            navController.popBackStack()
+        }
+
+        if (viewModel.skillsId.value.isEmpty() && !viewModel.isEmptyList) {
+            viewModel.skillsId.value = skills
+        }
+
+        viewModel.getAllSkills()
         viewModel.loadWorkers()
         isLoading = false
     }
+
+
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text("Pronađite pozicije ${skill}")
@@ -200,7 +224,7 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
                 ) {
 
                     WorkerCard(worker){
-                        navController.navigate("workersProfileScreen/${jobId}/${worker.id}/${skills.first()}")
+                        navController.navigate("workersProfileScreen/${jobId}/${worker.id}/${viewModel.skillsId.value.first()}")
                     }
                 }
             }
@@ -209,9 +233,4 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun WorkerSearchScreenPreview() {
-    val navController = rememberNavController()
-    WorkerSearchScreen(navController,tokenProvider = object : TokenProvider { override fun getToken(): String? { return null }},mutableListOf(1,2),1)
-}
+

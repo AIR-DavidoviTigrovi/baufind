@@ -2,6 +2,8 @@ package hr.foi.air.baufind.ui.screens.WorkerSearchScreen
 
 import WorkerMock
 import android.util.Log
+import androidx.collection.ObjectList
+import androidx.collection.emptyObjectList
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -12,6 +14,7 @@ import hr.foi.air.baufind.service.WorkerService.CallForWorkingRequest
 import hr.foi.air.baufind.service.WorkerService.CallForWorkingResponse
 import hr.foi.air.baufind.service.WorkerService.IWorkerSkillService
 import hr.foi.air.baufind.service.WorkerService.WorkerSkillService
+import hr.foi.air.baufind.ui.components.Skill
 import hr.foi.air.baufind.ws.model.Worker
 import hr.foi.air.baufind.ws.network.JobService
 import hr.foi.air.baufind.ws.network.TokenProvider
@@ -21,7 +24,10 @@ import kotlinx.coroutines.launch
 
 
 class WorkerSearchViewModel() : ViewModel() {
-    val skill : MutableState<List<String>> = mutableStateOf(emptyList())
+    val skillsId: MutableState<MutableList<Int>> = mutableStateOf(mutableListOf())
+    var skill : MutableState<MutableList<Skill>> = mutableStateOf(mutableListOf())
+    var isEmptyList :  Boolean = false
+    var skillStrings : MutableState<List<String>> = mutableStateOf(emptyList())
     val tokenProvider: MutableState<TokenProvider?> = mutableStateOf(null)
     val isExpandedL: MutableState<Boolean> = mutableStateOf(false)
     val isExpandedR: MutableState<Boolean> = mutableStateOf(false)
@@ -38,17 +44,24 @@ class WorkerSearchViewModel() : ViewModel() {
     val workers: MutableState<List<Worker>> = mutableStateOf(emptyList())
     val filteredWorkers: MutableState<List<Worker>> = mutableStateOf(emptyList())
     private val workersService : IWorkerSkillService = WorkerSkillService()
-    suspend fun getAllSkills (skills: List<Int>){
 
+
+    suspend fun getAllSkills (){
         val skillService = SkillsService(tokenProvider.value!!)
         var skillToFilter = skillService.fetchAllSkills().orEmpty()
+        Log.e("Prije fetchanja: ", skillsId.value.toString())
         if (skillToFilter.isNotEmpty()) {
+            skill.value =mutableListOf()
+            skillStrings.value = emptyList()
             for (i in skillToFilter){
-                if(skills.contains(i.id)){
-                    skill.value += i.title
+                if(skillsId.value.contains(i.id)){
+                    skill.value += Skill(i.id, i.title)
+                    skillStrings.value += i.title
                 }
             }
         }
+        Log.e("Nakon fetchanja: ", skillsId.value.toString())
+
 
     }
     //Funkcija za filtriranje radnika
@@ -73,8 +86,7 @@ class WorkerSearchViewModel() : ViewModel() {
         }
     }
     suspend fun loadWorkers() {
-        Log.e("tokenss", tokenProvider.value.toString())
-        workers.value =  service.getWorkersBySkill(workersSkillBody = WorkersSkillBody(skill.value.toString()),
+        workers.value =  service.getWorkersBySkill(workersSkillBody = WorkersSkillBody(skillStrings.value.toString()),
             tokenProvider = tokenProvider.value!!)
         Log.e("getWorkersBySkill", skill.value.toString())
         filteredWorkers.value = workers.value
@@ -115,6 +127,15 @@ class WorkerSearchViewModel() : ViewModel() {
                 success = false
             )
         }
+    }
+
+    fun clearData(){
+        skill.value =mutableListOf()
+        skillStrings.value = emptyList()
+        isEmptyList = false
+        skillsId.value = mutableListOf()
+        filteredWorkers.value = emptyList()
+        workers.value = emptyList()
     }
 
 }

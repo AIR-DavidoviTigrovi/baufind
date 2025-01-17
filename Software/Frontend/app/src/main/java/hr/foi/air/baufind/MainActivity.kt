@@ -60,6 +60,7 @@ import hr.foi.air.baufind.ui.screens.UserProfileScreen.UserProfileViewModel
 import hr.foi.air.baufind.ui.screens.UserProfileScreen.userProfileScreen
 import hr.foi.air.baufind.ui.screens.WorkerSearchScreen.WorkerProfileScreen
 import hr.foi.air.baufind.ui.screens.WorkerSearchScreen.WorkerSearchScreen
+import hr.foi.air.baufind.ui.screens.WorkerSearchScreen.WorkerSearchViewModel
 import hr.foi.air.baufind.ui.theme.BaufindTheme
 import hr.foi.air.baufind.ws.network.AppTokenProvider
 
@@ -78,7 +79,9 @@ class MainActivity : ComponentActivity() {
         val myJobsViewModel = MyJobsViewModel()
         val jobNotificationViewModel = JobNotificationViewModel()
         val myJobNotificationViewModel = MyJobsNotificationsViewModel()
+        val workerSearchViewModel = WorkerSearchViewModel()
         val reviewNotificationsViewModel = ReviewNotificationViewModel()
+
 
         requestNotificationPermissions()
 
@@ -168,7 +171,7 @@ class MainActivity : ComponentActivity() {
                                 val jobId = backStackEntry.arguments?.getInt("jobId")
 
                                 deserializedList = gson.fromJson(position, Array<Int>::class.java).toMutableList()
-                                WorkerSearchScreen(navController,tokenProvider,deserializedList, jobId!!)
+                                WorkerSearchScreen(navController,tokenProvider,deserializedList, jobId!!, workerSearchViewModel, jobViewModel)
                             }
                             composable(
                                 "workersProfileScreen/{jobId}/{workerId}/{skillId}",
@@ -188,9 +191,9 @@ class MainActivity : ComponentActivity() {
                                     context = this@MainActivity,
                                     tokenProvider = tokenProvider,
                                     id = workerId,
-                                    skills = deserializedList,
                                     jobId = jobId,
-                                    skillId = skillId
+                                    skillId = skillId,
+                                    workerSearchViewModel
                                 )
                             }
 

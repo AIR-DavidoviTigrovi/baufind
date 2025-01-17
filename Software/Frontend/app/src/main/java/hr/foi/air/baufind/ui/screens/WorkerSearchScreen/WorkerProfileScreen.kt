@@ -1,6 +1,7 @@
 package hr.foi.air.baufind.ui.screens.WorkerSearchScreen
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,12 +15,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Phone
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -41,7 +44,6 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import hr.foi.air.baufind.helpers.PictureHelper.Companion.decodeBase64ToByteArray
 import hr.foi.air.baufind.service.UserProfileService.UserProfileService
@@ -60,14 +62,14 @@ fun WorkerProfileScreen(
     context: Context,
     tokenProvider: TokenProvider,
     id: Int,
-    skills: MutableList<Int>,
     jobId : Int,
-    skillId : Int
+    skillId : Int,
+    viewModel: WorkerSearchViewModel
 )  {
     val coroutineScope = rememberCoroutineScope()
     val userProfileService = UserProfileService(tokenProvider)
-    val viewModel: WorkerSearchViewModel = viewModel()
     viewModel.tokenProvider.value = tokenProvider
+    val scrollState = rememberScrollState()
     val userProfile = remember { mutableStateOf<UserProfileResponse?>(null) }
     val isLoading = remember { mutableStateOf(true) }
 
@@ -85,8 +87,10 @@ fun WorkerProfileScreen(
             Column (
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(16.dp)
+                    .verticalScroll(scrollState),
+                horizontalAlignment = Alignment.CenterHorizontally,
+
             ) {
                 Box(
                     modifier = Modifier
@@ -257,9 +261,13 @@ fun WorkerProfileScreen(
                                     )
 
                                     if (response.success) {
-                                        skills.remove(skills.first())
-                                        navController.navigate("workersSearchScreen/${skills}/${jobId}")
-                                    } else {
+                                        viewModel.skillsId.value.remove(skillId)
+                                        viewModel.skillsId.value = viewModel.skillsId.value
+                                        if (viewModel.skillsId.value.isEmpty()) viewModel.isEmptyList = true
+
+                                        navController.popBackStack()
+                                    }
+                                    else {
                                         Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
                                     }
                                 } catch (e: Exception) {
