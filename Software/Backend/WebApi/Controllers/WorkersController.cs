@@ -22,16 +22,30 @@ namespace WebApi.Controllers {
         {
             var userIdFromJwt = HttpContext.Items["UserId"] as int?;
 
+            if (workerIDs == "[]") {
+                return Unauthorized(new GetUserResponse() {
+                    Error = "Ne možete pristupiti tom resursu!"
+                });
+            }
+
             if (userIdFromJwt == null) {
                 return Unauthorized(new GetUserResponse() {
                     Error = "Ne možete pristupiti tom resursu!"
                 });
             }
-            List<int> workerList = workerIDs
-          .Trim('[', ']')  
-          .Split(',')     
-          .Select(int.Parse)
-          .ToList();
+            List<int> workerList;
+            try {
+            workerList = workerIDs
+                .Trim('[', ']')  
+                .Split(',')     
+                .Select(int.Parse)
+                .ToList();
+            } catch {
+                return BadRequest(new GetUserResponse() {
+                    Error = "Neispravan format zahtjeva!"
+                });
+            }
+            
             
             workerList.Add(userIdFromJwt.Value);
             
