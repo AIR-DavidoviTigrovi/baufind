@@ -26,12 +26,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import hr.foi.air.baufind.service.JobRoomService.RoomOwnerState
-import hr.foi.air.baufind.ui.components.PersonInRoomCard
 import hr.foi.air.baufind.ui.components.RoleInJobCard
 import hr.foi.air.baufind.ws.network.TokenProvider
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.newCoroutineContext
-import kotlin.coroutines.coroutineContext
+
 
 @Composable
 fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobID: Int){
@@ -58,7 +56,8 @@ fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobI
                 viewModel.roomSkills.value,
                 navController = navController,
                 peopleInRoom = viewModel.peopleInRoom,
-                jobID
+                jobID,
+                viewModel.jobRoom.value
             )
             if(viewModel.roomOwnerState.value == RoomOwnerState.Employer){
                 when (status) {

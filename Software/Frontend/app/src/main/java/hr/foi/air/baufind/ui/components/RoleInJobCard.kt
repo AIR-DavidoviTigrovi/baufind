@@ -36,12 +36,10 @@ fun RoleInJobCard(
     listOfSkills: List<Skill>,
     navController: NavController,
     peopleInRoom: Map<String, List<String>>,
-    Jobid: Int
+    Jobid: Int,
+    jobRoom: List<JobRoom>
 ) {
     Column {
-
-
-
         for (person in peopleInRoom) {
             Column(modifier = Modifier.padding(top = 16.dp)) {
                 Text(
@@ -51,46 +49,41 @@ fun RoleInJobCard(
                     fontSize = 20.sp
                 )
 
-                val workers = person.value
-                if (workers.isNotEmpty() ) {
-                    workers.forEach { worker ->
-                        if(worker != "Nema radnika")
-                      PersonInRoomCard(workerName = worker, onItemClick = {  })
+                val confirmedWorkers = jobRoom.filter { job ->
+                    job.skillTitle == person.key && job.workingStatus == "Potvrden"
+                }.map { it.workerName }
+
+                if (confirmedWorkers.isNotEmpty()) {
+                    confirmedWorkers.forEach { worker ->
+                        PersonInRoomCard(workerName = worker, onItemClick = { })
                     }
-                }
-
-
-                if (workers.contains("Nema radnika")) {
-                    if (allowedInvitations) {
-                        Button(
-                            modifier = Modifier.padding(6.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = LightPrimary,
-                                contentColor = Color.White
-                            ),
-                            onClick = {
-
-                                for(skill in listOfSkills){
-                                    if(skill.title == person.key) {
-                                        navController.navigate("workersSearchScreen/[${skill.id}]/${Jobid}")
-                                    }
+                } else if (allowedInvitations) {
+                    Button(
+                        modifier = Modifier.padding(6.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = LightPrimary,
+                            contentColor = Color.White
+                        ),
+                        onClick = {
+                            for (skill in listOfSkills) {
+                                if (skill.title == person.key) {
+                                    navController.navigate("workersSearchScreen/[${skill.id}]/${Jobid}")
                                 }
-
                             }
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.add_person_icon),
-                                contentDescription = "Add Worker Icon",
-                                modifier = Modifier.size(24.dp)
-                            )
-
                         }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.add_person_icon),
+                            contentDescription = "Add Worker Icon",
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
                 }
             }
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -100,9 +93,13 @@ fun RoleInJobCardPreview() {
         listOfSkills = listOf(Skill(1, "Električar"), Skill(2, "Vodoinstalater")),
         navController = NavController(LocalContext.current),
         peopleInRoom = mapOf(
-            "Električar" to listOf("John Doe", "Jane Smith"),
-            "Vodoinstalater" to listOf("Nema radnika","Uga buga")
+            "skill koji samo David ima" to listOf("David Matijanić"),
+            "prvi skill" to listOf("Viktor","string", "Mateo Vujica")
         ),
-        19
+        19,
+        listOf(JobRoom(workingId=467, jobId=163, jobTitle="test2", jobStatus="Zapocet", allowWorkerInvite=true, employerId=9, skillId=1, skillTitle="skill koji samo David ima", workerId=1, workerName="David Matijanić", workingStatus="Potvrden"),
+        JobRoom(workingId=468, jobId=163, jobTitle="test2", jobStatus="Zapocet", allowWorkerInvite=true, employerId=9, skillId=1, skillTitle="prvi skill", workerId=6, workerName="Mateo Vujica", workingStatus="Ceka odobrenje poslodavca"),
+    JobRoom(workingId=469, jobId=163, jobTitle="test2", jobStatus="Zapocet", allowWorkerInvite=true, employerId=9, skillId=1, skillTitle="prvi skill", workerId=8, workerName="Viktor", workingStatus="Ceka odobrenje poslodavca"),
+     JobRoom(workingId=470, jobId=163, jobTitle="test2", jobStatus="Zapocet", allowWorkerInvite=true, employerId=9, skillId=4, skillTitle="prvi skill", workerId=18, workerName="string", workingStatus="Ceka odobrenje poslodavca"))
     )
 }
