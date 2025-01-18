@@ -44,7 +44,10 @@ fun RoleInJobCard(
     val roomStructureCount = jobRoom.groupBy { it.skillTitle }.mapValues { entry ->
         entry.value.count { it.workerId == null }
     }
-
+    val peopleIds = jobRoom.mapNotNull { it.workerId }.toMutableList()
+    if(peopleIds.isEmpty()){
+        peopleIds.add(0)
+    }
     Column {
         for (person in peopleInRoom) {
             val skillTitle = person.key
@@ -79,7 +82,7 @@ fun RoleInJobCard(
                             ),
                             onClick = {
                                 listOfSkills.firstOrNull { it.title == skillTitle }?.let { skill ->
-                                    navController.navigate("workersSearchScreen/[${skill.id}]/${Jobid}")
+                                    navController.navigate("workersSearchScreen/[${skill.id}]/${peopleIds}/${Jobid}")
                                 }
                             }
                         ) {

@@ -170,16 +170,24 @@ class MainActivity : ComponentActivity() {
                             }
 
                             var deserializedList = mutableListOf<Int>()
-                            composable("workersSearchScreen/{position}/{jobId}",
+                            var deserializedIDList = mutableListOf<Int>()
+                            composable("workersSearchScreen/{position}/{ids}/{jobId}",
                                 arguments = listOf(navArgument("position") { type = NavType.StringType },
-                                    navArgument("jobId") { type = NavType.IntType }
+                                    navArgument("jobId") { type = NavType.IntType },
+                                    navArgument("ids") { type = NavType.StringType }
                                 )
                                 ) { backStackEntry ->
                                 val position = backStackEntry.arguments?.getString("position")
                                 val jobId = backStackEntry.arguments?.getInt("jobId")
+                                val ids = backStackEntry.arguments?.getString("ids")
 
                                 deserializedList = gson.fromJson(position, Array<Int>::class.java).toMutableList()
-                                WorkerSearchScreen(navController,tokenProvider,deserializedList, jobId!!, workerSearchViewModel, jobViewModel)
+                                if (!ids.isNullOrEmpty()) {
+                                    deserializedIDList = gson.fromJson(ids, Array<Int>::class.java).toMutableList()
+                                } else {
+                                    deserializedIDList = mutableListOf()
+                                }
+                                WorkerSearchScreen(navController,tokenProvider,deserializedList,deserializedIDList, jobId!!, workerSearchViewModel, jobViewModel)
                             }
                             composable(
                                 "workersProfileScreen/{jobId}/{workerId}/{skillId}",

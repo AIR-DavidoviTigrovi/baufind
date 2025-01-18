@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.AppLogic {
     public interface IWorkerRepository {
-        public List<WorkerModel>? GetWorkers(string skill);
+        public List<WorkerModel>? GetWorkers(string skill,string workerIDs);
         /// <summary>
         /// Za posao dohvaća imena radnika i imena pozicija koje su imali na tom poslu
         /// </summary>

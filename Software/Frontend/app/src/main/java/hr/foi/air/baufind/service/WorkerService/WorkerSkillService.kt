@@ -9,10 +9,10 @@ import hr.foi.air.baufind.ws.request.WorkersSkillBody
 import hr.foi.air.baufind.ws.response.WorkersSkillResponse
 
 class WorkerSkillService : IWorkerSkillService {
-    override suspend fun getWorkersBySkill(workersSkillBody: WorkersSkillBody,tokenProvider: TokenProvider): List<Worker> {
+    override suspend fun getWorkersBySkill(ids: String,workersSkillBody: WorkersSkillBody,tokenProvider: TokenProvider): List<Worker> {
         val service = NetworkService.createWorkersService(tokenProvider)
         try {
-            val response = service.getWorkersBySkill(workersSkillBody.title)
+            val response = service.getWorkersBySkill(workersSkillBody.title,ids)
             return response.workerRecords
         }catch (err: Exception){
             err.printStackTrace()

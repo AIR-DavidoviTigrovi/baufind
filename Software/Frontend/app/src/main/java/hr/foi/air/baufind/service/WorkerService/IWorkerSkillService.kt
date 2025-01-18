@@ -8,7 +8,7 @@ import hr.foi.air.baufind.ws.response.WorkersSkillResponse
 
 interface IWorkerSkillService {
 
-    suspend fun getWorkersBySkill(workersSkillBody: WorkersSkillBody, tokenProvider: TokenProvider): List<Worker>
+    suspend fun getWorkersBySkill(ids: String,workersSkillBody: WorkersSkillBody, tokenProvider: TokenProvider): List<Worker>
     suspend fun getWorkerAccount(worker: Worker, tokenProvider: TokenProvider): User
     suspend fun callWorkerToJob(request: CallForWorkingRequest, tokenProvider: TokenProvider):CallForWorkingResponse
 }
