@@ -40,8 +40,13 @@ SELECT
     u.id, 
     u.name, 
     u.address, 
-    COUNT(j.id) AS numOfJobs, 
-    STRING_AGG(s.title, ', ') AS skills,  
+    COUNT(DISTINCT j.id) AS numOfJobs, 
+    STUFF((
+        SELECT ', ' + s2.title
+        FROM user_skill us2
+        JOIN skill s2 ON us2.skill_id = s2.id
+        WHERE us2.user_id = u.id AND s2.title IN ({skills})
+        FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 2, '') AS skills,  
     COALESCE(CAST(AVG(CAST(wr.rating AS DECIMAL(3, 2))) AS DECIMAL(5, 2)), 0.00) AS avgRating
 FROM 
     app_user u
@@ -51,15 +56,16 @@ LEFT JOIN
     job j ON w.job_id = j.id
 LEFT JOIN 
     worker_review wr ON w.id = wr.working_id
-LEFT JOIN 
-    user_skill us ON u.id = us.user_id
-LEFT JOIN 
-    (SELECT DISTINCT id, title
-     FROM skill) s ON us.skill_id = s.id  
 WHERE 
-    s.title IN ({skills}) 
+    EXISTS (
+        SELECT 1
+        FROM user_skill us
+        JOIN skill s ON us.skill_id = s.id
+        WHERE us.user_id = u.id AND s.title = 'prvi skill'
+    )
 GROUP BY 
     u.id, u.name, u.address;
+
 ";
 
             using (var reader = dB.ExecuteReader(query)) {
@@ -78,10 +84,10 @@ GROUP BY
                 Name = (string)reader["name"],
                 Address = (string)reader["address"],
                 NumOfJobs = (int)reader["numOfJobs"],
-                Skills = (string)reader["skills"],
+                Skills = reader.IsDBNull(reader.GetOrdinal("skills")) ? string.Empty : (string)reader["skills"],
                 AvgRating = reader.IsDBNull(reader.GetOrdinal("avgRating")) ? 0m : (decimal)reader["avgRating"]
-
             };
+
         }
         /// <summary>
         /// Za posao dohvaća imena radnika i imena pozicija koje su imali na tom poslu
