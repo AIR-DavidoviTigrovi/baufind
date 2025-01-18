@@ -57,7 +57,8 @@ fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobI
                 navController = navController,
                 peopleInRoom = viewModel.peopleInRoom,
                 jobID,
-                viewModel.jobRoom.value
+                viewModel.jobRoom.value,
+                viewModel.roomOwnerState.value!!
             )
             if(viewModel.roomOwnerState.value == RoomOwnerState.Employer){
                 when (status) {

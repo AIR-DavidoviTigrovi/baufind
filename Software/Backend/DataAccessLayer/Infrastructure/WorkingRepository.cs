@@ -32,22 +32,8 @@ namespace DataAccessLayer.Infrastructure
                 return (false, $"Skill {skillId} nije potreban za vaš posao.");
             }
             string query = @"
-        WITH CTE AS (
-    SELECT TOP (1) w.id
-    FROM working w
-    JOIN skill s ON w.skill_id = s.id
-    WHERE 
-        w.job_id = @jobId
-        AND s.id = @skillId
-        AND w.worker_id IS  NULL
-    ORDER BY w.id 
-)
-UPDATE working
-SET 
-    worker_id = @workerId,  
-    working_status_id = 2  
-WHERE id IN (SELECT id FROM CTE);
-";
+        INSERT INTO Working (worker_id, skill_id, job_id, working_status_id)
+        VALUES (@workerId, @skillId,@jobId, 3);";
 
             var parameters = new Dictionary<string, object>
                 {
