@@ -232,6 +232,11 @@ fun WorkerSearchScreen(
             }
         }
     }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.clearData()
+        }
+    }
 
 }
 

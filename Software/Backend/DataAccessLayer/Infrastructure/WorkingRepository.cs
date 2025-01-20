@@ -468,7 +468,49 @@ namespace DataAccessLayer.Infrastructure
 
             return results;
         }
+        public bool IsWorkerInvitedToJob(int WorkerId, int JobId)
+        {
+            string query = @"
+                SELECT TOP (1) *
+                    FROM working
+                    WHERE job_id = @JobId AND worker_id = @WorkerId;";
 
+            var parameters = new Dictionary<string, object>
+            {
+                { "@WorkerId", WorkerId },
+                { "@JobId", JobId }
+            };
 
+            try
+            {
+                var result = _db.ExecuteScalar(query, parameters);
+                return Convert.ToInt32(result) > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                return false;
+            }
+        }
+
+        public (bool, string) WorkerConfirmJob(int JobId, int WorkerId, int WorkingStatusId) {
+            if (!IsWorkerInvitedToJob(WorkerId, JobId)) return (false, "Radnik nije pozvan na posao ili pristupa resursu kojem ne smije");
+            try {
+                string query = @"UPDATE TOP (1) working
+                                SET working_status_id = @WorkingStatusId
+                                WHERE job_id = @JobId AND worker_id = @WorkerId;";
+                var parameters = new Dictionary<string, object>
+                {
+                    { "@JobId", JobId },
+                    {"@WorkerId", WorkerId},
+                    {"@WorkingStatusId", WorkingStatusId}
+                };
+                bool result = _db.ExecuteNonQuery(query, parameters) > 0;
+                return (result, result ? "Radnik uspješno ažuriran" : "Radnik nije ažuriran");
+            } catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+                return (false, "Dogodila se pogreška : " + ex.Message);
+            }
+        }
     }
 }

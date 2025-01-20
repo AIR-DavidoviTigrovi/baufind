@@ -17,6 +17,8 @@ namespace DataAccessLayer.AppLogic
 
         public (bool, string) ConfirmWorker(int JobId, int WorkerId, int SkillId, int WorkingStatusId);
 
+        public (bool, string) WorkerConfirmJob(int JobId, int WorkerId, int WorkingStatusId);
+
         public List<MyJobNotificationModel> GetPendingJobApplications(int jobId);
     }
 }
