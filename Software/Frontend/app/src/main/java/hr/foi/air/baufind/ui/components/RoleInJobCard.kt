@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -41,64 +42,75 @@ fun RoleInJobCard(
     jobRoom: List<JobRoom>,
     roomOwnerState: RoomOwnerState
 ) {
+    // Grouping job rooms by skill title
     val roomStructureCount = jobRoom.groupBy { it.skillTitle }.mapValues { entry ->
         entry.value.count { it.workerId == null }
     }
+
+    // Extracting people IDs from job rooms
     val peopleIds = jobRoom.mapNotNull { it.workerId }.toMutableList()
-    if(peopleIds.isEmpty()){
+    if (peopleIds.isEmpty()) {
         peopleIds.add(0)
     }
+
     Column {
         for (person in peopleInRoom) {
             val skillTitle = person.key
             val requiredCount = roomStructureCount[skillTitle] ?: 0
+
             val confirmedWorkers = jobRoom.filter { job ->
                 job.skillTitle == skillTitle && job.workingStatus == "Potvrden"
             }.map { it.workerName }
 
-            Column(modifier = Modifier.padding(top = 16.dp)) {
-                Text(
-                    text = skillTitle,
-                    modifier = Modifier.padding(6.dp),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
-                )
+            val noWorkerJobs = jobRoom.filter { job ->
+                job.skillTitle == skillTitle && job.workingStatus == "Nema radnika"
+            }
 
-                if (confirmedWorkers.isNotEmpty()) {
-                    confirmedWorkers.forEach { worker ->
-                        PersonInRoomCard(workerName = worker, onItemClick = { })
+            if (confirmedWorkers.isNotEmpty() || noWorkerJobs.isNotEmpty()) {
+                Column(modifier = Modifier.padding(top = 16.dp)) {
+                    Text(
+                        text = skillTitle,
+                        modifier = Modifier.padding(6.dp),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
+
+                    if (confirmedWorkers.isNotEmpty()) {
+                        confirmedWorkers.forEach { worker ->
+                            PersonInRoomCard(workerName = worker, onItemClick = { })
+                        }
                     }
-                }
 
-
-
-                if ( confirmedWorkers.size < requiredCount) {
-                    if (roomOwnerState == RoomOwnerState.Employer || allowedInvitations) {
-                        Button(
-                            modifier = Modifier.padding(6.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = LightPrimary,
-                                contentColor = Color.White
-                            ),
-                            onClick = {
-                                listOfSkills.firstOrNull { it.title == skillTitle }?.let { skill ->
-                                    navController.navigate("workersSearchScreen/[${skill.id}]/${peopleIds}/${Jobid}")
+                    if (noWorkerJobs.isNotEmpty() || confirmedWorkers.size < requiredCount) {
+                        if (roomOwnerState == RoomOwnerState.Employer || allowedInvitations) {
+                            Button(
+                                modifier = Modifier.padding(6.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = LightPrimary,
+                                    contentColor = Color.White
+                                ),
+                                onClick = {
+                                    listOfSkills.firstOrNull { it.title == skillTitle }?.let { skill ->
+                                        navController.navigate("workersSearchScreen/[${skill.id}]/${peopleIds}/${Jobid}")
+                                    }
                                 }
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.add_person_icon),
+                                    contentDescription = "Add Worker Icon",
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Text(text = "Dodaj radnika", modifier = Modifier.padding(start = 8.dp))
                             }
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.add_person_icon),
-                                contentDescription = "Add Worker Icon",
-                                modifier = Modifier.size(24.dp)
-                            )
-
                         }
                     }
                 }
             }
         }
     }
+
 }
+
 
 
 @Preview(showBackground = true)
@@ -109,16 +121,45 @@ fun RoleInJobCardPreview() {
         listOfSkills = listOf(Skill(1, "Električar"), Skill(2, "Vodoinstalater")),
         navController = NavController(LocalContext.current),
         peopleInRoom = mapOf(
-            "skill koji samo David ima" to listOf("David Matijanić","Nema radnika"),
-            "prvi skill" to listOf("marino","Viktor","Nema radnika","Nema radnika")
+            "skill koji samo David ima" to listOf("string1", "string","string1","string"),
+            "prvi skill" to listOf( "Viktor", "Nema radnika","Nema radnika","Nema radnika")
         ),
         19,
-        listOf(JobRoom(workingId=476, jobId=164, jobTitle="ne radi ovo nista", jobStatus="Nema radnika", allowWorkerInvite=true, employerId=19, skillId=1, skillTitle="prvi skill", workerId=null, workerName="Nema radnika", workingStatus="Nema radnika"),
-                JobRoom(workingId=477, jobId=164, jobTitle="ne radi ovo nista", jobStatus="Nema radnika", allowWorkerInvite=true, employerId=19, skillId=1, skillTitle="prvi skill", workerId=null, workerName="Nema radnika", workingStatus="Nema radnika"),
-                JobRoom(workingId=478, jobId=164, jobTitle="ne radi ovo nista", jobStatus="Nema radnika", allowWorkerInvite=true, employerId=19, skillId=4, skillTitle="skill koji samo David ima", workerId=null, workerName="Nema radnika", workingStatus="Nema radnika"),
-    JobRoom(workingId=479, jobId=164, jobTitle="ne radi ovo nista", jobStatus="Nema radnika", allowWorkerInvite=true, employerId=19, skillId=1, skillTitle="prvi skill", workerId=19, workerName="marino", workingStatus="Ima zahtjev koji mora prihvatiti"),
-    JobRoom(workingId=480, jobId=164, jobTitle="ne radi ovo nista", jobStatus="Nema radnika", allowWorkerInvite=true, employerId=19, skillId=1, skillTitle="prvi skill", workerId=8, workerName="Viktor", workingStatus="Ima zahtjev koji mora prihvatiti"),
-    JobRoom(workingId=481, jobId=164, jobTitle="ne radi ovo nista", jobStatus="Nema radnika", allowWorkerInvite=true, employerId=19, skillId=4, skillTitle="skill koji samo David ima", workerId=1, workerName="David Matijanić", workingStatus="Potvrden")
-    ), RoomOwnerState.Worker
+        listOf(
+            JobRoom(
+                workingId = 495, jobId = 176, jobTitle = "stringares", jobStatus = "Nema radnika", allowWorkerInvite = true,
+                employerId = 19, skillId = 4, skillTitle = "skill koji samo David ima", workerId = 9, workerName = "string1", workingStatus = "Potvrden"
+            ),
+            JobRoom(
+                workingId = 496, jobId = 176, jobTitle = "stringares", jobStatus = "Nema radnika", allowWorkerInvite = true,
+                employerId = 19, skillId = 4, skillTitle = "skill koji samo David ima", workerId = null, workerName = "string", workingStatus = "Potvrden"
+            ),
+            JobRoom(
+                workingId = 497, jobId = 176, jobTitle = "stringares", jobStatus = "Nema radnika", allowWorkerInvite = true,
+                employerId = 19, skillId = 1, skillTitle = "prvi skill", workerId = null, workerName = "Nema radnika", workingStatus = "Nema radnika"
+            ),
+            JobRoom(
+                workingId = 498, jobId = 176, jobTitle = "stringares", jobStatus = "Nema radnika", allowWorkerInvite = true,
+                employerId = 19, skillId = 1, skillTitle = "prvi skill", workerId = null, workerName = "Nema radnika", workingStatus = "Nema radnika"
+            ),
+            JobRoom(
+                workingId = 499, jobId = 176, jobTitle = "stringares", jobStatus = "Nema radnika", allowWorkerInvite = true,
+                employerId = 19, skillId = 1, skillTitle = "prvi skill", workerId = null, workerName = "Nema radnika", workingStatus = "Nema radnika"
+            ),
+            JobRoom(
+                workingId = 500, jobId = 176, jobTitle = "stringares", jobStatus = "Nema radnika", allowWorkerInvite = true,
+                employerId = 19, skillId = 4, skillTitle = "skill koji samo David ima", workerId = 9, workerName = "string1", workingStatus = "Ima zahtjev koji mora prihvatiti"
+            ),
+            JobRoom(
+                workingId = 501, jobId = 176, jobTitle = "stringares", jobStatus = "Nema radnika", allowWorkerInvite = true,
+                employerId = 19, skillId = 4, skillTitle = "skill koji samo David ima", workerId = 18, workerName = "string", workingStatus = "Ima zahtjev koji mora prihvatiti"
+            ),
+            JobRoom(
+                workingId = 502, jobId = 176, jobTitle = "stringares", jobStatus = "Nema radnika", allowWorkerInvite = true,
+                employerId = 19, skillId = 1, skillTitle = "prvi skill", workerId = 8, workerName = "Viktor", workingStatus = "Ima zahtjev koji mora prihvatiti"
+            )
+        ),
+        RoomOwnerState.Worker
     )
 }
+

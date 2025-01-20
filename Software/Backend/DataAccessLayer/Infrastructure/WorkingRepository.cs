@@ -495,10 +495,19 @@ namespace DataAccessLayer.Infrastructure
 
         public (bool, string) WorkerConfirmJob(int JobId, int WorkerId, int WorkingStatusId) {
             if (!IsWorkerInvitedToJob(WorkerId, JobId)) return (false, "Radnik nije pozvan na posao ili pristupa resursu kojem ne smije");
+            string query;
             try {
-                string query = @"UPDATE TOP (1) working
-                                SET working_status_id = @WorkingStatusId
-                                WHERE job_id = @JobId AND worker_id = @WorkerId;";
+                if(WorkingStatusId == 5) {
+                    query = @"UPDATE top (1)  working
+                                 SET working_status_id = @WorkingStatusId
+                                    WHERE job_id = @JobId AND worker_id = @WorkerId;";
+                } else {
+                    query = @"UPDATE top (1)  working
+                                 SET working_status_id = @WorkingStatusId,
+		                            worker_id = @WorkerId
+                                    WHERE job_id = @JobId AND worker_id IS NULL; ";
+                }
+                
                 var parameters = new Dictionary<string, object>
                 {
                     { "@JobId", JobId },
