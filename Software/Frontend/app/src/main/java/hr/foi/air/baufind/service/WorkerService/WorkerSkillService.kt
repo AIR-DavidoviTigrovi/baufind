@@ -5,7 +5,9 @@ import hr.foi.air.baufind.ws.model.Worker
 import hr.foi.air.baufind.ws.network.NetworkService
 import hr.foi.air.baufind.ws.network.TokenProvider
 import hr.foi.air.baufind.ws.request.CallForWorkingBody
+import hr.foi.air.baufind.ws.request.ConfirmWorkerRequest
 import hr.foi.air.baufind.ws.request.WorkersSkillBody
+import hr.foi.air.baufind.ws.response.ConfirmWorkerResponse
 import hr.foi.air.baufind.ws.response.WorkersSkillResponse
 
 class WorkerSkillService : IWorkerSkillService {
@@ -44,6 +46,24 @@ class WorkerSkillService : IWorkerSkillService {
                 success = false
             )
         }
+    }
+
+    override suspend fun workerConfirmsJob(
+        request: ConfirmWorkerRequest,
+        tokenProvider: TokenProvider
+    ): ConfirmWorkerResponse {
+        val service = NetworkService.createJobService(tokenProvider)
+        try {
+            val response = service.workerConfirmsJob(request)
+            return ConfirmWorkerResponse(
+                response.success,
+                response.message
+            )
+        }catch (er: Exception){
+            er.printStackTrace()
+            return ConfirmWorkerResponse(false,"Greška prilikom slanja")
+        }
+
     }
 
     override suspend fun getWorkerAccount(worker: Worker,tokenProvider: TokenProvider): User {

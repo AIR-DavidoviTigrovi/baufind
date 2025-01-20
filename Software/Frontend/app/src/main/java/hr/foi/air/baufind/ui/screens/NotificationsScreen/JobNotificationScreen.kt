@@ -52,13 +52,13 @@ fun JobNotificationScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             itemsIndexed(invitedJobs.filterNotNull()) { index, job ->
-                JobNotificationCard(job,navController)
+                JobNotificationCard(job,navController,tokenProvider)
             }
             itemsIndexed(acceptedJobs.filterNotNull()) { index, job ->
-                JobNotificationCard(job,navController)
+                JobNotificationCard(job,navController,tokenProvider)
             }
             itemsIndexed(reviewJobs.filterNotNull()) { index, job ->
-                JobNotificationCard(job,navController)
+                JobNotificationCard(job,navController,tokenProvider)
             }
             itemsIndexed(reviewList) { index, review ->
                 ReviewNotificationCard(review, navController)
