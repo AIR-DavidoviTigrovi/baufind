@@ -205,6 +205,21 @@ public class JobController : ControllerBase
 
         return response;
     }
+    [HttpPut("workerConfirmsJob")]
+    [Authorize]
+    public ActionResult<ConfirmWorkerResponse> WorkerConfirmsJob(ConfirmWorkerRequest request) {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+
+        if (userIdFromJwt == null) {
+            return Unauthorized(new GetJobResponse() {
+                Error = "Ne možete pristupiti tom resursu!"
+            });
+        }
+        request.WorkerId = userIdFromJwt.Value;
+        var response = _jobService.WorkerConfirmsJob(request);
+
+        return response;
+    }
 
     [HttpGet("getMyJobNotifications")]
     [Authorize]

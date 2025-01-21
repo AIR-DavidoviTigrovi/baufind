@@ -23,25 +23,33 @@ namespace DataAccessLayer.Infrastructure {
         /// Implementacija dohvaćanja radnika prema vještini
         /// </summary>
         /// Returns WorkerModel - Radnik koji zadovoljava određenu vještinu i njegove informacije o bivšim poslovima i prosječnoj ocjeni
-         public List<WorkerModel>? GetWorkers(string skill) 
+         public List<WorkerModel>? GetWorkers(string skill,string workerIDs) 
         {
-            // Trim the input string and split it into individual skills
+
             string trimmed = skill.Trim('[', ']');
             var elements = trimmed.Split(',')
-                                  .Select(e => e.Trim()) // Trim spaces around each element
-                                  .Select(e => $"'{e}'"); // Add single quotes around each skill
-
-            // Join the elements into a single string to pass into the SQL query
+                                  .Select(e => e.Trim()) 
+                                  .Select(e => $"'{e}'"); 
             string skills = string.Join(", ", elements);
+            string trimmedIds = workerIDs.Trim('[', ']');
+            var elementsIDs = trimmedIds.Split(',')
+                                  .Select(e => e.Trim())
+                                  .Select(e => $"'{e}'");
+            string workerIDsAssimilated = string.Join(", ", elementsIDs);
 
-            // Construct the SQL query
+
             string query = $@"
 SELECT 
     u.id, 
     u.name, 
     u.address, 
-    COUNT(j.id) AS numOfJobs, 
-    STRING_AGG(s.title, ', ') AS skills,  
+    COUNT(DISTINCT j.id) AS numOfJobs, 
+    STUFF((
+        SELECT ', ' + s2.title
+        FROM user_skill us2
+        JOIN skill s2 ON us2.skill_id = s2.id
+        WHERE us2.user_id = u.id AND s2.title IN ({skills}) -- Replace with actual skills
+        FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 2, '') AS skills,  
     COALESCE(CAST(AVG(CAST(wr.rating AS DECIMAL(3, 2))) AS DECIMAL(5, 2)), 0.00) AS avgRating
 FROM 
     app_user u
@@ -51,15 +59,18 @@ LEFT JOIN
     job j ON w.job_id = j.id
 LEFT JOIN 
     worker_review wr ON w.id = wr.working_id
-LEFT JOIN 
-    user_skill us ON u.id = us.user_id
-LEFT JOIN 
-    (SELECT DISTINCT id, title
-     FROM skill) s ON us.skill_id = s.id  
 WHERE 
-    s.title IN ({skills}) 
+    u.id not in ({workerIDsAssimilated}) 
+    AND EXISTS (
+        SELECT 1
+        FROM user_skill us
+        JOIN skill s ON us.skill_id = s.id
+        WHERE us.user_id = u.id AND s.title in ({skills})
+    )
 GROUP BY 
     u.id, u.name, u.address;
+
+
 ";
 
             using (var reader = dB.ExecuteReader(query)) {
@@ -78,10 +89,10 @@ GROUP BY
                 Name = (string)reader["name"],
                 Address = (string)reader["address"],
                 NumOfJobs = (int)reader["numOfJobs"],
-                Skills = (string)reader["skills"],
+                Skills = reader.IsDBNull(reader.GetOrdinal("skills")) ? string.Empty : (string)reader["skills"],
                 AvgRating = reader.IsDBNull(reader.GetOrdinal("avgRating")) ? 0m : (decimal)reader["avgRating"]
-
             };
+
         }
         /// <summary>
         /// Za posao dohvaća imena radnika i imena pozicija koje su imali na tom poslu

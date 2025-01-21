@@ -19,9 +19,9 @@ namespace BusinessLogicLayer.Infrastructure {
         {
             this._workerRepository = workerRepository;   
         }
-        public GetWorkersResponse GetWorkers(string skill) 
+        public GetWorkersResponse GetWorkers(string skill,string ids) 
         {
-            var query = _workerRepository.GetWorkers(skill);
+            var query = _workerRepository.GetWorkers(skill,ids);
 
             if (query == null || !query.Any()) {
                 return new GetWorkersResponse() {

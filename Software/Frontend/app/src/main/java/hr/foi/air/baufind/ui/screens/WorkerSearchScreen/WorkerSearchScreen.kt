@@ -56,6 +56,7 @@ fun WorkerSearchScreen(
     navController: NavController,
     tokenProvider: TokenProvider,
     skills: MutableList<Int>,
+    listOfIDs: MutableList<Int>,
     jobId : Int,
     viewModel: WorkerSearchViewModel,
     jobViewModel : JobViewModel
@@ -63,6 +64,7 @@ fun WorkerSearchScreen(
     viewModel.tokenProvider.value = tokenProvider
     //Logika za dropdown meni
     /// Preporučeno je za manji broj opcija koristiti chip6
+    viewModel.listofIDs.value = listOfIDs
     var skill by viewModel.skillStrings
     var isLoading by remember { mutableStateOf(true) }
     val isExpandedL by viewModel.isExpandedL
@@ -228,6 +230,11 @@ fun WorkerSearchScreen(
                     }
                 }
             }
+        }
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.clearData()
         }
     }
 

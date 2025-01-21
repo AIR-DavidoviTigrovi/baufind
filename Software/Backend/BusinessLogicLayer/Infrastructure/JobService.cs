@@ -259,6 +259,8 @@ namespace BusinessLogicLayer.Infrastructure
             return response;
         }
 
+
+
         public ConfirmWorkerResponse ConfirmWorkerRequest(ConfirmWorkerRequest request)
         {
             var response = new ConfirmWorkerResponse();
@@ -380,6 +382,20 @@ namespace BusinessLogicLayer.Infrastructure
             {
                 JobHistory = jobHistory
             };
+        }
+
+        public ConfirmWorkerResponse WorkerConfirmsJob(ConfirmWorkerRequest request) {
+            var response = new ConfirmWorkerResponse();
+
+            try {
+                var success = _workingRepository.WorkerConfirmJob(request.JobId, request.WorkerId, request.WorkingStatusId);
+                response.Message = success.Item2;
+                response.Success = success.Item1;
+            } catch (Exception ex) {
+                response.Message = $"Nešto je pošlo krivo: {ex.Message}";
+                response.Success = false;
+            }
+            return response;
         }
     }
 }

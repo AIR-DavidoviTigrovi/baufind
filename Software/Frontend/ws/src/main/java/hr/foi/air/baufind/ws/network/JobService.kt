@@ -53,6 +53,9 @@ interface JobService {
     @PUT("/jobs/confirmWorker")
     suspend fun confirmWorker( @Body request: ConfirmWorkerRequest): ConfirmWorkerResponse
 
+    @PUT("/jobs/workerConfirmsJob")
+    suspend fun workerConfirmsJob( @Body request: ConfirmWorkerRequest): ConfirmWorkerResponse
+
     @GET("/jobs/getHistory")
     suspend fun getFullJobHistory(): GetFullJobHistoryResponse
 

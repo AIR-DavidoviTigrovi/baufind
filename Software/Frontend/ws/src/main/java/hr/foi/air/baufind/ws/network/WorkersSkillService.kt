@@ -8,6 +8,6 @@ import retrofit2.http.Path
 
 interface WorkersSkillService {
 
-    @GET("/workers/{skill}")
-    suspend fun getWorkersBySkill(@Path("skill") skill: String): WorkersSkillResponse
+    @GET("/workers/{skill}/{ids}")
+    suspend fun getWorkersBySkill(@Path("skill") skill: String,@Path ("ids") ids: String): WorkersSkillResponse
 }

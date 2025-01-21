@@ -2,6 +2,7 @@
 
 package hr.foi.air.baufind.ui.screens.NotificationsScreen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -16,24 +17,35 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationCompat.Action
 import androidx.navigation.NavController
+import hr.foi.air.baufind.service.WorkerService.WorkerSkillService
 import hr.foi.air.baufind.ui.components.PrimaryButton
+import hr.foi.air.baufind.ws.network.TokenProvider
+import hr.foi.air.baufind.ws.request.ConfirmWorkerRequest
 import hr.foi.air.baufind.ws.response.JobNotificationResponse
+import kotlinx.coroutines.launch
 
 @Composable
 fun JobNotificationCard(
     job: JobNotificationResponse,
-    navController: NavController
+    navController: NavController,
+    tokenProvider: TokenProvider
 ) {
+    var corutine = rememberCoroutineScope()
+    val context = LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
+
         Column(modifier = Modifier.padding(16.dp)) {
             if(job.working_status_id == 3){
                 Text("Pozvani ste na ste na posao ${job.title}")
@@ -41,8 +53,16 @@ fun JobNotificationCard(
                 Row {
                     Button(
                         onClick = {
-                            navController.navigate("jobRoom/${job.id}")
-                            //Sad tu rješiti logiku za prihvaćanje posla
+                            corutine.launch {
+                                val service = WorkerSkillService()
+                                val response = service.workerConfirmsJob(ConfirmWorkerRequest(0,job.id,0,4),tokenProvider)
+                                if(response.success){
+                                    Toast.makeText(context,"Uspješno ste prihvatili posao",Toast.LENGTH_SHORT).show()
+                                    navController.popBackStack()
+                                    navController.navigate("jobRoom/${job.id}")
+
+                                }
+                            }
                         }
                     ){
                         Text(text = "Prihvati")
@@ -51,7 +71,14 @@ fun JobNotificationCard(
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
                         onClick = {
-                            //Tu rješiti logiku za odbijanje posla
+                            corutine.launch {
+                                val service = WorkerSkillService()
+                                val response = service.workerConfirmsJob(ConfirmWorkerRequest(0,job.id,0,5),tokenProvider)
+                                if(response.success){
+                                    Toast.makeText(context,"Uspješno ste odbili posao",Toast.LENGTH_SHORT).show()
+                                    navController.popBackStack()
+                                }
+                            }
                         },
                         colors = ButtonColors(
                             contentColor = Color.White,

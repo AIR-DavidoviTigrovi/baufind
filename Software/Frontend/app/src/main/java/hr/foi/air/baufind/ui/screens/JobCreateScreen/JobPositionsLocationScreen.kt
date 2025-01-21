@@ -197,7 +197,7 @@ fun JobPositionsLocationScreen(
                         if (response.added) {
                             var positions = gson.toJson(jobViewModel.getPositionsArray())
                             jobViewModel.clearData()
-                            navController.navigate("workersSearchScreen/${positions}/${response.jobId}")
+                            navController.navigate("workersSearchScreen/${positions}/[0]/${response.jobId}")
                         } else {
                             Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
                         }

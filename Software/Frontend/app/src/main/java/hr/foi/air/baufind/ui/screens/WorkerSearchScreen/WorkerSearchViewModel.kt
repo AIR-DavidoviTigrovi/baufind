@@ -27,6 +27,7 @@ class WorkerSearchViewModel() : ViewModel() {
     val skillsId: MutableState<MutableList<Int>> = mutableStateOf(mutableListOf())
     var skill : MutableState<MutableList<Skill>> = mutableStateOf(mutableListOf())
     var isEmptyList :  Boolean = false
+    val listofIDs : MutableState<MutableList<Int>> = mutableStateOf(mutableListOf())
     var skillStrings : MutableState<List<String>> = mutableStateOf(emptyList())
     val tokenProvider: MutableState<TokenProvider?> = mutableStateOf(null)
     val isExpandedL: MutableState<Boolean> = mutableStateOf(false)
@@ -86,7 +87,7 @@ class WorkerSearchViewModel() : ViewModel() {
         }
     }
     suspend fun loadWorkers() {
-        workers.value =  service.getWorkersBySkill(workersSkillBody = WorkersSkillBody(skillStrings.value.toString()),
+        workers.value =  service.getWorkersBySkill(listofIDs.value.toString(),workersSkillBody = WorkersSkillBody(skillStrings.value.toString()),
             tokenProvider = tokenProvider.value!!)
         Log.e("getWorkersBySkill", skill.value.toString())
         filteredWorkers.value = workers.value

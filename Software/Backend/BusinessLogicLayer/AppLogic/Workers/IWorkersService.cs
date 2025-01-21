@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.AppLogic.Workers {
     public interface IWorkersService {
-        public GetWorkersResponse GetWorkers(string skill);
+        public GetWorkersResponse GetWorkers(string skill,string ids);
     }
 }

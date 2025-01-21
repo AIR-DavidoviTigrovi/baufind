@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,12 +26,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import hr.foi.air.baufind.service.JobRoomService.RoomOwnerState
-import hr.foi.air.baufind.ui.components.PersonInRoomCard
 import hr.foi.air.baufind.ui.components.RoleInJobCard
 import hr.foi.air.baufind.ws.network.TokenProvider
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.newCoroutineContext
-import kotlin.coroutines.coroutineContext
+
 
 @Composable
 fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobID: Int){
@@ -57,7 +56,9 @@ fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobI
                 viewModel.roomSkills.value,
                 navController = navController,
                 peopleInRoom = viewModel.peopleInRoom,
-                jobID
+                jobID,
+                viewModel.jobRoom.value,
+                viewModel.roomOwnerState.value!!
             )
             if(viewModel.roomOwnerState.value == RoomOwnerState.Employer){
                 when (status) {
@@ -125,6 +126,11 @@ fun JobRoomScreen(navController: NavController,tokenProvider: TokenProvider,jobI
 
             Text(text = "Loading...")
         }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.peopleInRoom.clear()
+        }
+    }
 
     }
 }
