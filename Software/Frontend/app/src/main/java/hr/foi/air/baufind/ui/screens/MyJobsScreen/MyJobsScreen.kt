@@ -164,7 +164,7 @@ fun MyJobsScreen(
 
                         val job = viewModel.jobsImOn.value[index]
                         MyJobListItem(job = job){
-                            // TODO: odvede na zaslon posla na kojemu radim ili čekam
+                            navController.navigate("jobRoom/${job.id}")
                         }
                     }
                 }

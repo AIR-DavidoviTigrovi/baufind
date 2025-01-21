@@ -86,7 +86,7 @@ namespace BusinessLogicLayer.Infrastructure
             {
                 _pushNotificationService.SendPushNotification("Pozvani ste na posao!", "Pozvani ste na posao! Kliknite ovdje da bi ste vidjeli o kojem poslu se radi.", new Dictionary<string, string>
                 {
-                    { "changeRoute", "pendingJobsScreen" } // TODO: prebaciti na waiting room kad se implementira: $"jobRoom/{request.JobId}"
+                    { "changeRoute", "jobNotificationScreen" } // TODO: prebaciti na waiting room kad se implementira: $"jobRoom/{request.JobId}"
                 }, request.WorkerId);
                 response.Message = "Radnik uspjesno pozvan na posao";
             }
