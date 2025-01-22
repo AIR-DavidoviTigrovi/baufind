@@ -13,6 +13,7 @@ using BusinessLogicLayer.AppLogic.PushNotifications;
 using DataAccessLayer.AppLogic;
 using DataAccessLayer.Models;
 using Google.Apis.Util;
+using System.Net.Http.Headers;
 
 namespace BusinessLogicLayer.Infrastructure
 {
@@ -24,8 +25,9 @@ namespace BusinessLogicLayer.Infrastructure
         private readonly IWorkingRepository _workingRepository;
         private readonly IJwtService _jwtService;
         private readonly IPushNotificationService _pushNotificationService;
+        private readonly IWorkerRepository _workerRepository;
 
-        public JobService(IJobRepository jobRepository, IJwtService jwtService, IPictureRepository pictureRepository, ISkillRepository skillRepository, IWorkingRepository workingRepository, IPushNotificationService pushNotificationService)
+        public JobService(IJobRepository jobRepository, IJwtService jwtService, IPictureRepository pictureRepository, ISkillRepository skillRepository, IWorkingRepository workingRepository, IPushNotificationService pushNotificationService,IWorkerRepository workerRepository)
         {
             _jobRepository = jobRepository;
             _jwtService = jwtService;
@@ -33,6 +35,7 @@ namespace BusinessLogicLayer.Infrastructure
             _skillRepository = skillRepository;
             _workingRepository = workingRepository;
             _pushNotificationService = pushNotificationService;
+            _workerRepository = workerRepository;
         }
 
         public AddJobResponse AddJob(AddJobRequest request, int userId)
@@ -388,14 +391,38 @@ namespace BusinessLogicLayer.Infrastructure
             var response = new ConfirmWorkerResponse();
 
             try {
+                var worker = _workerRepository.GetWorker(request.WorkerId);
+                if (worker == null) {
+                    response.Message = "Radnik nije pronađen!";
+                    response.Success = false;
+                    return response;
+                }
+
                 var success = _workingRepository.WorkerConfirmJob(request.JobId, request.WorkerId, request.WorkingStatusId);
                 response.Message = success.Item2;
                 response.Success = success.Item1;
-                _pushNotificationService.SendPushNotification($"Radnik je potvrdio posao!", $"Radnik je potvrdio posao! Kliknite ovdje da bi ste vidjeli o kojem poslu se radi.", new Dictionary<string, string>
-                {
-                    { "changeRoute", $"jobRoom/{request.JobId}" } // TODO: prebaciti na waiting room kad se implementira: $"jobRoom/{request.JobId}"
-                }, EmployerIdForNotification);
+                if (success.Item1 == false) {
+                    return response;
+                }
 
+                switch (request.WorkingStatusId) {
+                    case 4: {
+                    _pushNotificationService.SendPushNotification($"Radnik {worker.Name} je potvrdio posao!", $"Radnik je potvrdio posao! Kliknite ovdje da bi ste vidjeli o kojem poslu se radi.", new Dictionary<string, string>
+                    {
+                    { "changeRoute", $"jobRoom/{request.JobId}" } 
+                }, EmployerIdForNotification);
+                            break;
+                        }
+                    case 5: {
+                            _pushNotificationService.SendPushNotification($"Radnik {worker.Name} je odbio posao!", $"Radnik je odbio vaš posao :( Kliknite ovdje da bi ste vidjeli o kojem poslu se radi.", new Dictionary<string, string>
+                    {
+                    { "changeRoute", $"jobRoom/{request.JobId}" }
+                    }, EmployerIdForNotification);
+                            break;
+                        }
+                }
+                
+                
                 
             } catch (Exception ex) {
                 response.Message = $"Nešto je pošlo krivo: {ex.Message}";
