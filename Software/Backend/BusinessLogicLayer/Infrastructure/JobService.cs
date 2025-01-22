@@ -86,7 +86,7 @@ namespace BusinessLogicLayer.Infrastructure
             {
                 _pushNotificationService.SendPushNotification("Pozvani ste na posao!", "Pozvani ste na posao! Kliknite ovdje da bi ste vidjeli o kojem poslu se radi.", new Dictionary<string, string>
                 {
-                    { "changeRoute", "pendingJobsScreen" } // TODO: prebaciti na waiting room kad se implementira: $"jobRoom/{request.JobId}"
+                    { "changeRoute", "myJobsScreen" }
                 }, request.WorkerId);
                 response.Message = "Radnik uspjesno pozvan na posao";
             }
@@ -206,7 +206,7 @@ namespace BusinessLogicLayer.Infrastructure
             try
             {
                 var jobs = new List<JobWorkingModel>();
-                int[] statuses = [2, 3, 4];
+                int[] statuses = [2, 3];
                 foreach (var status in statuses)
                 {
                     var foundJobsForStatus = _jobRepository.GetJobWorkingByUserAndStatus(userId, status);
