@@ -14,5 +14,6 @@ namespace DataAccessLayer.AppLogic {
         /// <param name="jobId"></param>
         /// <returns>Za posao dohvaća imena radnika i imena pozicija koje su imali na tom poslu</returns>
         public List<WorkerOnJobModel> GetWorkerNameAndSkillTitleForJob(int jobId);
+        public WorkerModel GetWorker(int WorkerId);
     }
 }

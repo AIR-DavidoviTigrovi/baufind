@@ -72,6 +72,7 @@ fun WorkerSearchScreen(
     val scrollState = rememberScrollState()
     val selectedItemL by viewModel.selectedItemL
     val selectedItemR by viewModel.selectedItemR
+    viewModel.jobID.value = jobId
     val context = LocalContext.current
     // Opcije za dropdown meni
     val optionsR = viewModel.optionsR
@@ -81,7 +82,6 @@ fun WorkerSearchScreen(
 
     LaunchedEffect(viewModel.skillsId.value) {
         isLoading = true
-        Log.e("LaunchedEffect - skillsId", viewModel.skillsId.value.toString())
 
         if(viewModel.isEmptyList && viewModel.skillsId.value.isEmpty()){
             viewModel.clearData()

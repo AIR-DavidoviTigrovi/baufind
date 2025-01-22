@@ -131,5 +131,20 @@ GROUP BY
             return workers;
         }
 
+        public WorkerModel GetWorker(int WorkerId) {
+            string query = @"select name from app_user where id = @WorkerId;";
+            var parameters = new Dictionary<string, object>
+            {
+                { "@WorkerId", WorkerId }
+            };
+            using (var reader = dB.ExecuteReader(query, parameters)) {
+                if (reader.Read()) {
+                    return new WorkerModel {
+                        Name = (string)reader["name"]
+                    };
+                }
+                return null;
+            }
+        }
     }
 }
