@@ -6,6 +6,7 @@ import hr.foi.air.baufind.ws.network.NetworkService
 import hr.foi.air.baufind.ws.network.TokenProvider
 import hr.foi.air.baufind.ws.request.CallForWorkingBody
 import hr.foi.air.baufind.ws.request.ConfirmWorkerRequest
+import hr.foi.air.baufind.ws.request.WorkerConfirmsJobRequest
 import hr.foi.air.baufind.ws.request.WorkersSkillBody
 import hr.foi.air.baufind.ws.response.ConfirmWorkerResponse
 import hr.foi.air.baufind.ws.response.WorkersSkillResponse
@@ -49,7 +50,7 @@ class WorkerSkillService : IWorkerSkillService {
     }
 
     override suspend fun workerConfirmsJob(
-        request: ConfirmWorkerRequest,
+        request: WorkerConfirmsJobRequest,
         tokenProvider: TokenProvider
     ): ConfirmWorkerResponse {
         val service = NetworkService.createJobService(tokenProvider)

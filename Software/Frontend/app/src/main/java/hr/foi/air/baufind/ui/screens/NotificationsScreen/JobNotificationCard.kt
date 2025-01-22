@@ -29,6 +29,7 @@ import hr.foi.air.baufind.service.WorkerService.WorkerSkillService
 import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ws.network.TokenProvider
 import hr.foi.air.baufind.ws.request.ConfirmWorkerRequest
+import hr.foi.air.baufind.ws.request.WorkerConfirmsJobRequest
 import hr.foi.air.baufind.ws.response.JobNotificationResponse
 import kotlinx.coroutines.launch
 
@@ -55,7 +56,7 @@ fun JobNotificationCard(
                         onClick = {
                             corutine.launch {
                                 val service = WorkerSkillService()
-                                val response = service.workerConfirmsJob(ConfirmWorkerRequest(0,job.id,0,4),tokenProvider)
+                                val response = service.workerConfirmsJob(WorkerConfirmsJobRequest(ConfirmWorkerRequest(0,job.id,0,4),job.employer_id),tokenProvider)
                                 if(response.success){
                                     Toast.makeText(context,"Uspješno ste prihvatili posao",Toast.LENGTH_SHORT).show()
                                     navController.popBackStack()
@@ -73,7 +74,7 @@ fun JobNotificationCard(
                         onClick = {
                             corutine.launch {
                                 val service = WorkerSkillService()
-                                val response = service.workerConfirmsJob(ConfirmWorkerRequest(0,job.id,0,5),tokenProvider)
+                                val response = service.workerConfirmsJob(WorkerConfirmsJobRequest(ConfirmWorkerRequest(0,job.id,0,4),job.employer_id),tokenProvider)
                                 if(response.success){
                                     Toast.makeText(context,"Uspješno ste odbili posao",Toast.LENGTH_SHORT).show()
                                     navController.popBackStack()

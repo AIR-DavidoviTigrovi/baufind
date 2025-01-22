@@ -8,6 +8,7 @@ using BusinessLogicLayer.AppLogic.Jobs.GetJob;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobHistory;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
 using BusinessLogicLayer.AppLogic.Jobs.WorkerJoinJob;
+using BusinessLogicLayer.AppLogic.Workers.GetWorkers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -207,16 +208,17 @@ public class JobController : ControllerBase
     }
     [HttpPut("workerConfirmsJob")]
     [Authorize]
-    public ActionResult<ConfirmWorkerResponse> WorkerConfirmsJob(ConfirmWorkerRequest request) {
+    public ActionResult<ConfirmWorkerResponse> WorkerConfirmsJob(WorkerConfirmsJobRequest request) {
         var userIdFromJwt = HttpContext.Items["UserId"] as int?;
-
+        //
+        var EmployerIdForNotificationService = request.EmployerIdForNotification;
         if (userIdFromJwt == null) {
             return Unauthorized(new GetJobResponse() {
                 Error = "Ne možete pristupiti tom resursu!"
             });
         }
-        request.WorkerId = userIdFromJwt.Value;
-        var response = _jobService.WorkerConfirmsJob(request);
+        request.ConfirmWorkerRequest.WorkerId = userIdFromJwt.Value;
+        var response = _jobService.WorkerConfirmsJob(request.ConfirmWorkerRequest, EmployerIdForNotificationService);
 
         return response;
     }

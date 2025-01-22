@@ -21,7 +21,7 @@ namespace DataAccessLayer.Infrastructure
 
         public (bool, string) AddNewWorkingEntry(int workerId, int jobId, int skillId, int userId)
         {
-            if (!ValidateUsersId(userId, jobId))
+            if (!ValidateUsersId(userId, jobId) && !IsAllowedInvites(jobId))
             {
                 Console.WriteLine("Pristup odbijen: Korisnik nije vlasnik posla.");
                 return (false, "Pristup odbijen: Korisnik nije vlasnik posla.");
@@ -99,6 +99,25 @@ namespace DataAccessLayer.Infrastructure
             }
             return false;
         }
+        private bool IsAllowedInvites(int jobId)
+        {
+            string query = @"
+            SELECT allow_worker_invite
+            FROM Job
+            WHERE id = @jobId";
+            var parameters = new Dictionary<string, object>
+            {
+                { "@jobId", jobId }
+            };
+            using (var reader = _db.ExecuteReader(query, parameters))
+            {
+                if (reader.Read())
+                {
+                    return reader.GetBoolean(0);
+                }
+            }
+            return false;
+        }  
 
 
 

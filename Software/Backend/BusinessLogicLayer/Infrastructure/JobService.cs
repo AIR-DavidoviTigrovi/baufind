@@ -384,13 +384,19 @@ namespace BusinessLogicLayer.Infrastructure
             };
         }
 
-        public ConfirmWorkerResponse WorkerConfirmsJob(ConfirmWorkerRequest request) {
+        public ConfirmWorkerResponse WorkerConfirmsJob(ConfirmWorkerRequest request, int EmployerIdForNotification) {
             var response = new ConfirmWorkerResponse();
 
             try {
                 var success = _workingRepository.WorkerConfirmJob(request.JobId, request.WorkerId, request.WorkingStatusId);
                 response.Message = success.Item2;
                 response.Success = success.Item1;
+                _pushNotificationService.SendPushNotification($"Radnik je potvrdio posao!", $"Radnik je potvrdio posao! Kliknite ovdje da bi ste vidjeli o kojem poslu se radi.", new Dictionary<string, string>
+                {
+                    { "changeRoute", $"jobRoom/{request.JobId}" } // TODO: prebaciti na waiting room kad se implementira: $"jobRoom/{request.JobId}"
+                }, EmployerIdForNotification);
+
+                
             } catch (Exception ex) {
                 response.Message = $"Nešto je pošlo krivo: {ex.Message}";
                 response.Success = false;
