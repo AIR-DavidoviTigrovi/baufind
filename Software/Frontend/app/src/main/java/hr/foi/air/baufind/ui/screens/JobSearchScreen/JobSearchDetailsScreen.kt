@@ -13,13 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,26 +32,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import hr.foi.air.baufind.core.map.MapProvider
 import hr.foi.air.baufind.core.map.models.Coordinates
 import hr.foi.air.baufind.helpers.MapHelper
 import hr.foi.air.baufind.helpers.PictureHelper
-import hr.foi.air.baufind.service.JobGetService.JobGetService
 import hr.foi.air.baufind.service.WorkerRequestJoinService.WorkerRequestJoinService
 import hr.foi.air.baufind.ui.components.DisplayTextField
 import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ui.components.SkillListConfirm
-import hr.foi.air.baufind.ws.model.FullJobModel
-import hr.foi.air.baufind.ws.network.JobService
 import hr.foi.air.baufind.ws.network.TokenProvider
-import hr.foi.air.baufind.ws.response.JobResponse
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -92,7 +82,7 @@ fun JobSearchDetailsScreen(
             )
             if(response.success){
                 jobSearchDetailsViewModel.clearData()
-                navController.navigate("pendingJobsScreen"){
+                navController.navigate("myJobsScreen"){
                     popUpTo("jobSearchDetailsScreen") { inclusive = true }
                 }
             }else{

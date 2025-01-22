@@ -2,24 +2,19 @@ package hr.foi.air.baufind.ui.screens.WorkerSearchScreen
 
 import WorkerMock
 import android.util.Log
-import androidx.collection.ObjectList
-import androidx.collection.emptyObjectList
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import hr.foi.air.baufind.service.SkillsService.SkillsService
-import hr.foi.air.baufind.service.UserProfileService.UserProfileService
 import hr.foi.air.baufind.service.WorkerService.CallForWorkingRequest
 import hr.foi.air.baufind.service.WorkerService.CallForWorkingResponse
 import hr.foi.air.baufind.service.WorkerService.IWorkerSkillService
 import hr.foi.air.baufind.service.WorkerService.WorkerSkillService
 import hr.foi.air.baufind.ui.components.Skill
 import hr.foi.air.baufind.ws.model.Worker
-import hr.foi.air.baufind.ws.network.JobService
 import hr.foi.air.baufind.ws.network.TokenProvider
 import hr.foi.air.baufind.ws.request.WorkersSkillBody
-import hr.foi.air.baufind.ws.response.UserProfileResponse
 import kotlinx.coroutines.launch
 
 

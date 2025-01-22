@@ -56,7 +56,7 @@ fun UserProfileHeader(name: String, address:String, profilePicture: ByteArray?){
                 if (bitmap != null) {
                     androidx.compose.foundation.Image(
                         bitmap = bitmap.asImageBitmap(),
-                        contentDescription = "Profile Picture",
+                        contentDescription = "Slika profila",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize().clip(CircleShape)
                     )

@@ -21,17 +21,16 @@ fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
         BottomNavItem(
             route = "jobDetailsScreen",
-            icon = IconType.Vector(imageVector = Icons.Default.Add),
-            label = "Add job"),
+            icon = IconType.Vector(imageVector = Icons.Default.Add), label = "Novi posao"),
             BottomNavItem(
             route = "jobSearchScreen",
-            icon = IconType.Vector(imageVector = Icons.Default.Search), label = "Search jobs"),
+            icon = IconType.Vector(imageVector = Icons.Default.Search), label = "Pretraži"),
             BottomNavItem(
             route = "myJobsScreen",
-            icon = IconType.Vector(imageVector = Icons.Default.Home), label = "My jobs"),
+            icon = IconType.Vector(imageVector = Icons.Default.Home), label = "Moji poslovi"),
             BottomNavItem(
             route = "userProfileScreen",
-            icon = IconType.Vector(imageVector = Icons.Default.Person), label = "Profile"),
+            icon = IconType.Vector(imageVector = Icons.Default.Person), label = "Profil"),
 
 
     )

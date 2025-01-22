@@ -95,7 +95,7 @@ fun WorkerCardNotificationDetail(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Check,
-                            contentDescription = "Confirm",
+                            contentDescription = "Potvrdi",
                             tint = Color.White
                         )
                     }
@@ -111,7 +111,7 @@ fun WorkerCardNotificationDetail(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Clear,
-                            contentDescription = "Deny",
+                            contentDescription = "Odbij",
                             tint = Color.White
                         )
                     }

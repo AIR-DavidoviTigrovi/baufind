@@ -52,11 +52,11 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
         passwordError=""
 
         if (email.isBlank() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailError = "You must enter your email"
+            emailError = "Morate unijeti email"
             valid = false
         }
         if (password.isBlank()) {
-            passwordError = "You must enter your password"
+            passwordError = "Morate unijeti lozinku"
             valid = false
         }
         return valid
@@ -69,7 +69,7 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
         verticalArrangement = Arrangement.Top
     ) {
         Text(
-            text ="Welcome back",
+            text ="Dobrodošli natrag!",
             modifier = Modifier.align(Alignment.CenterHorizontally),
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold
@@ -90,7 +90,7 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
         PrimaryTextField(
             value = password,
             onValueChange = { password = it },
-            label = "Password",
+            label = "Lozinka",
             modifier = Modifier.fillMaxWidth(),
             visualTransformation =  PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -98,7 +98,7 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
             errorMessage = passwordError
         )
         Text(
-            text ="Forgot password?",
+            text ="Zaboravili lozinku?",
             modifier = Modifier.align(Alignment.Start).clickable {
                 //Ovdje ide logika za reset lozinke
             },
@@ -115,7 +115,7 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
             color = Color.Red
         )
         PrimaryButton(
-            text = "Log in",
+            text = "Prijava",
             maxWidth = true,
             onClick = {
                 if (validateInputs()) {
@@ -138,7 +138,7 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
                         else {
                             email = ""
                             password =""
-                            loginError = "invalid username and password"
+                            loginError = "nepoznat email ili lozinka"
                         }
                     }
                 }
@@ -147,7 +147,7 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text ="New user? Sign up",
+            text ="Nemate račun? Registracija",
             modifier = Modifier.align(Alignment.CenterHorizontally).clickable { navController.navigate("registration") },
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,

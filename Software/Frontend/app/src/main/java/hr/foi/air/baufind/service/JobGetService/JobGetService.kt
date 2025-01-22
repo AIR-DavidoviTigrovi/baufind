@@ -9,7 +9,6 @@ class JobGetService() {
         val service = NetworkService.createJobService(tokenProvider)
         try {
             val response = service.getJob(id)
-            Log.d("Response od getJob", response.toString())
             if (response.error == "") {
                 return JobGetResponse(
                     true,
@@ -25,7 +24,6 @@ class JobGetService() {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.d("JobGetService", "Error: ${e.message}")
             return JobGetResponse(
                 false,
                 "Pogreska pri fetchanju",

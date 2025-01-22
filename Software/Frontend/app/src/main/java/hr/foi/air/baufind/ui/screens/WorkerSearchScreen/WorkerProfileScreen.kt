@@ -1,7 +1,6 @@
 package hr.foi.air.baufind.ui.screens.WorkerSearchScreen
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -105,7 +103,7 @@ fun WorkerProfileScreen(
                         if (bitmap != null) {
                             Image(
                                 bitmap = bitmap.asImageBitmap(),
-                                contentDescription = "Profile Picture",
+                                contentDescription = "Slika profila",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier.fillMaxSize().clip(CircleShape)
                             )
@@ -160,7 +158,7 @@ fun WorkerProfileScreen(
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        text = "Contact Information",
+                        text = "Kontakt informacije",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontSize = 18.sp,
                             fontWeight = FontWeight.ExtraBold
@@ -183,7 +181,7 @@ fun WorkerProfileScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.Email,
-                                contentDescription = "Email Icon",
+                                contentDescription = "Email ikonica",
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(24.dp)
                             )
@@ -211,7 +209,7 @@ fun WorkerProfileScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.Phone,
-                                contentDescription = "Phone Icon",
+                                contentDescription = "Ikonica telefona",
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(24.dp)
                             )
@@ -282,6 +280,6 @@ fun WorkerProfileScreen(
                     )
                 }
             }
-        else -> Text(text = "Error: Could not load profile", color = Color.Red)
+        else -> Text(text = "Error: Nemogućnost učitavanja profila", color = Color.Red)
     }
 }

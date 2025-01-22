@@ -46,27 +46,27 @@ fun RegistrationScreen(navController : NavController, tokenProvider: TokenProvid
         confirmPasswordError = ""
 
         if (email.isBlank() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailError = "You must enter your email"
+            emailError = "Morate unijeti email"
             valid = false
         }
         if (name.isBlank()) {
-            nameError = "You must enter your name"
+            nameError = "Morate unijeti ime"
             valid = false
         }
         if (phone.isBlank()) {
-            phoneError = "You must enter your phone number"
+            phoneError = "Morate unijeti broj telefona"
             valid = false
         }
         if (address.isBlank()) {
-            addressError = "You must enter your address"
+            addressError = "Morate unijeti adresu"
             valid = false
         }
         if (password.isBlank()) {
-            passwordError = "You must insert your password"
+            passwordError = "Morate unijeti lozinku"
             valid = false
         }
         if (confirmPassword != password || confirmPassword.isBlank()) {
-            confirmPasswordError = "Passwords do not match"
+            confirmPasswordError = "Lozinke se ne podudaraju"
             valid = false
         }
         return valid
@@ -87,7 +87,7 @@ fun RegistrationScreen(navController : NavController, tokenProvider: TokenProvid
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text ="Get started with Baufind",
+            text ="Započnite koristiti Baufind",
             modifier = Modifier.align(Alignment.CenterHorizontally),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
@@ -99,7 +99,7 @@ fun RegistrationScreen(navController : NavController, tokenProvider: TokenProvid
         PrimaryTextField(
             value = name,
             onValueChange = { name = it },
-            label ="Name",
+            label ="Ime i prezime",
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             isError = nameError.isNotEmpty(),
@@ -122,7 +122,7 @@ fun RegistrationScreen(navController : NavController, tokenProvider: TokenProvid
         PrimaryTextField(
             value = phone,
             onValueChange = { phone = it },
-            label = "Phone number",
+            label = "Broj telefona",
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             isError = phoneError.isNotEmpty(),
@@ -132,7 +132,7 @@ fun RegistrationScreen(navController : NavController, tokenProvider: TokenProvid
         PrimaryTextField(
             value = address,
             onValueChange = { address = it },
-            label = "Address",
+            label = "Adresa",
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             isError = addressError.isNotEmpty(),
@@ -145,7 +145,7 @@ fun RegistrationScreen(navController : NavController, tokenProvider: TokenProvid
         PrimaryTextField(
             value = password,
             onValueChange = { password = it },
-            label = "Password",
+            label = "Lozinka",
             modifier = Modifier.fillMaxWidth(),
             visualTransformation =  PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -158,7 +158,7 @@ fun RegistrationScreen(navController : NavController, tokenProvider: TokenProvid
         PrimaryTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            label = "Repeat password",
+            label = "Ponovite lozinku",
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -168,7 +168,7 @@ fun RegistrationScreen(navController : NavController, tokenProvider: TokenProvid
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text ="By tapping Register, you agree to our Terms and Privacy Policy.",
+            text ="Pritiskom na \"Registriraj se\" slažete se s našim Uvjetima i Politikom privatnosti.",
             modifier = Modifier.align(Alignment.CenterHorizontally),
             fontSize = 12.sp
         )
@@ -182,7 +182,7 @@ fun RegistrationScreen(navController : NavController, tokenProvider: TokenProvid
             color = Color.Red
         )
         PrimaryButton(
-            text = "Register",
+            text = "Registriraj se",
             maxWidth = true,
             onClick = {
                 if (validateInputs()) {
@@ -200,7 +200,7 @@ fun RegistrationScreen(navController : NavController, tokenProvider: TokenProvid
                             tokenProvider
                         )
                         if (response.added) navController.navigate("login")
-                        else registrationError = "Cannot register with those data"
+                        else registrationError = "Nemogućnost registracije s tim podacima"
                     }
                 }
             }

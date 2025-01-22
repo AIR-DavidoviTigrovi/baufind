@@ -117,7 +117,6 @@ class MainActivity : ComponentActivity() {
                                 "jobSearchScreen",
                                 "jobSearchDetailsScreen",
                                 "settingsScreen",
-                                "pendingJobsScreen",
                                 "myJobsScreen",
                                 "wholeHistoryScreen",
                                 "selectedJobHistoryScreen"
@@ -227,7 +226,6 @@ class MainActivity : ComponentActivity() {
                             composable("jobAddSkillsScreen") { JobAddSkillsScreen(navController, jobViewModel, tokenProvider) }
 
                             composable("jobSearchScreen") { JobSearchScreen(navController, tokenProvider, jobSearchViewModel, jobSearchDetailsViewModel) }
-                            composable("pendingJobsScreen") { PendingJobsScreen(navController, tokenProvider, pendingJobsViewModel) }
                             composable("myJobsScreen") { MyJobsScreen(navController, tokenProvider, myJobsViewModel) }
                             composable("jobSearchDetailsScreen") { JobSearchDetailsScreen(navController, tokenProvider, jobSearchDetailsViewModel) }
                             composable("settingsScreen") { SettingsScreen(navController) }

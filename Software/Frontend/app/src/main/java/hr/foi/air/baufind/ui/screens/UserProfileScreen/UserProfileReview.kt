@@ -41,7 +41,7 @@ fun UserProfileReview(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Reviews",
+                text = "Recenzije",
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -49,7 +49,7 @@ fun UserProfileReview(
                 modifier = Modifier.weight(1f)
             )
             Text(
-                text = "View All",
+                text = "Pogledaj sve",
                 style = MaterialTheme.typography.bodyMedium.copy(
                     color = MaterialTheme.colorScheme.secondary,
                     fontWeight = FontWeight.Bold
@@ -85,7 +85,7 @@ fun UserProfileReview(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "$totalReviews reviews",
+                    text = "$totalReviews recenzija",
                     style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface)
                 )
             }

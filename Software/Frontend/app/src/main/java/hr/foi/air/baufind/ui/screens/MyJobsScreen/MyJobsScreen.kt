@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import hr.foi.air.baufind.R
-import hr.foi.air.baufind.ui.components.JobWorkingListItem
 import hr.foi.air.baufind.ui.components.MyJobListItem
 import hr.foi.air.baufind.ws.network.TokenProvider
 
@@ -61,7 +60,7 @@ fun MyJobsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 title = {
                     Text(
-                        "My jobs",
+                        "Moji poslovi",
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.ExtraBold,
@@ -73,7 +72,7 @@ fun MyJobsScreen(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = "Natrag",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -84,7 +83,7 @@ fun MyJobsScreen(
                     }) {
                         Icon(
                             painter = painterResource(R.drawable.baseline_history_24),
-                            contentDescription = "History",
+                            contentDescription = "Povijest",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -93,7 +92,7 @@ fun MyJobsScreen(
                     }) {
                         Icon(
                             imageVector = Icons.Outlined.Notifications,
-                            contentDescription = "Back",
+                            contentDescription = "Natrag",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }

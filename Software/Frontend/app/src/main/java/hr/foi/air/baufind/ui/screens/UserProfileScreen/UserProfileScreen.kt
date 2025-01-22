@@ -83,16 +83,10 @@ fun ProfileButtons(navController: NavController) {
                 )
             ) {
                 Text(
-                    text = "Edit Profile",
+                    text = "Uredi profil",
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                 )
             }
-            PrimaryButton(
-                text = "Pending jobs",
-                onClick = {
-                    navController.navigate("pendingJobsScreen")
-                }
-            )
         }
     }
 }
@@ -165,7 +159,7 @@ fun userProfileScreen(
                     modifier = Modifier.fillMaxWidth(),
                     title = {
                         Text(
-                            "Profile",
+                            "Profil",
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.ExtraBold,
@@ -177,7 +171,7 @@ fun userProfileScreen(
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
+                                contentDescription = "Natrag",
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -187,7 +181,7 @@ fun userProfileScreen(
                                 IconButton(onClick = { showMenu = !showMenu }) {
                                     Icon(
                                         imageVector = Icons.Default.MoreVert,
-                                        contentDescription = "Options",
+                                        contentDescription = "Postavke",
                                         tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
@@ -196,20 +190,20 @@ fun userProfileScreen(
                                     onDismissRequest = { showMenu = false }
                                 ) {
                                     DropdownMenuItem(
-                                        text = { Text("Settings") },
+                                        text = { Text("Postavke") },
                                         onClick = {
                                             navController.navigate("settingsScreen")
                                         }
                                     )
                                     DropdownMenuItem(
-                                        text = { Text("Delete account") },
+                                        text = { Text("Izbriši račun") },
                                         onClick = {
                                             showMenu = false
                                             showDeleteConfirmation = true
                                         }
                                     )
                                     DropdownMenuItem(
-                                        text = { Text("Logout") },
+                                        text = { Text("Odjava") },
                                         onClick = {
                                             showMenu = false
                                             val authService = AuthService(tokenProvider)
@@ -263,8 +257,8 @@ fun userProfileScreen(
         if (showDeleteConfirmation) {
             AlertDialog(
                 onDismissRequest = { showDeleteConfirmation = false },
-                title = { Text("Delete Account") },
-                text = { Text("Are you sure you want to delete your account? This action cannot be undone.") },
+                title = { Text("Izbriši račun") },
+                text = { Text("Jeste li sigurni da želite izbrisati račun? Ovo se ne može poništiti!") },
                 confirmButton = {
                     TextButton(
                         onClick = {
@@ -276,18 +270,18 @@ fun userProfileScreen(
                                         popUpTo(0) { inclusive = true }
                                     }
                                 } else {
-                                    snackbarHostState.showSnackbar("Failed to delete account. Please try again.")
+                                    snackbarHostState.showSnackbar("Neuspjeh kod brisanja računa. Pokušajte ponovno!")
                                 }
                             }
                             showDeleteConfirmation = false
                         }
                     ) {
-                        Text("Delete")
+                        Text("Briši")
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showDeleteConfirmation = false }) {
-                        Text("Cancel")
+                        Text("Odustani")
                     }
                 }
             )

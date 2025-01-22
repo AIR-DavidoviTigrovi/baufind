@@ -29,7 +29,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
 import hr.foi.air.baufind.R
-import hr.foi.air.baufind.core.map.MapProvider
 import hr.foi.air.baufind.core.map.models.Coordinates
 import hr.foi.air.baufind.helpers.MapHelper
 import hr.foi.air.baufind.service.JobService.JobDao

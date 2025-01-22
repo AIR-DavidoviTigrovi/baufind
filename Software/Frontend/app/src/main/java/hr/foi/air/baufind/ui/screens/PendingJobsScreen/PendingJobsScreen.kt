@@ -24,12 +24,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import hr.foi.air.baufind.R
 import hr.foi.air.baufind.ui.components.JobWorkingListItem
 import hr.foi.air.baufind.ws.network.TokenProvider
 
@@ -57,7 +55,7 @@ fun PendingJobsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 title = {
                     Text(
-                        "Pending jobs",
+                        "Poslovi na čekanju",
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.ExtraBold,
@@ -69,7 +67,7 @@ fun PendingJobsScreen(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = "Natrag",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }

@@ -5,11 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import hr.foi.air.baufind.service.JobGetService.JobGetResponse
 import hr.foi.air.baufind.service.JobGetService.JobGetService
-import hr.foi.air.baufind.service.WorkerRequestJoinService.WorkerRequestJoinResponse
-import hr.foi.air.baufind.service.WorkerRequestJoinService.WorkerRequestJoinService
 import hr.foi.air.baufind.ws.model.FullJobModel
 import hr.foi.air.baufind.ws.network.TokenProvider
-import hr.foi.air.baufind.ws.request.WorkerRequestJoinBody
 import kotlinx.coroutines.launch
 
 class JobSearchDetailsViewModel : ViewModel() {
