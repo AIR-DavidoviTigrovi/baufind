@@ -3,9 +3,11 @@ package hr.foi.air.baufind.ui.screens.WorkerSearchScreen
 import WorkerMock
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import hr.foi.air.baufind.service.JobRoomService.JobRoomService
 import hr.foi.air.baufind.service.SkillsService.SkillsService
 import hr.foi.air.baufind.service.WorkerService.CallForWorkingRequest
 import hr.foi.air.baufind.service.WorkerService.CallForWorkingResponse
@@ -22,6 +24,7 @@ class WorkerSearchViewModel() : ViewModel() {
     val skillsId: MutableState<MutableList<Int>> = mutableStateOf(mutableListOf())
     var skill : MutableState<MutableList<Skill>> = mutableStateOf(mutableListOf())
     var isEmptyList :  Boolean = false
+    var jobID = mutableIntStateOf(0)
     val listofIDs : MutableState<MutableList<Int>> = mutableStateOf(mutableListOf())
     var skillStrings : MutableState<List<String>> = mutableStateOf(emptyList())
     val tokenProvider: MutableState<TokenProvider?> = mutableStateOf(null)
@@ -82,7 +85,13 @@ class WorkerSearchViewModel() : ViewModel() {
         }
     }
     suspend fun loadWorkers() {
-        workers.value =  service.getWorkersBySkill(listofIDs.value.toString(),workersSkillBody = WorkersSkillBody(skillStrings.value.toString()),
+        val jobRoomService = JobRoomService()
+        var job = jobRoomService.GetRoomForJob(jobID.value,tokenProvider.value!!)
+        if(!job.isEmpty()){
+            listofIDs.value.add(job[0].employerId)
+        }
+        workers.value =  service.getWorkersBySkill(
+            listofIDs.value.toString(),workersSkillBody = WorkersSkillBody(skillStrings.value.toString()),
             tokenProvider = tokenProvider.value!!)
         Log.e("getWorkersBySkill", skill.value.toString())
         filteredWorkers.value = workers.value

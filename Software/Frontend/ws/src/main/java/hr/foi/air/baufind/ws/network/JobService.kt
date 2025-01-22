@@ -3,6 +3,7 @@ package hr.foi.air.baufind.ws.network
 import hr.foi.air.baufind.ws.request.CallForWorkingBody
 import hr.foi.air.baufind.ws.request.ConfirmWorkerRequest
 import hr.foi.air.baufind.ws.request.JobCreateBody
+import hr.foi.air.baufind.ws.request.WorkerConfirmsJobRequest
 import hr.foi.air.baufind.ws.request.WorkerRequestJoinBody
 import hr.foi.air.baufind.ws.response.CallForWorkingResponse
 import hr.foi.air.baufind.ws.response.CheckJobNotificationResponse
@@ -54,7 +55,7 @@ interface JobService {
     suspend fun confirmWorker( @Body request: ConfirmWorkerRequest): ConfirmWorkerResponse
 
     @PUT("/jobs/workerConfirmsJob")
-    suspend fun workerConfirmsJob( @Body request: ConfirmWorkerRequest): ConfirmWorkerResponse
+    suspend fun workerConfirmsJob( @Body request: WorkerConfirmsJobRequest): ConfirmWorkerResponse
 
     @GET("/jobs/getHistory")
     suspend fun getFullJobHistory(): GetFullJobHistoryResponse

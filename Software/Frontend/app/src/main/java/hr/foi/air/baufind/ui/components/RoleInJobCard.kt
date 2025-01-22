@@ -42,12 +42,11 @@ fun RoleInJobCard(
     jobRoom: List<JobRoom>,
     roomOwnerState: RoomOwnerState
 ) {
-    // Grouping job rooms by skill title
+
     val roomStructureCount = jobRoom.groupBy { it.skillTitle }.mapValues { entry ->
         entry.value.count { it.workerId == null }
     }
 
-    // Extracting people IDs from job rooms
     val peopleIds = jobRoom.mapNotNull { it.workerId }.toMutableList()
     if (peopleIds.isEmpty()) {
         peopleIds.add(0)
