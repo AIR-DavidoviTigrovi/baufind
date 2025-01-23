@@ -96,7 +96,7 @@ fun RoleInJobCard(
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.add_person_icon),
-                                    contentDescription = "Add Worker Icon",
+                                    contentDescription = "Dodaj radnika",
                                     modifier = Modifier.size(24.dp)
                                 )
                                 Text(text = "Dodaj radnika", modifier = Modifier.padding(start = 8.dp))

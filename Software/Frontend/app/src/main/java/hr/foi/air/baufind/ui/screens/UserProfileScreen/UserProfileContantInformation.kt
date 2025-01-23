@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun UserProfileContactInformation(address : String, phone: String, email: String){
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-        Text(text = "Contact information",
+        Text(text = "Kontakt informacije",
             style = MaterialTheme.typography.titleMedium.copy(
                 fontSize = 18.sp,
             fontWeight = FontWeight.ExtraBold
@@ -50,7 +50,7 @@ fun UserProfileContactInformation(address : String, phone: String, email: String
             ) {
                 Icon(
                     imageVector = Icons.Outlined.LocationOn,
-                    contentDescription = "Location Icon",
+                    contentDescription = "Ikonica lokacije",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
@@ -77,7 +77,7 @@ fun UserProfileContactInformation(address : String, phone: String, email: String
             ){
                 Icon(
                     imageVector =Icons.Outlined.Phone,
-                    contentDescription = "Phone Icon",
+                    contentDescription = "Ikonica telefona",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
@@ -104,7 +104,7 @@ fun UserProfileContactInformation(address : String, phone: String, email: String
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Email,
-                    contentDescription = "Email Icon",
+                    contentDescription = "Email ikonica",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )

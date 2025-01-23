@@ -76,7 +76,7 @@ fun ReviewsScreen(navController: NavController, userId: Int, tokenProvider: Toke
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            error = "Failed to load reviews."
+            error = "Neuspjeh kod učitavanja recenzija"
         }
     }
 
@@ -86,7 +86,7 @@ fun ReviewsScreen(navController: NavController, userId: Int, tokenProvider: Toke
                 modifier = Modifier.fillMaxWidth(),
                 title = {
                     Text(
-                        "Reviews",
+                        "Recenzije",
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.ExtraBold,
@@ -98,7 +98,7 @@ fun ReviewsScreen(navController: NavController, userId: Int, tokenProvider: Toke
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = "Natrag",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -118,7 +118,7 @@ fun ReviewsScreen(navController: NavController, userId: Int, tokenProvider: Toke
         ) {
             if (error != null) {
                 Text(
-                    text = error ?: "Unknown error",
+                    text = error ?: "Nepoznata greška",
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(16.dp)
                 )
@@ -134,7 +134,7 @@ fun ReviewsScreen(navController: NavController, userId: Int, tokenProvider: Toke
 @Composable
 fun ReviewsTabContent(workerReviews: List<Review>, employerReviews: List<Review>) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Worker", "Employer")
+    val tabs = listOf("Zaposlenik", "Radnik")
 
     Column {
         ConnectedTabLayout(
@@ -236,7 +236,7 @@ fun ShowImageZoomDialog(image: ImageBitmap, onDismiss: () -> Unit) {
         ) {
             Image(
                 bitmap = image,
-                contentDescription = "Zoomed Image",
+                contentDescription = "Povećana slika",
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.align(Alignment.Center)
             )
@@ -268,7 +268,7 @@ fun ReviewItem(review: Review) {
             if (bitmap != null) {
                 Image(
                     bitmap = bitmap.asImageBitmap(),
-                    contentDescription = "Reviewer Image",
+                    contentDescription = "Slika recenzenta",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -320,7 +320,7 @@ fun ReviewItem(review: Review) {
                     if (review.pictures.size > 5) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Previous",
+                            contentDescription = "Natrag",
                             modifier = Modifier
                                 .align(Alignment.CenterStart)
                                 .clickable {
@@ -331,7 +331,7 @@ fun ReviewItem(review: Review) {
 
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = "Next",
+                            contentDescription = "Naprijed",
                             modifier = Modifier
                                 .align(Alignment.CenterEnd)
                                 .clickable {
@@ -358,7 +358,7 @@ fun ReviewItem(review: Review) {
                             if (imageBitmap != null) {
                                 Image(
                                     bitmap = imageBitmap,
-                                    contentDescription = "Review Picture",
+                                    contentDescription = "Slika recenzije",
                                     modifier = Modifier
                                         .size(80.dp)
                                         .padding(end = 8.dp)
@@ -409,7 +409,7 @@ fun formatMonthYear(dateString: String): String {
         val date: Date = inputFormat.parse(dateString)!!
         outputFormat.format(date)
     } catch (e: Exception) {
-        "Invalid date"
+        "Neispravan datum"
     }
 }
 

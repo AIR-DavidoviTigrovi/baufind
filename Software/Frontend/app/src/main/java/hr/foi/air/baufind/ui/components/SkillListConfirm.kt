@@ -47,7 +47,7 @@ fun SkillListConfirm(
         ) {
             Icon(
                 imageVector = Icons.Filled.Check,
-                contentDescription = "Confirm",
+                contentDescription = "Potvrdi",
                 tint = Color.White
             )
         }

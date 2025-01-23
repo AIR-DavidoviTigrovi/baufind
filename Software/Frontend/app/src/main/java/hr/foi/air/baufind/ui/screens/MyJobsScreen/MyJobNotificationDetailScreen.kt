@@ -78,7 +78,7 @@ fun MyJobNotificationDetailScreen(
                 modifier = Modifier.fillMaxWidth(),
                 title = {
                     Text(
-                        "Details",
+                        "Detalji",
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.ExtraBold,
@@ -90,7 +90,7 @@ fun MyJobNotificationDetailScreen(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = "Natrag",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }

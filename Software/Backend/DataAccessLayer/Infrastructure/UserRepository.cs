@@ -240,6 +240,8 @@ public class UserRepository : IUserRepository
     /// <param name="skillIds"></param>
     public void AddUserSkills(int userId, List<int> skillIds)
     {
+        string deleteQuery = "DELETE FROM user_skill WHERE user_id = @user_id AND skill_id = @skill_id;";
+
         string query = @"
             INSERT INTO user_skill (user_id, skill_id)
             VALUES (@user_id, @skill_id);";
@@ -251,6 +253,9 @@ public class UserRepository : IUserRepository
                 { "@user_id", userId },
                 { "@skill_id", skillId }
             };
+
+            _db.ExecuteNonQuery(deleteQuery, parameters);
+
             _db.ExecuteNonQuery(query, parameters);
         }
     }

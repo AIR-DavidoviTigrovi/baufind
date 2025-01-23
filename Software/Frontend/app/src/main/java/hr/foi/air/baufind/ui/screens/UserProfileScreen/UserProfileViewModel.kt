@@ -35,11 +35,11 @@ class UserProfileViewModel(tokenProvider: AppTokenProvider) : ViewModel() {
                 if (fetchedProfile != null) {
                     _userProfile.value = fetchedProfile
                 } else {
-                    _errorMessage.value = "Failed to load user profile."
+                    _errorMessage.value = "Neuspjeh kod učitavanja korisničkog profila."
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                _errorMessage.value = "An error occurred while fetching the profile."
+                _errorMessage.value = "Dogodila se greška pri učitavanju korisničkog profila."
             } finally {
                 _loading.value = false
             }
@@ -79,7 +79,7 @@ class UserProfileViewModel(tokenProvider: AppTokenProvider) : ViewModel() {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                _errorMessage.value = "An error occurred while updating the profile."
+                _errorMessage.value = "Dogodila se greška kod ažuriranja profila."
             } finally {
                 _loading.value = false
             }

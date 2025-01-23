@@ -42,14 +42,13 @@ class JobRoomViewModel: ViewModel() {
         jobRoom.value = response
         mutableStatus.value = jobRoom.value[0].jobStatus
 
-            if(jobRoom.value[0].jobStatus == "Zapocet"){
-                buttonStateText.value = "Završi posao"
-            }else if( jobRoom.value[0].jobStatus != "Zavrsen" && jobRoom.value[0].jobStatus != "Zapocet"){
-                buttonStateText.value = "Započni posao"
-            }else if(jobRoom.value[0].jobStatus == "Zavrsen"){
-                buttonStateText.value = "Zavrsen"
-            }
-
+        if(jobRoom.value[0].jobStatus == "Zapocet"){
+            buttonStateText.value = "Završi posao"
+        }else if( jobRoom.value[0].jobStatus != "Zavrsen" && jobRoom.value[0].jobStatus != "Zapocet"){
+            buttonStateText.value = "Započni posao"
+        }else if(jobRoom.value[0].jobStatus == "Zavrsen"){
+            buttonStateText.value = "Zavrsen"
+        }
     }
     suspend fun loadJobPeople(jobId: Int) {
         val uniqueSkills = mutableSetOf<Skill>()

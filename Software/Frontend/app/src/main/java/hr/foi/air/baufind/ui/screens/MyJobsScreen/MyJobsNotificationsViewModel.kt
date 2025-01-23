@@ -40,7 +40,7 @@ class MyJobsNotificationsViewModel : ViewModel(){
             val response = service.confirmWorker(tokenProvider,request)
             success = response.success
 
-            message.value = response.message ?: "No message"
+            message.value = response.message ?: "Nema poruke"
 
             snackbarMessage.value = if (response.success) {
                 message.value

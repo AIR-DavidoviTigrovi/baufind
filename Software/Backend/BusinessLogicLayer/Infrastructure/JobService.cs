@@ -209,7 +209,7 @@ namespace BusinessLogicLayer.Infrastructure
             try
             {
                 var jobs = new List<JobWorkingModel>();
-                int[] statuses = [2, 3, 4];
+                int[] statuses = [2, 3];
                 foreach (var status in statuses)
                 {
                     var foundJobsForStatus = _jobRepository.GetJobWorkingByUserAndStatus(userId, status);
