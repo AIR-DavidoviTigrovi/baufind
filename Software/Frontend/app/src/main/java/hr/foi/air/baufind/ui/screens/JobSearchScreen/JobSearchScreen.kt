@@ -83,8 +83,15 @@ fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider, 
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Start
         ) {
-            Button(onClick = { showCountyBottomSheet = true }) {
-                Text(text = selectedCounty ?: "Odaberite županiju")
+            Column{
+                Button(onClick = { showCountyBottomSheet = true }) {
+                    Text(text = selectedCounty ?: "Odaberite županiju")
+                }
+                if(selectedCounty != null){
+                    Button(onClick = { selectedCounty = null }) {
+                        Text(text = "Očisti odabir")
+                    }
+                }
             }
             Spacer(modifier = Modifier.weight(1f))
             IconButton(
@@ -97,14 +104,9 @@ fun JobSearchScreen(navController: NavController, tokenProvider: TokenProvider, 
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
-
             Spacer(modifier = Modifier.width(8.dp))
 
-            if(selectedCounty != null){
-                Button(onClick = { selectedCounty = null }) {
-                    Text(text = "Očisti odabir")
-                }
-            }
+
         }
         if(showCountyBottomSheet){
             ModalBottomSheet(
