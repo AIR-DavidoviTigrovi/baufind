@@ -290,12 +290,13 @@ namespace DataAccessLayer.Infrastructure
                 FROM job j
                 LEFT JOIN job_status s
                 ON j.job_status_id = s.id
-                WHERE j.employer_id = @userId
+                WHERE (j.employer_id = @userId
                 OR j.id IN (
 	                SELECT job_id FROM working
 	                WHERE worker_id = @userId
                     AND working_status_id = 4
-                );";
+                ))
+                AND j.job_status_id IN (1, 2, 4);";
 
             var parameters = new Dictionary<string, object>
             {

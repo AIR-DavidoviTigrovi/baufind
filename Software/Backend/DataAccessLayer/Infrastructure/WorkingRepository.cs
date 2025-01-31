@@ -169,7 +169,8 @@ namespace DataAccessLayer.Infrastructure
                 j.location,
                 j.lat,
                 j.lng,
-                w.working_status_id
+                w.working_status_id,
+                w.skill_id
                 FROM working w
                 INNER JOIN job j ON w.job_id = j.id
                 LEFT JOIN worker_review wr ON wr.working_id = w.id
@@ -202,6 +203,7 @@ namespace DataAccessLayer.Infrastructure
                         Pictures = new List<byte[]>(),
                         Skills = new List<SkillModel>(),
                         Working_status_id = reader.GetInt32(reader.GetOrdinal("working_status_id")),
+                        Skill_id = reader.GetInt32(reader.GetOrdinal("skill_id"))
                     });
                 }
             }
@@ -512,26 +514,27 @@ namespace DataAccessLayer.Infrastructure
             }
         }
 
-        public (bool, string) WorkerConfirmJob(int JobId, int WorkerId, int WorkingStatusId) {
+        public (bool, string) WorkerConfirmJob(int JobId, int WorkerId, int skillId, int WorkingStatusId) {
             if (!IsWorkerInvitedToJob(WorkerId, JobId)) return (false, "Radnik nije pozvan na posao ili pristupa resursu kojem ne smije");
             string query;
             try {
                 if(WorkingStatusId == 5) {
                     query = @"UPDATE top (1)  working
                                  SET working_status_id = @WorkingStatusId
-                                    WHERE job_id = @JobId AND worker_id = @WorkerId;";
+                                    WHERE job_id = @JobId AND worker_id = @WorkerId AND skill_id = @SkillId;";
                 } else {
                     query = @"UPDATE top (1)  working
                                  SET working_status_id = @WorkingStatusId,
 		                            worker_id = @WorkerId
-                                    WHERE job_id = @JobId AND worker_id IS NULL; ";
+                                    WHERE job_id = @JobId AND worker_id IS NULL AND skill_id = @SkillId; ";
                 }
                 
                 var parameters = new Dictionary<string, object>
                 {
                     { "@JobId", JobId },
                     {"@WorkerId", WorkerId},
-                    {"@WorkingStatusId", WorkingStatusId}
+                    {"@WorkingStatusId", WorkingStatusId},
+                    {"@SkillId", skillId}
                 };
                 bool result = _db.ExecuteNonQuery(query, parameters) > 0;
                 return (result, result ? "Radnik uspješno ažuriran" : "Radnik nije ažuriran");

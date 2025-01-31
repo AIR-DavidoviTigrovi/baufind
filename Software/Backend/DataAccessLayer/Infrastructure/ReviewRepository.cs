@@ -316,6 +316,7 @@ namespace DataAccessLayer.Infrastructure
                    JOIN skill s ON w.skill_id = s.id
                    WHERE j.employer_id = @UserId
                      AND j.job_status_id = 3
+                     AND w.working_status_id = 4
                      AND w.worker_id != @UserId
                      AND NOT EXISTS (
                          SELECT 1
