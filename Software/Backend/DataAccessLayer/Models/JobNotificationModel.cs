@@ -20,5 +20,6 @@ namespace DataAccessLayer.Models
         public List<byte[]> Pictures { get; set; }
         public List<SkillModel> Skills { get; set; }
         public int Working_status_id { get; set; }
+        public int Skill_id { get; set; }
     }
 }

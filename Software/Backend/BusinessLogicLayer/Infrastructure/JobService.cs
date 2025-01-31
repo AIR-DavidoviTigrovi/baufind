@@ -398,7 +398,7 @@ namespace BusinessLogicLayer.Infrastructure
                     return response;
                 }
 
-                var success = _workingRepository.WorkerConfirmJob(request.JobId, request.WorkerId, request.WorkingStatusId);
+                var success = _workingRepository.WorkerConfirmJob(request.JobId, request.WorkerId, request.SkillId, request.WorkingStatusId);
                 response.Message = success.Item2;
                 response.Success = success.Item1;
                 if (success.Item1 == false) {

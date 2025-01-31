@@ -20,4 +20,5 @@ data class JobNotificationResponse(
     val pictures: List<String>,
     val skills: List<Skill>,
     val working_status_id: Int,
+    val skill_id: Int
 )

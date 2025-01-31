@@ -134,7 +134,7 @@ fun ReviewsScreen(navController: NavController, userId: Int, tokenProvider: Toke
 @Composable
 fun ReviewsTabContent(workerReviews: List<Review>, employerReviews: List<Review>) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Zaposlenik", "Radnik")
+    val tabs = listOf("Zaposlenik", "Poslodavac")
 
     Column {
         ConnectedTabLayout(
