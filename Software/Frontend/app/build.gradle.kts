@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -67,9 +68,12 @@ dependencies {
     implementation("io.coil-kt.coil3:coil-compose:3.0.4")
     implementation(libs.androidx.runtime)
 
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation("com.google.firebase:firebase-messaging")
+
     implementation(project(":core"))
 
-    // Ako uspijem refleksivnost i DI ovo napraviti na drukčiji način
     implementation(project(":example_map"))
     implementation(project(":google_map"))
+    implementation(project(":open_street_map"))
 }

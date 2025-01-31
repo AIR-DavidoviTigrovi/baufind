@@ -77,6 +77,29 @@ public class DB : IDisposable
     }
 
     /// <summary>
+    /// Generička metoda za dohvat liste objekata iz baze.
+    /// </summary>
+    public List<T> ExecuteQuery<T>(string query, Dictionary<string, object>? parameters, Func<SqlDataReader, T> mapFunc)
+    {
+        List<T> results = new List<T>();
+
+        using (SqlCommand command = new SqlCommand(query, _connection))
+        {
+            AddParameters(command, parameters);
+
+            using (SqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    T item = mapFunc(reader);
+                    results.Add(item);
+                }
+            }
+        }
+        return results;
+    }
+
+    /// <summary>
     /// Dispose metoda za IDisposable
     /// </summary>
     public void Dispose()
@@ -87,4 +110,5 @@ public class DB : IDisposable
         }
         _connection.Dispose();
     }
+
 }

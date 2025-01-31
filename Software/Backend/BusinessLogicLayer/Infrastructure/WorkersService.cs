@@ -19,9 +19,24 @@ namespace BusinessLogicLayer.Infrastructure {
         {
             this._workerRepository = workerRepository;   
         }
-        public GetWorkersResponse GetWorkers(string skill) 
+
+        public GetWorkerResponse GetWorker(int WorkerId) {
+            var query = _workerRepository.GetWorker(WorkerId);
+            if (query == null) {
+                return new GetWorkerResponse {
+                    Error = "Korisnik nije pronađen!"
+                };
+            }
+            return new GetWorkerResponse {
+                workerRecord = new WorkerRecord {
+                    Name = query.Name,
+                }
+            };
+        }
+
+        public GetWorkersResponse GetWorkers(string skill,string ids) 
         {
-            var query = _workerRepository.GetWorkers(skill);
+            var query = _workerRepository.GetWorkers(skill,ids);
 
             if (query == null || !query.Any()) {
                 return new GetWorkersResponse() {

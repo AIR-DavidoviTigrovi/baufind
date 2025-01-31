@@ -3,20 +3,30 @@ package hr.foi.air.baufind.ui.screens.WorkerSearchScreen
 import WorkerMock
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import hr.foi.air.baufind.service.JobRoomService.JobRoomService
 import hr.foi.air.baufind.service.SkillsService.SkillsService
+import hr.foi.air.baufind.service.WorkerService.CallForWorkingRequest
+import hr.foi.air.baufind.service.WorkerService.CallForWorkingResponse
+import hr.foi.air.baufind.service.WorkerService.IWorkerSkillService
 import hr.foi.air.baufind.service.WorkerService.WorkerSkillService
+import hr.foi.air.baufind.ui.components.Skill
 import hr.foi.air.baufind.ws.model.Worker
-import hr.foi.air.baufind.ws.network.SkillService
 import hr.foi.air.baufind.ws.network.TokenProvider
 import hr.foi.air.baufind.ws.request.WorkersSkillBody
 import kotlinx.coroutines.launch
 
 
 class WorkerSearchViewModel() : ViewModel() {
-    val skill : MutableState<List<String>> = mutableStateOf(emptyList())
+    val skillsId: MutableState<MutableList<Int>> = mutableStateOf(mutableListOf())
+    var skill : MutableState<MutableList<Skill>> = mutableStateOf(mutableListOf())
+    var isEmptyList :  Boolean = false
+    var jobID = mutableIntStateOf(0)
+    val listofIDs : MutableState<MutableList<Int>> = mutableStateOf(mutableListOf())
+    var skillStrings : MutableState<List<String>> = mutableStateOf(emptyList())
     val tokenProvider: MutableState<TokenProvider?> = mutableStateOf(null)
     val isExpandedL: MutableState<Boolean> = mutableStateOf(false)
     val isExpandedR: MutableState<Boolean> = mutableStateOf(false)
@@ -32,18 +42,25 @@ class WorkerSearchViewModel() : ViewModel() {
     val service = WorkerSkillService()
     val workers: MutableState<List<Worker>> = mutableStateOf(emptyList())
     val filteredWorkers: MutableState<List<Worker>> = mutableStateOf(emptyList())
+    private val workersService : IWorkerSkillService = WorkerSkillService()
 
-    suspend fun getAllSkills (skills: List<Int>){
 
+    suspend fun getAllSkills (){
         val skillService = SkillsService(tokenProvider.value!!)
         var skillToFilter = skillService.fetchAllSkills().orEmpty()
+        Log.e("Prije fetchanja: ", skillsId.value.toString())
         if (skillToFilter.isNotEmpty()) {
+            skill.value =mutableListOf()
+            skillStrings.value = emptyList()
             for (i in skillToFilter){
-                if(skills.contains(i.id)){
-                    skill.value += i.title
+                if(skillsId.value.contains(i.id)){
+                    skill.value += Skill(i.id, i.title)
+                    skillStrings.value += i.title
                 }
             }
         }
+        Log.e("Nakon fetchanja: ", skillsId.value.toString())
+
 
     }
     //Funkcija za filtriranje radnika
@@ -68,8 +85,13 @@ class WorkerSearchViewModel() : ViewModel() {
         }
     }
     suspend fun loadWorkers() {
-        Log.e("tokenss", tokenProvider.value.toString())
-        workers.value =  service.getWorkersBySkill(workersSkillBody = WorkersSkillBody(skill.value.toString()),
+        val jobRoomService = JobRoomService()
+        var job = jobRoomService.GetRoomForJob(jobID.value,tokenProvider.value!!)
+        if(!job.isEmpty()){
+            listofIDs.value.add(job[0].employerId)
+        }
+        workers.value =  service.getWorkersBySkill(
+            listofIDs.value.toString(),workersSkillBody = WorkersSkillBody(skillStrings.value.toString()),
             tokenProvider = tokenProvider.value!!)
         Log.e("getWorkersBySkill", skill.value.toString())
         filteredWorkers.value = workers.value
@@ -95,4 +117,30 @@ class WorkerSearchViewModel() : ViewModel() {
         }
         isExpandedR.value = false
     }
+
+    suspend fun callWorkerToJob(jobId: Int, skillId: Int, workerId: Int): CallForWorkingResponse {
+        try {
+            val success = workersService.callWorkerToJob(
+                CallForWorkingRequest( workerId,  jobId, skillId),
+                tokenProvider = tokenProvider.value!!
+            )
+            return success
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return CallForWorkingResponse(
+                message = "Greška prilikom fetchanja",
+                success = false
+            )
+        }
+    }
+
+    fun clearData(){
+        skill.value =mutableListOf()
+        skillStrings.value = emptyList()
+        isEmptyList = false
+        skillsId.value = mutableListOf()
+        filteredWorkers.value = emptyList()
+        workers.value = emptyList()
+    }
+
 }

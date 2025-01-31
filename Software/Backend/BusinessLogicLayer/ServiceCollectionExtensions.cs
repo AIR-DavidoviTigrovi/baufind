@@ -1,5 +1,8 @@
-﻿using BusinessLogicLayer.AppLogic;
+using BusinessLogicLayer.AppLogic;
+using BusinessLogicLayer.AppLogic.Geocoding;
+using BusinessLogicLayer.AppLogic.JobRoom;
 using BusinessLogicLayer.AppLogic.Jobs;
+using BusinessLogicLayer.AppLogic.PushNotifications;
 using BusinessLogicLayer.AppLogic.Reviews;
 using BusinessLogicLayer.AppLogic.Skills;
 using BusinessLogicLayer.AppLogic.Users;
@@ -29,17 +32,24 @@ public static class ServiceCollectionExtensions
         services.Configure<JWTOptions>(
             configuration.GetSection("JWTOptions")
         );
+        services.Configure<GeocodingOptions>(
+            configuration.GetSection("Geocoding")
+        );
+        services.Configure<PushNotificationOptions>(
+            configuration.GetSection("Firebase")
+        );
 
         services.AddScoped<DB>(); // Zbog DI u repozitorije
 
         // Repozitoriji
         services.AddScoped<IUserRepository, UserRepository>();
-
         services.AddScoped<IWorkerRepository,WorkerRepository>();
         services.AddScoped<ISkillRepository, SkillRepository>();
         services.AddScoped<IJobRepository, JobRepository>();
         services.AddScoped<IPictureRepository, PictureRepository>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
+        services.AddScoped<IWorkingRepository, WorkingRepository>(); 
+        services.AddScoped<IJobRoomRepository, JobRoomRepository>(); 
         // Servisi
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IUserService, UserService>();
@@ -47,6 +57,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISkillService, SkillService>();
         services.AddScoped<IJobService, JobService>();
         services.AddScoped<IReviewService, ReviewService>();
+        services.AddScoped<IGeocodingService, GeocodingService>();
+        services.AddScoped<IJobRoomService, JobRoomService>();
+        services.AddSingleton<IPushNotificationService, PushNotificationService>();
 
         return services;
     }

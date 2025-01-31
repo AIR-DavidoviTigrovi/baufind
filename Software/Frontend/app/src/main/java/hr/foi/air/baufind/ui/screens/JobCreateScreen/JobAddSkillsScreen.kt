@@ -1,6 +1,5 @@
 package hr.foi.air.baufind.ui.screens.JobCreateScreen
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,8 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,7 +26,6 @@ import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.ui.components.PrimaryTextField
 import hr.foi.air.baufind.ui.components.SkillListConfirm
 import hr.foi.air.baufind.ws.network.TokenProvider
-import kotlin.text.contains
 
 
 @Composable
@@ -75,8 +71,9 @@ fun JobAddSkillsScreen(navController: NavController, jobViewModel: JobViewModel,
                         if (!jobViewModel.jobPositions.any { it.name == skill.title }){
                             jobViewModel.jobPositions.add(JobPosition(skill.title, mutableIntStateOf(1), skill.id))
                             navController.popBackStack()
+                        }else{
+                            Toast.makeText(context, "Pozicija već postoji", Toast.LENGTH_SHORT).show()
                         }
-                        Toast.makeText(context, "Pozicija već postoji", Toast.LENGTH_SHORT).show()
                     }
                 )
             }

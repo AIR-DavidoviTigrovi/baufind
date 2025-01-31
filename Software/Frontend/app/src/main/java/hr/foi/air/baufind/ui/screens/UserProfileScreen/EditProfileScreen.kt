@@ -103,12 +103,12 @@ fun EditProfileScreen(
         Scaffold(
             topBar = {
                 CenterAlignedTopAppBar(
-                    title = { Text("Edit Profile", style = MaterialTheme.typography.titleMedium) },
+                    title = { Text("Uredi profil", style = MaterialTheme.typography.titleMedium) },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
+                                contentDescription = "Natrag",
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -149,13 +149,13 @@ fun EditProfileScreen(
                         if (bitmap != null) {
                             Image(
                                 bitmap = bitmap.asImageBitmap(),
-                                contentDescription = "Profile Picture",
+                                contentDescription = "Slika profila",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier.fillMaxSize()
                             )
                         } else {
                             Text(
-                                text = "Select Picture",
+                                text = "Odaberi sliku",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
@@ -166,45 +166,45 @@ fun EditProfileScreen(
                     onClick = { imagePickerLauncher.launch("image/*") },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Upload Picture")
+                    Text("Prenesi sliku")
                 }
 
 
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Name") },
+                    label = { Text("Ime i prezime") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(
                     value = address,
                     onValueChange = { address = it },
-                    label = { Text("Address") },
+                    label = { Text("Adresa") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(
                     value = phone,
                     onValueChange = { phone = it },
-                    label = { Text("Phone") },
+                    label = { Text("Telefon") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(16.dp))
 
 
-                Text("Manage Your Skills", style = MaterialTheme.typography.titleMedium)
+                Text("Upravljanje ulogama", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    label = { Text("Search Skills") },
+                    label = { Text("Pretražite uloge") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(8.dp))
 
 
-                Text("Available Skills", style = MaterialTheme.typography.bodyLarge)
+                Text("Dostupne uloge", style = MaterialTheme.typography.bodyLarge)
                 Column(modifier = Modifier.fillMaxWidth()) {
                     val filteredSkills = allSkills.value.filter {
                         it.title.contains(searchQuery, ignoreCase = true) && it !in selectedSkills
@@ -226,12 +226,12 @@ fun EditProfileScreen(
                                 modifier = Modifier.weight(1f),
                                 style = MaterialTheme.typography.bodyMedium
                             )
-                            Text("Add", color = MaterialTheme.colorScheme.primary)
+                            Text("Dodaj", color = MaterialTheme.colorScheme.primary)
                         }
                     }
                     if (filteredSkills.isEmpty()) {
                         Text(
-                            "No skills found",
+                            "Nije pronađeno",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error
                         )
@@ -240,7 +240,7 @@ fun EditProfileScreen(
                 Spacer(Modifier.height(16.dp))
 
 
-                Text("Selected Skills", style = MaterialTheme.typography.bodyLarge)
+                Text("Odabrane uloge", style = MaterialTheme.typography.bodyLarge)
                 Column {
                     selectedSkills.forEach { skill ->
                         Row(
@@ -259,7 +259,7 @@ fun EditProfileScreen(
                                 removeSkills.add(skill)
                                 addSkills.remove(skill)
                             }) {
-                                Icon(Icons.Default.Delete, contentDescription = "Remove Skill")
+                                Icon(Icons.Default.Delete, contentDescription = "Ukloni ulogu")
                             }
                         }
                     }
@@ -289,7 +289,7 @@ fun EditProfileScreen(
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Save")
+                    Text("Spremi")
                 }
             }
         }

@@ -54,4 +54,33 @@ public interface IUserRepository
     /// <param name="userId"></param>
     /// <param name="removeSkills"></param>
     void RemoveUserSkills(int userId, List<int> removeSkills);
+
+    /// <summary>
+    /// Metoda koja izvodi brisanje korirsnika u bazi (samo postavlja deleted na 1 u app_user)
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public bool DeleteUser(int userId);
+
+    /// <summary>
+    /// Doda token vezan uz Firebase notifikacije na korisnika i makne isti ako postoji kod nekog drugog korisnika
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    public bool AddUserToken(int userId, string token);
+
+    /// <summary>
+    /// Uklanja Firebase token korisnika (kod odjave)
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public bool RemoveUserToken(int userId);
+
+    /// <summary>
+    /// Dohvaća token za korisnika (ako postoji u bazi)
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public string? GetUserToken(int userId);
 }

@@ -50,9 +50,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import hr.foi.air.baufind.helpers.PictureHelper
 import hr.foi.air.baufind.service.ReviewService.ReviewService
 import hr.foi.air.baufind.ws.model.Review
 import hr.foi.air.baufind.ws.network.TokenProvider
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +76,7 @@ fun ReviewsScreen(navController: NavController, userId: Int, tokenProvider: Toke
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            error = "Failed to load reviews."
+            error = "Neuspjeh kod učitavanja recenzija"
         }
     }
 
@@ -82,7 +86,7 @@ fun ReviewsScreen(navController: NavController, userId: Int, tokenProvider: Toke
                 modifier = Modifier.fillMaxWidth(),
                 title = {
                     Text(
-                        "Reviews",
+                        "Recenzije",
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.ExtraBold,
@@ -94,7 +98,7 @@ fun ReviewsScreen(navController: NavController, userId: Int, tokenProvider: Toke
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = "Natrag",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -114,7 +118,7 @@ fun ReviewsScreen(navController: NavController, userId: Int, tokenProvider: Toke
         ) {
             if (error != null) {
                 Text(
-                    text = error ?: "Unknown error",
+                    text = error ?: "Nepoznata greška",
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(16.dp)
                 )
@@ -130,7 +134,7 @@ fun ReviewsScreen(navController: NavController, userId: Int, tokenProvider: Toke
 @Composable
 fun ReviewsTabContent(workerReviews: List<Review>, employerReviews: List<Review>) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Worker", "Employer")
+    val tabs = listOf("Zaposlenik", "Poslodavac")
 
     Column {
         ConnectedTabLayout(
@@ -232,7 +236,7 @@ fun ShowImageZoomDialog(image: ImageBitmap, onDismiss: () -> Unit) {
         ) {
             Image(
                 bitmap = image,
-                contentDescription = "Zoomed Image",
+                contentDescription = "Povećana slika",
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.align(Alignment.Center)
             )
@@ -252,20 +256,19 @@ fun ReviewItem(review: Review) {
             .fillMaxWidth(),
         verticalAlignment = Alignment.Top
     ) {
-        // Profile Image
         Box(
             modifier = Modifier
                 .size(50.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), CircleShape)
         ) {
-            val imageData = review.reviewerImage?.let { decodeBase64ToByteArray(it) }
+            val imageData = review.reviewerImage?.let { PictureHelper.decodeBase64ToByteArray(it) }
             val bitmap = imageData?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
 
             if (bitmap != null) {
                 Image(
                     bitmap = bitmap.asImageBitmap(),
-                    contentDescription = "Reviewer Image",
+                    contentDescription = "Slika recenzenta",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -283,32 +286,27 @@ fun ReviewItem(review: Review) {
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // Review Content
         Column(modifier = Modifier.weight(1f)) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Reviewer Name
                 Text(
                     text = review.reviewerName,
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                 )
-                // Date Placeholder
                 Text(
-                    text = "Date Placeholder",
+                    text = formatMonthYear(review.reviewDate),
                     style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
                 )
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Star Rating
             StarRating(rating = review.rating.toDouble())
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Comment
             Text(
                 text = review.comment,
                 style = MaterialTheme.typography.bodyMedium
@@ -322,7 +320,7 @@ fun ReviewItem(review: Review) {
                     if (review.pictures.size > 5) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Previous",
+                            contentDescription = "Natrag",
                             modifier = Modifier
                                 .align(Alignment.CenterStart)
                                 .clickable {
@@ -333,7 +331,7 @@ fun ReviewItem(review: Review) {
 
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = "Next",
+                            contentDescription = "Naprijed",
                             modifier = Modifier
                                 .align(Alignment.CenterEnd)
                                 .clickable {
@@ -352,7 +350,7 @@ fun ReviewItem(review: Review) {
                         val endIndex = (startIndex + 5).coerceAtMost(review.pictures.size)
 
                         items(review.pictures.subList(startIndex, endIndex)) { picture ->
-                            val decodedBytes = decodeBase64ToByteArray(picture.picture)
+                            val decodedBytes = PictureHelper.decodeBase64ToByteArray(picture.picture)
 
                             val imageBitmap = decodedBytes?.let {
                                 BitmapFactory.decodeByteArray(it, 0, it.size).asImageBitmap()
@@ -360,7 +358,7 @@ fun ReviewItem(review: Review) {
                             if (imageBitmap != null) {
                                 Image(
                                     bitmap = imageBitmap,
-                                    contentDescription = "Review Picture",
+                                    contentDescription = "Slika recenzije",
                                     modifier = Modifier
                                         .size(80.dp)
                                         .padding(end = 8.dp)
@@ -403,5 +401,17 @@ fun ReviewItem(review: Review) {
         }
     }
 }
+fun formatMonthYear(dateString: String): String {
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault())
+    val outputFormat = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
+
+    return try {
+        val date: Date = inputFormat.parse(dateString)!!
+        outputFormat.format(date)
+    } catch (e: Exception) {
+        "Neispravan datum"
+    }
+}
+
 
 

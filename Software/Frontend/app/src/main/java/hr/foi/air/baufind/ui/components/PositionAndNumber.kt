@@ -52,14 +52,14 @@ fun PositionAndNumber(
                 }
             }
             ) {
-                Icon(imageVector = Icons.Filled.Clear, contentDescription = "Minus")
+                Icon(imageVector = Icons.Filled.Clear, contentDescription = "Očisti")
             }
             Text(text = count.toString())
             IconButton(onClick = { onCountChange(count + 1) }) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = "Plus")
+                Icon(imageVector = Icons.Filled.Add, contentDescription = "Dodaj")
             }
             IconButton(onClick = onDelete) {
-                Icon(imageVector = Icons.Filled.Delete, contentDescription = "Delete")
+                Icon(imageVector = Icons.Filled.Delete, contentDescription = "Briši")
             }
         }
     }

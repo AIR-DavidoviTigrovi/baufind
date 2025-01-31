@@ -1,8 +1,6 @@
 package hr.foi.air.baufind.ui.screens.WorkerSearchScreen
 
-import android.text.style.ClickableSpan
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -26,53 +24,86 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.runtime.*
-import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import hr.foi.air.baufind.ui.components.WorkerCard
+import hr.foi.air.baufind.ui.screens.JobCreateScreen.JobViewModel
 import hr.foi.air.baufind.ws.model.Worker
 import hr.foi.air.baufind.ws.network.TokenProvider
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider,skills: List<Int>) {
-    val viewModel: WorkerSearchViewModel = viewModel()
+fun WorkerSearchScreen(
+    navController: NavController,
+    tokenProvider: TokenProvider,
+    skills: MutableList<Int>,
+    listOfIDs: MutableList<Int>,
+    jobId : Int,
+    viewModel: WorkerSearchViewModel,
+    jobViewModel : JobViewModel
+    ) {
     viewModel.tokenProvider.value = tokenProvider
     //Logika za dropdown meni
     /// Preporučeno je za manji broj opcija koristiti chip6
-    var skill by viewModel.skill
+    viewModel.listofIDs.value = listOfIDs
+    var skill by viewModel.skillStrings
     var isLoading by remember { mutableStateOf(true) }
     val isExpandedL by viewModel.isExpandedL
     val isExpandedR by viewModel.isExpandedR
     val scrollState = rememberScrollState()
     val selectedItemL by viewModel.selectedItemL
     val selectedItemR by viewModel.selectedItemR
+    viewModel.jobID.value = jobId
     val context = LocalContext.current
     // Opcije za dropdown meni
     val optionsR = viewModel.optionsR
     val optionsL = viewModel.optionsL
     val workers by viewModel.filteredWorkers
     val coroutine = rememberCoroutineScope()
-    LaunchedEffect(Unit) {
+
+    LaunchedEffect(viewModel.skillsId.value) {
         isLoading = true
-        viewModel.getAllSkills(skills)
+
+        if(viewModel.isEmptyList && viewModel.skillsId.value.isEmpty()){
+            viewModel.clearData()
+            jobViewModel.clearData()
+            navController.popBackStack()
+        }
+
+        if (viewModel.skillsId.value.isEmpty() && !viewModel.isEmptyList) {
+            viewModel.skillsId.value = skills
+        }
+
+        viewModel.getAllSkills()
         viewModel.loadWorkers()
         isLoading = false
     }
+
+
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text("Pronađite pozicije ${skill}")
@@ -110,7 +141,7 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
             if(selectedItemL != "" || selectedItemR != "") {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Close icon",
+                    contentDescription = "Ikonica za zatvaranje",
                     tint = Color.Black,
                     modifier = Modifier.padding(12.dp, 0.dp).clickable {
                         viewModel.updateFilteredWorkersR("")
@@ -169,7 +200,7 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Close,
-                    contentDescription = "No Workers",
+                    contentDescription = "Nema radnika",
                     tint = Color.Gray,
                     modifier = Modifier.size(24.dp)
                 )
@@ -198,20 +229,20 @@ fun WorkerSearchScreen(navController: NavController,tokenProvider: TokenProvider
                         initialOffsetY = { it }
                     ),
                 ) {
+
                     WorkerCard(worker){
-                        //Funkcija se poziva na pritiskom na radnika,| treba je promijeniti u kasnijim fazama i prilikom promjene obrišite dio komentara nakon | znaka.
-                        Toast.makeText(context, "Clicked on ${worker.name}", Toast.LENGTH_SHORT).show()
+                        navController.navigate("workersProfileScreen/${jobId}/${worker.id}/${viewModel.skillsId.value.first()}")
                     }
                 }
             }
         }
     }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.clearData()
+        }
+    }
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun WorkerSearchScreenPreview() {
-    val navController = rememberNavController()
-    WorkerSearchScreen(navController,tokenProvider = object : TokenProvider { override fun getToken(): String? { return null }},listOf(1,2))
-}
+

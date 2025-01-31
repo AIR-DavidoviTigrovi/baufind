@@ -1,9 +1,12 @@
 ﻿using BusinessLogicLayer.AppLogic;
+using BusinessLogicLayer.AppLogic.PushNotifications;
 using BusinessLogicLayer.AppLogic.Users;
+using BusinessLogicLayer.AppLogic.Users.DeleteUser;
 using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
 using BusinessLogicLayer.AppLogic.Users.GetUser;
 using BusinessLogicLayer.AppLogic.Users.GetUserProfile;
 using BusinessLogicLayer.AppLogic.Users.Login;
+using BusinessLogicLayer.AppLogic.Users.Logout;
 using BusinessLogicLayer.AppLogic.Users.RegisterUser;
 using BusinessLogicLayer.AppLogic.Users.UpdateUserProfile;
 using DataAccessLayer.AppLogic;
@@ -185,11 +188,41 @@ public class UserService : IUserService
             Email = user.Email
         };
 
+        if (request.FirebaseToken != null)
+        {
+            _repository.AddUserToken(user.Id, request.FirebaseToken);
+        }
+
         return new LoginResponse()
         {
             JWT = _jwtService.GenerateToken(newUser),
             Success = $"Korisnik {user.Name} uspješno je prijavljen u sustav."
         };
+    }
+
+    /// <summary>
+    /// Metoda za odjavu korisnika.
+    /// Samo briše postojeći Firebase token.
+    /// </summary>
+    /// <param name="userId">korisnikov ID</param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public LogoutResponse Logout(int userId)
+    {
+        var result = _repository.RemoveUserToken(userId);
+        if (result)
+        {
+            return new LogoutResponse()
+            {
+                Success = "Token uspješno uklonjen."
+            };
+        } else
+        {
+            return new LogoutResponse()
+            {
+                Error = "Greška kod uklanjanja tokena."
+            };
+        }
     }
 
     /// <summary>
@@ -292,5 +325,26 @@ public class UserService : IUserService
 
             return hash.ToString();
         }
+    }
+    /// <summary>
+    /// Metoda za brisanje korisnika, zahtjeva ID kao argument
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public DeleteUserResponse DeleteUser(int id)
+    {
+        bool deleted = _repository.DeleteUser(id);
+        if (!deleted)
+        {
+            return new DeleteUserResponse { 
+                Message="Greška prilikom brisanja korisnika", 
+                Success = false 
+            };
+        }
+        return new DeleteUserResponse {
+            Message="Korisnik je uspješno obrisan",
+            Success=true 
+        };
+
     }
 }

@@ -2,11 +2,11 @@ package hr.foi.air.baufind.ws.model
 
 data class JobSearchModel(
     val id: Int,
-    val employerId: Int,
-    val jobStatusId: Int,
+    val employer_id: Int,
+    val job_status_id: Int,
     val title: String,
     val description: String,
-    val allowWorkerInvite: Boolean,
+    val allow_worker_invite: Boolean,
     val location: String,
     val lat: Double?,
     val lng: Double?,

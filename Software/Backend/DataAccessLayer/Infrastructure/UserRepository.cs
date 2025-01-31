@@ -100,7 +100,6 @@ public class UserRepository : IUserRepository
     /// <returns>Ako je uspješno vratiti će UserProfileModel, ako ne onda vraća null.</returns>
     public UserProfileModel GetUserProfile(int id)
     {
-        // Sljedecih nekoliko linija koda vraća podatke potrebne za prikaz profila
         var userProfile = new UserProfileModel
         {
             Id = 0,
@@ -131,7 +130,6 @@ public class UserRepository : IUserRepository
                 userProfile.ProfilePicture = reader["profile_picture"] == DBNull.Value ? null : (byte[])reader["profile_picture"];
             }
         }
-        // Kod za skillsQuery vraća sve skillove povezane s traženim korisnikom.
         string skillsQuery = @"
             SELECT s.id, s.title
             FROM user_skill us
@@ -151,14 +149,30 @@ public class UserRepository : IUserRepository
             userProfile.Skills = skills;
         }
 
-        //reviews
         string reviewsQuery = @"
-        SELECT rating, COUNT(*) as count
-        FROM worker_review wr
-        JOIN working w ON w.id = wr.working_id
-        WHERE w.worker_id = @id
-        AND w.working_status_id = (SELECT id FROM working_status WHERE status = 'Completed')
-        GROUP BY rating;";
+                    SELECT 
+                    'worker' AS review_type,
+                    COUNT(wr.rating) AS total_reviews,
+                    AVG(CAST(wr.rating AS FLOAT)) AS average_rating,
+                    wr.rating AS rating,         
+                    COUNT(*) AS [count]         
+                FROM worker_review wr
+                JOIN working w ON wr.working_id = w.id
+                WHERE w.worker_id = @id
+                GROUP BY wr.rating
+
+                UNION ALL
+
+                SELECT 
+                    'employer' AS review_type,
+                    COUNT(er.rating) AS total_reviews,
+                    AVG(CAST(er.rating AS FLOAT)) AS average_rating,
+                    er.rating AS rating,       
+                    COUNT(*) AS [count]         
+                FROM employer_review er
+                JOIN job j ON er.job_id = j.id
+                WHERE j.employer_id = @id
+                GROUP BY er.rating;";
         using (var reader = _db.ExecuteReader(reviewsQuery, idParameter))
         {
             var totalReviews = 0;
@@ -226,6 +240,8 @@ public class UserRepository : IUserRepository
     /// <param name="skillIds"></param>
     public void AddUserSkills(int userId, List<int> skillIds)
     {
+        string deleteQuery = "DELETE FROM user_skill WHERE user_id = @user_id AND skill_id = @skill_id;";
+
         string query = @"
             INSERT INTO user_skill (user_id, skill_id)
             VALUES (@user_id, @skill_id);";
@@ -237,6 +253,9 @@ public class UserRepository : IUserRepository
                 { "@user_id", userId },
                 { "@skill_id", skillId }
             };
+
+            _db.ExecuteNonQuery(deleteQuery, parameters);
+
             _db.ExecuteNonQuery(query, parameters);
         }
     }
@@ -262,7 +281,126 @@ public class UserRepository : IUserRepository
             _db.ExecuteNonQuery(query, parameters);
         }
     }
+    /// <summary>
+    /// Metoda koja izvodi brisanje korirsnika u bazi (samo postavlja deleted na 1 u app_user)
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public bool DeleteUser(int userId)
+    {
+        string query = @"
+            UPDATE app_user
+            SET deleted = 1
+            WHERE id = @UserId;";
+        var parameter = new Dictionary<string, object>
+        {
+            { "UserId", userId },
+        };
+        int rowsAffected = _db.ExecuteNonQuery(query, parameter);
+        return rowsAffected > 0;
+    }
 
+    /// <summary>
+    /// Doda token vezan uz Firebase notifikacije na korisnika i makne isti ako postoji kod nekog drugog korisnika
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    public bool AddUserToken(int userId, string token)
+    {
+        string deleteQuery = @"
+            UPDATE app_user
+            SET firebase_token = NULL
+            WHERE firebase_token = @Token;
+        ";
+        var deleteParams = new Dictionary<string, object>
+        {
+            { "Token", token }
+        };
+
+        try
+        {
+            _db.ExecuteNonQuery(deleteQuery, deleteParams);
+        } catch (Exception ex)
+        {
+            return false;
+        }
+
+        string query = @"
+            UPDATE app_user
+            SET firebase_token = @Token
+            WHERE id = @Id;
+        ";
+
+        var queryParams = new Dictionary<string, object>
+        {
+            { "Token", token },
+            { "Id", userId }
+        };
+
+        try
+        {
+            _db.ExecuteNonQuery(query, queryParams);
+            return true;
+        } catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Uklanja Firebase token korisnika (kod odjave)
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public bool RemoveUserToken(int userId)
+    {
+        string query = @"
+            UPDATE app_user
+            SET firebase_token = NULL
+            WHERE id = @Id;
+        ";
+        var queryParams = new Dictionary<string, object>
+        {
+            { "Id", userId }
+        };
+
+        try
+        {
+            _db.ExecuteNonQuery(query, queryParams);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Dohvaća token za korisnika (ako postoji u bazi)
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public string? GetUserToken(int userId)
+    {
+        string userInfoQuery = "SELECT firebase_token FROM app_user WHERE id = @id;";
+        var idParameter = new Dictionary<string, object>
+        {
+            { "@id", userId }
+        };
+
+        string? token = null;
+
+        using (var reader = _db.ExecuteReader(userInfoQuery, idParameter))
+        {
+            if (reader.Read())
+            {
+                token = (string?)reader["firebase_token"];
+            }
+        }
+
+        return token;
+    }
 
     private UserModel UserModelFromReader(SqlDataReader reader)
     {
@@ -279,5 +417,7 @@ public class UserRepository : IUserRepository
             Deleted = (bool)reader["deleted"],
             GoogleId = reader["google_id"] == DBNull.Value ? null : (string)reader["google_id"]
         };
-    }    
+    }
+
+    
 }

@@ -1,10 +1,11 @@
 ﻿using BusinessLogicLayer.AppLogic.Jobs.AddJob;
+using BusinessLogicLayer.AppLogic.Jobs.AddUserToJob;
+using BusinessLogicLayer.AppLogic.Jobs.ConfirmWorker;
+using BusinessLogicLayer.AppLogic.Jobs.GetAllJobsHistory;
+using BusinessLogicLayer.AppLogic.Jobs.GetJob;
+using BusinessLogicLayer.AppLogic.Jobs.GetJobHistory;
 using BusinessLogicLayer.AppLogic.Jobs.GetJobsForCurrentUser;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BusinessLogicLayer.AppLogic.Jobs.WorkerJoinJob;
 
 namespace BusinessLogicLayer.AppLogic.Jobs
 {
@@ -12,5 +13,18 @@ namespace BusinessLogicLayer.AppLogic.Jobs
     {
         public AddJobResponse AddJob(AddJobRequest request, int userId);
         public GetJobsForCurrentUserResponse GetJobsForCurrentUser(int userId);
+        public GetJobResponse GetJob(int jobId, int userId);
+        public CallWarkerToJobResponse CallWorkerToJob(CallWorkerToJobRequest request, int userId);
+        public PendingInvitationResponse GetPendingInvitations(int userId);
+        public SearchPendingJobsForUserResponse SearchPendingJobsForUser(int userId);
+        public SearchMyJobsForUserResponse SearchMyJobsForUser(int userId);
+        public WorkerRequestJoinResponse WorkerRequestJoin(WorkerRequestJoinRequest request, int userId);
+        public ConfirmWorkerResponse ConfirmWorkerRequest(ConfirmWorkerRequest request);
+
+        public ConfirmWorkerResponse WorkerConfirmsJob(ConfirmWorkerRequest request,int EmployerIdForNotification);
+        
+        public MyJobsNotificationResponse GetMyJobsNotifications(int EmployerId);
+        public GetAllJobsHistoryResponse GetAllJobsHistory(int userId);
+        public GetJobHistoryResponse GetJobHistory(int jobId, int userId);
     }
 }

@@ -8,6 +8,17 @@ import retrofit2.converter.gson.GsonConverterFactory
 object NetworkService {
     private const val BASE_URL = "http://10.0.2.2:5009/"
 
+    private fun createRetrofitNoAuth(): Retrofit {
+        val client = OkHttpClient.Builder()
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
     private fun createRetrofit(tokenProvider: TokenProvider): Retrofit {
         val client = OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor(tokenProvider))
@@ -23,7 +34,9 @@ object NetworkService {
     fun createWorkersService(tokenProvider: TokenProvider): WorkersSkillService {
         return createRetrofit(tokenProvider).create(WorkersSkillService::class.java)
     }
-
+    fun createJobRoomService(tokenProvider: TokenProvider): JobRoomService {
+        return createRetrofit(tokenProvider).create(JobRoomService::class.java)
+    }
     fun createAuthService(tokenProvider: TokenProvider): AuthenticationService {
         return createRetrofit(tokenProvider).create(AuthenticationService::class.java)
     }
@@ -38,6 +51,9 @@ object NetworkService {
     }
     fun createReviewService(tokenProvider: TokenProvider): ReviewService{
         return createRetrofit(tokenProvider).create(ReviewService::class.java)
+    }
+    fun createGeocodingService(): GeocodingService {
+        return createRetrofitNoAuth().create(GeocodingService::class.java)
     }
 }
 

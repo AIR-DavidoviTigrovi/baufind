@@ -27,8 +27,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import hr.foi.air.baufind.service.LoginService.LoginDao
-import hr.foi.air.baufind.service.LoginService.LoginService
+import hr.foi.air.baufind.service.AuthService.LoginDao
+import hr.foi.air.baufind.service.AuthService.AuthService
 import hr.foi.air.baufind.service.jwtService.JwtService
 import hr.foi.air.baufind.ui.components.PrimaryButton
 import hr.foi.air.baufind.ui.components.PrimaryTextField
@@ -36,7 +36,7 @@ import hr.foi.air.baufind.ws.network.TokenProvider
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(navController: NavController, context : Context, tokenProvider: TokenProvider){
+fun LoginScreen(navController: NavController, context : Context, tokenProvider: TokenProvider, afterLoginDestination: String = "jobDetailsScreen"){
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var emailError by remember { mutableStateOf("") }
@@ -52,11 +52,11 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
         passwordError=""
 
         if (email.isBlank() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailError = "You must enter your email"
+            emailError = "Morate unijeti email"
             valid = false
         }
         if (password.isBlank()) {
-            passwordError = "You must enter your password"
+            passwordError = "Morate unijeti lozinku"
             valid = false
         }
         return valid
@@ -69,7 +69,7 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
         verticalArrangement = Arrangement.Top
     ) {
         Text(
-            text ="Welcome back",
+            text ="Dobrodošli natrag!",
             modifier = Modifier.align(Alignment.CenterHorizontally),
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold
@@ -90,7 +90,7 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
         PrimaryTextField(
             value = password,
             onValueChange = { password = it },
-            label = "Password",
+            label = "Lozinka",
             modifier = Modifier.fillMaxWidth(),
             visualTransformation =  PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -98,7 +98,7 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
             errorMessage = passwordError
         )
         Text(
-            text ="Forgot password?",
+            text ="Zaboravili lozinku?",
             modifier = Modifier.align(Alignment.Start).clickable {
                 //Ovdje ide logika za reset lozinke
             },
@@ -115,13 +115,13 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
             color = Color.Red
         )
         PrimaryButton(
-            text = "Log in",
+            text = "Prijava",
             maxWidth = true,
             onClick = {
                 if (validateInputs()) {
-                    val service = LoginService(tokenProvider)
+                    val authService = AuthService(tokenProvider)
                     coroutineScope.launch {
-                        val response = service.loginAsync(
+                        val response = authService.loginAsync(
                             LoginDao(
                                 email = email,
                                 password = password
@@ -129,12 +129,16 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
                         )
                         if (response.successfulLogin){
                             JwtService.saveJwt(context, response.jwt)
-                            navController.navigate("jobDetailsScreen")
+
+                            navController.navigate(afterLoginDestination) {
+                                popUpTo("login") { inclusive = true }
+                            }
+
                         }
                         else {
                             email = ""
                             password =""
-                            loginError = "invalid username and password"
+                            loginError = "nepoznat email ili lozinka"
                         }
                     }
                 }
@@ -143,7 +147,7 @@ fun LoginScreen(navController: NavController, context : Context, tokenProvider: 
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text ="New user? Sign up",
+            text ="Nemate račun? Registracija",
             modifier = Modifier.align(Alignment.CenterHorizontally).clickable { navController.navigate("registration") },
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,

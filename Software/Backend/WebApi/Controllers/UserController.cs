@@ -1,14 +1,15 @@
 ﻿using Azure.Core;
 using BusinessLogicLayer.AppLogic.Users;
+using BusinessLogicLayer.AppLogic.Users.DeleteUser;
 using BusinessLogicLayer.AppLogic.Users.GetAllUsers;
 using BusinessLogicLayer.AppLogic.Users.GetUser;
 using BusinessLogicLayer.AppLogic.Users.GetUserProfile;
 using BusinessLogicLayer.AppLogic.Users.Login;
+using BusinessLogicLayer.AppLogic.Users.Logout;
 using BusinessLogicLayer.AppLogic.Users.RegisterUser;
 using BusinessLogicLayer.AppLogic.Users.UpdateUserProfile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebApi.Controllers;
 
@@ -62,7 +63,7 @@ public class UserController : ControllerBase
 
         return user;
     }
-
+    
     // POST: /users/register
     [HttpPost("register")]
     [AllowAnonymous]
@@ -127,17 +128,27 @@ public class UserController : ControllerBase
 
     }
 
-    /*  // GET: /users/profile/{id}
-      [HttpGet("/profile/{id}")]
-      public ActionResult<UserProfileResponse> GetUserProfile(int id)
-      {
-          var userProfileData = _userService.GetUserProfileData(id);
-          if (userProfileData.userProfileModel == null)
-          {
-              return NotFound(userProfileData);
-          }
-          return userProfileData;
-      }*/
+    // GET: /users/profile/{id}
+    [HttpGet("profile/{id}")]
+    [Authorize]
+    public ActionResult<UserProfileResponse> GetUserProfile(int id)
+    {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+
+        if (!userIdFromJwt.HasValue) 
+        {
+            return Unauthorized(new UserProfileResponse()
+            {
+                Error = "Ne možete pristupiti tom resursu!"
+            });
+        }
+        var userProfileData = _userService.GetUserProfileData(id);
+        if (userProfileData.userProfileModel == null)
+        {
+            return NotFound(userProfileData);
+        }
+        return userProfileData;
+    }
 
     // POST: /users/login
     [HttpPost("login")]
@@ -152,5 +163,54 @@ public class UserController : ControllerBase
         }
 
         return user;
+    }
+
+    // GET: /users/logout
+    [HttpGet("logout")]
+    [Authorize]
+    public ActionResult<LogoutResponse> Logout()
+    {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+
+        if (!userIdFromJwt.HasValue)
+        {
+            return Unauthorized(new UserProfileResponse()
+            {
+                Error = "Niste prijavljeni!"
+            });
+        }
+
+        int userId = userIdFromJwt.Value;
+
+        var response = _userService.Logout(userId);
+        if (!string.IsNullOrEmpty(response.Error))
+        {
+            return BadRequest(response);
+        }
+        return response;
+    }
+
+    [HttpGet("delete")]
+    [Authorize]
+    public ActionResult<DeleteUserResponse> DeleteUser()
+    {
+        var userIdFromJwt = HttpContext.Items["UserId"] as int?;
+
+        if (userIdFromJwt == null)
+        {
+            return Unauthorized(new DeleteUserResponse()
+            {
+                Success = false,
+                Message = "Niste autorizirani da obrišete tog korisnika."
+            });
+        }
+        var response = _userService.DeleteUser(userIdFromJwt.Value);
+
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
+
+        return Ok(response);
     }
 }
